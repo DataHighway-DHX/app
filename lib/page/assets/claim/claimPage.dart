@@ -84,7 +84,7 @@ class _ClaimPageState extends State<ClaimPage> {
                         child: CupertinoPicker(
                           itemExtent: 30.0,
                           children: [
-                            Text('chain1'),
+                            Text('Ethereum Testnet (Görli)'),
                             Text('chain2')
                           ],
                           onSelectedItemChanged: (index){
