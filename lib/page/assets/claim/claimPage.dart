@@ -85,7 +85,7 @@ class _ClaimPageState extends State<ClaimPage> {
                           itemExtent: 30.0,
                           children: [
                             Text('Ethereum Testnet (Görli)'),
-                            Text('chain2')
+                            Text('Ethereum Mainnet')
                           ],
                           onSelectedItemChanged: (index){
                           }
