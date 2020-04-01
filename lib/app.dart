@@ -112,7 +112,7 @@ class _WalletAppState extends State<WalletApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Data Highway',
+      title: 'DataHighway',
       localizationsDelegates: [
         AppLocalizationsDelegate(_locale),
         GlobalMaterialLocalizations.delegate,
