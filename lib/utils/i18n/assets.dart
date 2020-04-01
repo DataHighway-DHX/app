@@ -45,7 +45,7 @@ const Map<String, String> enAssets = {
   //lock takens
   'lock.tokens': 'Lock Tokens',
   'lock.start': 'Let\'s get started',
-  'lock.instrution': 'Locking tokens(MXC) places it in a DHX smart contract for safe keeping. During the lock period you will not have access to your tokens. When period is complete, your tokens will be available for you to claim back. You may claim rewards immediately after locking.',
+  'lock.instruction': 'Locking tokens(MXC) places it in a DHX smart contract for safe keeping. During the lock period you will not have access to your tokens. When period is complete, your tokens will be available for you to claim back. You may claim rewards immediately after locking.',
   'lock.whatlocking': 'What is Locking?',
   'lock.howlock': 'How to lock tokens',
   'transaction.message': 'Transaction Message',
@@ -136,7 +136,7 @@ const Map<String, String> zhAssets = {
   //lock takens
   'lock.tokens': '锁仓',
   'lock.start': '让我们开始吧',
-  'lock.instrution': '锁仓(MXC) 将其置于一个 DHX 智能合约中，用于安全保存。在锁定期间，您将无法访问您的通证。 当锁定期结束时，您可以将通证领回。您可以在锁仓后立即领取奖励。',
+  'lock.instruction': '锁仓(MXC) 将其置于一个 DHX 智能合约中，用于安全保存。在锁定期间，您将无法访问您的通证。 当锁定期结束时，您可以将通证领回。您可以在锁仓后立即领取奖励。',
   'lock.whatlocking': '什么是锁仓？',
   'lock.howlock': '如何锁定通证',
   'transaction.message': '交易消息',

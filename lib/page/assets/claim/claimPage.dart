@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/selectPicker.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -18,9 +19,10 @@ class _ClaimPageState extends State<ClaimPage> {
   _ClaimPageState(this.store);
 
   final AppStore store;
-  TapGestureRecognizer tapRuleRecongnizer = TapGestureRecognizer()
+  TapGestureRecognizer _tapRuleRecongnizer = TapGestureRecognizer()
     ..onTap = () => _tapRule();
-  TextEditingController textCtl = TextEditingController(text: '');
+  TextEditingController _hashCtl = TextEditingController(text: '');
+  int _selectedValue = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -53,11 +55,10 @@ class _ClaimPageState extends State<ClaimPage> {
                 children: <Widget>[
                   Expanded(
                     child: TextField(
+                      controller: _hashCtl,
                       decoration: InputDecoration(
-                        hintText: 'xxx-yy11-zz22',
                         labelText: dic['claim.hash'],
                       ),
-                      controller: textCtl,
                       readOnly: true
                     ),
                   ),
@@ -70,29 +71,17 @@ class _ClaimPageState extends State<ClaimPage> {
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 title: Text(dic['claim.which.chain']),
-                trailing: IconButton(
-                  icon: Icon(Icons.chevron_right),
-                  onPressed: (){},
-                ),
-                onTap: (){
-                  showCupertinoModalPopup(
-                    context: context,
-                    builder: (ctx) {
-                      return Container(
-                        height: 200.0,
-                        // padding: const EdgeInsets.only(bottom: 50.0),
-                        child: CupertinoPicker(
-                          itemExtent: 30.0,
-                          children: [
-                            Text('Ethereum Testnet (Görli)'),
-                            Text('Ethereum Mainnet')
-                          ],
-                          onSelectedItemChanged: (index){
-                          }
-                        ),
-                      );
+                trailing: Icon(Icons.chevron_right),
+                onTap: () async{
+                  List data = ['xxx-yyy-zzz','x123-y123-z123'];
+                  selectPicker(context,data,_selectedValue,(res){
+                    if(_hashCtl.text.isEmpty|| _selectedValue != res){
+                      setState(() {
+                        _selectedValue = res;
+                        _hashCtl.text = data[res];
+                      });
                     }
-                  );
+                  });
                 }
               ),
             ]
@@ -106,8 +95,6 @@ class _ClaimPageState extends State<ClaimPage> {
         children: <Widget>[
           Text.rich(
                 TextSpan(
-                  // style: TextStyle(
-                  // ),
                   children: [
                     TextSpan(
                       text: dic['claim.token.instruction']
@@ -117,7 +104,7 @@ class _ClaimPageState extends State<ClaimPage> {
                       style: TextStyle(
                         color: Colors.blue
                       ),
-                      recognizer: tapRuleRecongnizer
+                      recognizer: _tapRuleRecongnizer
                     ),
                   ]
                 ),
@@ -146,7 +133,7 @@ class _ClaimPageState extends State<ClaimPage> {
                         color: Colors.white
                       ),
                     ),
-                    onPressed: () {}
+                    onPressed: () => Navigator.pop(context)
                   )
                 )
               )
