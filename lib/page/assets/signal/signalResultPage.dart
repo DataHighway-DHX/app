@@ -61,7 +61,7 @@ class _ResultPageState extends State<SignalResultPage> {
                   padding: const EdgeInsets.all(5),
                   color: Colors.grey[200],
                   child: Text(
-                    'wallet Address',
+                    'Wallet Address',
                     textAlign: TextAlign.center,
                   ),
                 ),
