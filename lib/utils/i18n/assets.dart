@@ -67,7 +67,7 @@ const Map<String, String> enAssets = {
   'units': 'units',
   'gas.price': 'Suggested Gas Price',
   'gwei': 'Gwei',
-  'lock.app': 'Lock from the app',
+  'lock.app': 'Lock',
   'click.instructions': 'Click for additional instructions',
   //signal tokens
   'signal.tokens': 'Signal Tokens',
