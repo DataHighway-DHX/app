@@ -61,7 +61,7 @@ const Map<String, String> enAssets = {
   'back': 'Back',
   'agree': 'Agree',
   'understand': 'I understand',
-  'send.token': 'To lock, send us your token from the wallet holding your token to this Smart Contract addr.',
+  'send.token': 'To lock, send your tokens from the wallet holding your tokens to this Smart Contract address',
   'guide.send': 'Guide on how to securely send to our official address',
   'gas.limit': 'Ethereum Gas Limit',
   'units': 'units',
