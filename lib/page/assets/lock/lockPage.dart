@@ -63,7 +63,7 @@ class _LockPageState extends State<LockPage> {
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Text(
-                  dic['lock.instrution'],
+                  dic['lock.instruction'],
                   textAlign: TextAlign.center,
                 ),
               ),
