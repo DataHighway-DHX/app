@@ -14,7 +14,7 @@ PODS:
     - Flutter
   - package_info (0.0.1):
     - Flutter
-  - "permission_handler (4.4.0+hotfix.2)":
+  - "permission_handler (4.4.0+hotfix.4)":
     - Flutter
   - shared_preferences (0.0.1):
     - Flutter
@@ -87,7 +87,7 @@ SPEC CHECKSUMS:
   flutter_webview_plugin: ed9e8a6a96baf0c867e90e1bce2673913eeac694
   image_picker: e3eacd46b94694dde7cf2705955cece853aa1a8f
   package_info: 48b108e75b8802c2d5e126f208ef540561c98aef
-  permission_handler: d5d46b2ca93671e8dcf870b949e304c7ddb65ad0
+  permission_handler: 8278954f2382902f63f00dd8828769c0bd6d511b
   shared_preferences: 430726339841afefe5142b9c1f50cb6bd7793e01
   shared_preferences_macos: f3f29b71ccbb56bf40c9dd6396c9acf15e214087
   shared_preferences_web: 141cce0c3ed1a1c5bf2a0e44f52d31eeb66e5ea9

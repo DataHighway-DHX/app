@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
-import 'package:polka_wallet/common/components/JumpToBrowserLink.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class AboutPage extends StatelessWidget {
@@ -64,7 +63,6 @@ class AboutPage extends StatelessWidget {
             Expanded(
               child: Text(
                 'https://polkawallet.io',
-                // style: Theme.of(context).textTheme.display4,
               ),
             ),
             FutureBuilder<PackageInfo>(

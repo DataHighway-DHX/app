@@ -130,7 +130,7 @@ class _StakingActions extends State<StakingActions>
                     )
                   : Text(
                       'Failed',
-                      style: TextStyle(color: Colors.purple),
+                      style: TextStyle(color: Colors.deepPurple),
                     )
             ],
           ),

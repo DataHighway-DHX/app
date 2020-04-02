@@ -32,101 +32,107 @@ class _SignalPageState extends State<SignalPage> {
       body: SafeArea(
         child: Builder(
           builder: (BuildContext context) {
-            return ListView(
-              shrinkWrap: true, 
-              padding: const EdgeInsets.only(top:30,bottom: 20,left: 20,right: 20),
-              children: <Widget>[
-                Center(
-                  child: Text(
-                    dic['signal.welcome'],
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 26 
+            return Scrollbar(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.only(top:30,bottom: 20,left: 20,right: 20),
+                child: Column(
+                  children: <Widget>[
+                    Center(
+                      child: Text(
+                        dic['signal.welcome'],
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 26 
+                        ),
+                      )
                     ),
-                  )
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: Icon(
-                    Icons.thumb_up,
-                    size: 100
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        flex: 2,
-                        child: Container(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Icon(
+                        Icons.thumb_up,
+                        size: 100
                       ),
-                      Expanded(
-                        child: Image.asset(
-                          'assets/images/assets/DOT.png',
-                          width: 40,
-                          height: 40,
-                        )
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            flex: 2,
+                            child: Container(),
+                          ),
+                          Expanded(
+                            child: Image.asset(
+                              'assets/images/assets/DOT.png',
+                              width: 40,
+                              height: 40,
+                            )
+                          ),
+                          Expanded(
+                            child: Image.asset(
+                              'assets/images/assets/FIR.png',
+                              width: 40,
+                              height: 40,
+                            )
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Container(),
+                          ),
+                        ]
+                      )
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        dic['signal.instruction'],
+                        textAlign: TextAlign.center,
                       ),
-                      Expanded(
-                        child: Image.asset(
-                          'assets/images/assets/FIR.png',
-                          width: 40,
-                          height: 40,
-                        )
+                    ),
+                    linkTap(
+                      dic['signal.what'],
+                      onTap: (){}
+                    ),
+                    linkTap(
+                      dic['signal.how'],
+                      onTap: (){}
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        dic['signal.warning'],
+                        textAlign: TextAlign.center,
                       ),
-                      Expanded(
-                        flex: 2,
-                        child: Container(),
-                      ),
-                    ]
-                  )
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Text(
-                    dic['signal.instruction'],
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                linkTap(
-                  dic['signal.what'],
-                  onTap: (){}
-                ),
-                linkTap(
-                  dic['signal.how'],
-                  onTap: (){}
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Text(
-                    dic['signal.warning'],
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                linkTap(
-                  dic['signal.how.iota'],
-                  onTap: (){}
-                ),
-              ]
+                    ),
+                    linkTap(
+                      dic['signal.how.iota'],
+                      onTap: (){}
+                    ),
+                  ]
+                )
+              )
             );
           }
         )
       ),
-      bottomNavigationBar: ListTile(
-        contentPadding: const EdgeInsets.only(left: 10,right: 10,bottom: 30),
-        title: Row(children: <Widget>[
-          Icon(Icons.chevron_left),
-          goPageBtn(
-            dic['back'],
-            textAlign: TextAlign.left,
-            onTap: () => Navigator.pop(context),
-          ),
-          goPageBtn(
-            dic['understand'],
-            onTap: () => Navigator.pushNamed(context, SignalDetailPage.route),
-          ),
-          Icon(Icons.chevron_right)
-        ])
+      bottomNavigationBar: Container(
+        color: Theme.of(context).bottomAppBarColor,
+          child: ListTile(
+          contentPadding: const EdgeInsets.only(left: 10,right: 10,bottom: 30),
+          title: Row(children: <Widget>[
+            Icon(Icons.chevron_left),
+            goPageBtn(
+              dic['back'],
+              textAlign: TextAlign.left,
+              onTap: () => Navigator.pop(context),
+            ),
+            goPageBtn(
+              dic['understand'],
+              onTap: () => Navigator.pushNamed(context, SignalDetailPage.route),
+            ),
+            Icon(Icons.chevron_right)
+          ])
+        )
       )
     );
   }

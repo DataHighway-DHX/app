@@ -34,8 +34,8 @@ const Map<String, String> enAssets = {
   'lock': 'Lock',
   'signal': 'Signal',
   'claim': 'Claim',
-  'claim.eligibility': 'Claim Eligibility(MXC)',
-  'rewards': 'Rewards(DHX)',
+  'claim.eligibility': 'Claim Eligibility',
+  'rewards': 'Rewards (DHX)',
   'approved': 'Approved',
   'pending': 'Pending',
   'rejected': 'Rejected',
@@ -45,14 +45,16 @@ const Map<String, String> enAssets = {
   //lock takens
   'lock.tokens': 'Lock Tokens',
   'lock.start': 'Let\'s get started',
-  'lock.instruction': 'Locking tokens(MXC) places it in a DHX smart contract for safe keeping. During the lock period you will not have access to your tokens. When period is complete, your tokens will be available for you to claim back. You may claim rewards immediately after locking.',
+  'lock.instruction': 'Locking tokens (MXC) places it in a DHX smart contract for safe keeping. During the lock period you will not have access to your tokens. When period is complete, your tokens will be available for you to claim back. You may claim rewards immediately after locking.',
   'lock.whatlocking': 'What is Locking?',
   'lock.howlock': 'How to lock tokens',
   'transaction.message': 'Transaction Message',
   'lock.transaction.instruction': 'Our smart contract categorizes your transaction based on the transaction message. It is EXTREMELY important that you prepare it correctly.',
   'formula': 'The Formula',
   'lock.duration': 'Lock Duration in \nMonths',
-  'amount.tokens': 'Amount of \ntokens',
+  'amount.tokens': 'Amount of \nTokens',
+  'public.key': 'DHX public key (hex)',
+  'guide.public.key': 'Guide on how to create a public key',
   'your.transaction': 'Your Transaction Message',
   'expected': 'Expected',
   'your.convenience': 'For your convenience',
@@ -69,6 +71,7 @@ const Map<String, String> enAssets = {
   'gwei': 'Gwei',
   'lock.app': 'Lock',
   'click.instructions': 'Click for additional instructions',
+  'guide.lock.app': 'Guide on how to lock tokens from outside the app',
   //signal tokens
   'signal.tokens': 'Signal Tokens',
   'signal.welcome': 'Welcome to Signaling',
@@ -79,14 +82,16 @@ const Map<String, String> enAssets = {
   'signal.how.iota': 'How to signal IOTA',
   'signal.important': 'Important: Locking or signaling native tokens (DHX, DOT) requires at least 25-USD equivalent, whereas non-native tokens (MXC, IOTA) requires at least 50-USD equivalent.',
   'signal.send': 'To signal, send us a transaction of 0 ETH from the wallet holding your tokens and a correct transaction message.',
+  'signal.app': 'Signal',
+  'guide.signal.app': 'Guide on how to signal tokens from outside the app',
   //Claim
   'claim.title': 'Claim',
   // 'claim.transaction': 'Claim Transaction',
   'claim.instruction': 'Only if you signal/lock outside of DataHighway app',
   'claim.hash': 'Signal or Staking Transaction Hash',
   'claim.which.chain': 'Which chain was the transaction on?',
-  'claim.token.instruction': 'Token claims are handled as described in',
-  'claim.dhx.document': 'the DHX Documentation'
+  'claim.token.instruction': 'Token claims are handled as described in the ',
+  'claim.dhx.document': 'DHX Documentation'
 };
 
 const Map<String, String> zhAssets = {
@@ -125,7 +130,7 @@ const Map<String, String> zhAssets = {
   'lock': '锁仓',
   'signal': '预锁仓',
   'claim': '认领',
-  'claim.eligibility': '索回资格(MXC)',
+  'claim.eligibility': '索回资格',
   'rewards': '奖励(DHX)',
   'approved': '已通过',
   'pending': '待审核',
@@ -144,6 +149,8 @@ const Map<String, String> zhAssets = {
   'formula': '公式',
   'lock.duration': '按月锁仓时长',
   'amount.tokens': '通证数量',
+  'public.key': 'DHX公钥(hex)',
+  'guide.public.key': '如何创建一个公钥',
   'your.transaction': '您的交易哈希消息',
   'expected': '预期',
   'your.convenience': '为了您的便利',
@@ -158,8 +165,9 @@ const Map<String, String> zhAssets = {
   'units': '单位',
   'gas.price': '建议的GAS燃料价格',
   'gwei': 'Gwei',
-  'lock.app': '从App中锁仓',
+  'lock.app': '锁仓',
   'click.instructions': '点击以获取更多说明',
+  'guide.lock.app': '有关如何从应用程序外部锁仓的指南',
   //signal tokens
   'signal.tokens': '预锁仓',
   'signal.welcome': '欢迎来到预锁仓',
@@ -170,12 +178,15 @@ const Map<String, String> zhAssets = {
   'signal.how.iota': '如何预锁IOTA',
   'signal.important': '重要信息：锁仓或预锁原生通证(DHX, DOT) 至少需要25美元等值，而非原生通证(MXC, IOTA) 至少需要50美元等值',
   'signal.send': '预锁仓的方法是，从持有您的通证钱包中向我们发送0以太币的交易和正确的交易信息。',
+  'signal.app': '预锁仓',
+  'guide.signal.app': '如何从应用程序外部预锁仓的指南',
   //Claim
   // 'claim.title': '认领',
   // 'claim.transaction': 'Claim Transaction',
   'claim.instruction': '仅当您在数据高速公路应用程序外面预锁仓/锁仓时',
   'claim.hash': '预锁仓或质押交易哈希',
   'claim.which.chain': '交易发生在哪个链？',
-  'claim.token.instruction': '通证领回要求按 DHX文件 中的描述处理',
-  'claim.dhx.document': ''
+  'claim.token.instruction1': '通证领回要求按',
+  'claim.dhx.document': 'DHX文件',
+  'claim.token.instruction2': '中的描述处理',
 };

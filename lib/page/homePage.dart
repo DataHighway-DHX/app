@@ -42,13 +42,13 @@ class _HomePageState extends State<HomePage> {
               icon: Image.asset(_tabList[activeItem] == i
                   ? 'assets/images/public/$i.png'
                   : 'assets/images/public/${i}_dark.png',
-                  color: _tabList[activeItem] == i ? Colors.purple : Colors.grey),
+                  color: _tabList[activeItem] == i ? Colors.deepPurple : Colors.grey),
               title: Text(
                 tabs[i.toLowerCase()],
                 style: TextStyle(
                     fontSize: 14,
                     color:
-                        _tabList[activeItem] == i ? Colors.purple : Colors.grey),
+                        _tabList[activeItem] == i ? Colors.deepPurple : Colors.grey),
               ),
             ))
         .toList();

@@ -22,12 +22,13 @@ class _ClaimPageState extends State<ClaimPage> {
   TapGestureRecognizer _tapRuleRecongnizer = TapGestureRecognizer()
     ..onTap = () => _tapRule();
   TextEditingController _hashCtl = TextEditingController(text: '');
-  int _selectedValue = 0;
+  int _selectedValue = -1;
 
   @override
   Widget build(BuildContext context) {
     var dic = I18n.of(context).assets;
-
+    bool isEnglish = store.settings.localeCode.contains('en');
+    
     return Scaffold(
       appBar: AppBar(
         title: Text(dic['claim.transaction'])
@@ -74,7 +75,11 @@ class _ClaimPageState extends State<ClaimPage> {
                 trailing: Icon(Icons.chevron_right),
                 onTap: () async{
                   List data = ['xxx-yyy-zzz','x123-y123-z123'];
-                  selectPicker(context,data,_selectedValue,(res){
+                  selectPicker(
+                    context,
+                    data: data,
+                    value: _selectedValue,
+                    onSelected: (res){
                     if(_hashCtl.text.isEmpty|| _selectedValue != res){
                       setState(() {
                         _selectedValue = res;
@@ -94,49 +99,53 @@ class _ClaimPageState extends State<ClaimPage> {
         physics: const NeverScrollableScrollPhysics(),
         children: <Widget>[
           Text.rich(
+            TextSpan(
+              children: [
                 TextSpan(
-                  children: [
-                    TextSpan(
-                      text: dic['claim.token.instruction']
-                    ),
-                    TextSpan(
-                      text: dic['claim.dhx.document'],
-                      style: TextStyle(
-                        color: Colors.blue
-                      ),
-                      recognizer: _tapRuleRecongnizer
-                    ),
-                  ]
+                  text: isEnglish ? dic['claim.token.instruction'] : dic['claim.token.instruction1']
                 ),
-                textAlign: TextAlign.center,
-              ),
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Container(
-                  margin: const EdgeInsets.only(top: 30,right: 10,left: 10,bottom: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.purple,
-                    borderRadius: BorderRadius.circular(10.0)
+                TextSpan(
+                  text: dic["claim.dhx.document"],
+                  style: TextStyle(
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
                   ),
-                  child: OutlineButton(
-                    borderSide: BorderSide(
-                      color: Colors.purple
-                    ),
-                    padding: const EdgeInsets.all(10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0)
-                    ),
-                    child: Text(
-                      dic['claim'],
-                      style: const TextStyle(
-                        fontSize: 22.0,
-                        color: Colors.white
-                      ),
-                    ),
-                    onPressed: () => Navigator.pop(context)
-                  )
+                  recognizer: _tapRuleRecongnizer
+                ),
+                TextSpan(
+                  text: isEnglish ? '' : dic['claim.token.instruction2']
                 )
+              ]
+            ),
+            textAlign: TextAlign.center,
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Container(
+              margin: const EdgeInsets.only(top: 30,right: 10,left: 10,bottom: 10),
+              decoration: BoxDecoration(
+                color: Colors.deepPurple,
+                borderRadius: BorderRadius.circular(10.0)
+              ),
+              child: OutlineButton(
+                borderSide: BorderSide(
+                  color: Colors.deepPurple
+                ),
+                padding: const EdgeInsets.all(10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)
+                ),
+                child: Text(
+                  dic['claim'],
+                  style: const TextStyle(
+                    fontSize: 22.0,
+                    color: Colors.white
+                  ),
+                ),
+                onPressed: () => Navigator.pop(context)
               )
+            )
+          )
         ],
       ),
     );

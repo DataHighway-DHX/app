@@ -61,7 +61,7 @@ class _AssetsState extends State<Assets> {
             trailing: IconButton(
               icon: Image.asset(
                 'assets/images/assets/Assets_nav_code.png',
-                color: Colors.purple,
+                color: Colors.deepPurple,
               ),
               onPressed: () {
                 if (acc.address != '') {
@@ -335,8 +335,9 @@ void _tapBtns(context,index){
 }
 
 final List<String> itemTabList = [
-  'claim.eligibility',//'claim Eligibility(MXC)',
-  'rewards'//'Rewards(DHX)'
+  'claim.eligibility.MXC',
+  'claim.eligibility.IOTA',
+  'rewards'
 ];
 
 Widget expandTab(context){
@@ -354,9 +355,19 @@ Widget expandTab(context){
           labelColor: Colors.black87,
           unselectedLabelColor: Colors.black38,
           tabs: itemTabList.map((itemTab) {
-            return Tab(
-              text: dic[itemTab],
-            );
+            if(itemTab == 'claim.eligibility.MXC'){
+              return Tab(
+                text: '${dic['claim.eligibility']} (MXC)',
+              );
+            }else if(itemTab == 'claim.eligibility.IOTA'){
+              return Tab(
+                text: '${dic['claim.eligibility']} (IOTA)',
+              );
+            }else{
+              return Tab(
+                text: dic[itemTab],
+              );
+            }
           }).toList(),
         ),
         Container(
@@ -479,6 +490,20 @@ Widget tabRW(context){
               ),
             ]
           ),
+          Row(
+            children: <Widget>[
+              content(
+                '24000',
+              ),
+              content(
+                '1.025',
+              ),
+              content(
+                '2460',
+                color: Colors.green
+              ),
+            ]
+          )
         ]
       ),
     )

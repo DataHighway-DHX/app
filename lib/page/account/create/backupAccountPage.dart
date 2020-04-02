@@ -137,7 +137,7 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
                           padding: EdgeInsets.all(8),
                           child: Text(
                             i18n['backup.reset'],
-                            style: TextStyle(fontSize: 14, color: Colors.purple),
+                            style: TextStyle(fontSize: 14, color: Colors.deepPurple),
                           ),
                         ),
                         onTap: () {

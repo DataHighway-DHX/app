@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-Widget checkRule(content){
+Widget checkRule(content,{bool value = false,Function(bool) onChanged}){
   return ListTile(
     leading: Checkbox(
-      value: false,
-      onChanged: (newValue){}
+      value: value,
+      onChanged: onChanged
     ),
     title: Text(
       content,

@@ -139,7 +139,7 @@ class ReferendumPanel extends StatelessWidget {
             width: widthYes > widthMin ? widthYes : widthMin,
             decoration: BoxDecoration(
                 border:
-                    Border(bottom: BorderSide(width: 6, color: Colors.purple))),
+                    Border(bottom: BorderSide(width: 6, color: Colors.deepPurple))),
           )
         ],
       ));

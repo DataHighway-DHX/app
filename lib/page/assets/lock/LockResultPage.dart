@@ -34,61 +34,70 @@ class _ResultPageState extends State<LockResultPage> {
       body: SafeArea(
         child: Builder(
           builder: (BuildContext context) {
-          return ListView(
-            shrinkWrap: true, 
-            padding: const EdgeInsets.all(20),
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                child: Text(
-                  dic['send.token'],
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold
+          return Scrollbar(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    child: Text(
+                      dic['send.token'],
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              linkTap(
-                dic['guide.send'],
-                onTap: (){}
-              ),
-              Icon(
-                Icons.dashboard,
-                size: 120
-              ),
-              ListTile(
-                title: Container(
-                  padding: const EdgeInsets.all(5),
-                  color: Colors.grey[200],
-                  child: Text(
-                    'Wallet Address',
-                    textAlign: TextAlign.center,
+                  linkTap(
+                    dic['guide.send'],
+                    onTap: (){}
                   ),
-                ),
-                trailing: Icon(Icons.content_copy),
-              ),
-              gesInput(dic['gas.limit'],dic['units']),
-              gesInput(dic['gas.price'],dic['gwei']),
-              lockAppBtn(context),
-              linkTap(
-                dic['click.instructions'],
-                onTap: (){}
-              ),
-            ]
+                  Icon(
+                    Icons.dashboard,
+                    size: 120
+                  ),
+                  ListTile(
+                    title: Container(
+                      padding: const EdgeInsets.all(5),
+                      color: Colors.grey[200],
+                      child: Text(
+                        'Wallet Address',
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    trailing: Icon(Icons.content_copy),
+                  ),
+                  gesInput(dic['gas.limit'],dic['units']),
+                  gesInput(dic['gas.price'],dic['gwei']),
+                  linkTap(
+                    dic['click.instructions'],
+                    onTap: (){}
+                  ),
+                  linkTap(
+                    dic['guide.lock.app'],
+                    onTap: (){}
+                  ),
+                ]
+              )
+            )
           );
         }
       )),
-      bottomNavigationBar: ListTile(
-        contentPadding: const EdgeInsets.only(left: 10,right: 10,bottom: 30),
-        title: Row(children: <Widget>[
-          Icon(Icons.chevron_left),
-          goPageBtn(
-            dic['back'],
-            textAlign: TextAlign.left,
-            onTap: () => Navigator.pop(context),
-          )
-        ]),
-      ),
+      bottomNavigationBar: Container(
+        color: Theme.of(context).bottomAppBarColor,
+        child: ListTile(
+          contentPadding: const EdgeInsets.only(left: 10,right: 10,bottom: 30),
+          title: Row(children: <Widget>[
+            Icon(Icons.chevron_left),
+            goPageBtn(
+              dic['back'],
+              textAlign: TextAlign.left,
+              onTap: () => Navigator.pop(context),
+            )
+          ]),
+        ),
+      )
     );
   }
 }
