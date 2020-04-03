@@ -53,7 +53,7 @@ const Map<String, String> enAssets = {
   'formula': 'The Formula',
   'lock.duration': 'Lock Duration in \nMonths',
   'amount.tokens': 'Amount of \nTokens',
-  'public.key': 'DHX public key (hex)',
+  'public.key': 'DHX Public Key (hex)',
   'guide.public.key': 'Guide on how to create a public key',
   'your.transaction': 'Your Transaction Message',
   'expected': 'Expected',

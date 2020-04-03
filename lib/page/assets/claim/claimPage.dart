@@ -74,7 +74,7 @@ class _ClaimPageState extends State<ClaimPage> {
                 title: Text(dic['claim.which.chain']),
                 trailing: Icon(Icons.chevron_right),
                 onTap: () async{
-                  List data = ['xxx-yyy-zzz','x123-y123-z123'];
+                  List data = ['Ethereum Testnet (Görli)', 'Ethereum Mainnet'];
                   selectPicker(
                     context,
                     data: data,
