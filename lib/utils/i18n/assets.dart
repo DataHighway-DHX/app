@@ -88,7 +88,7 @@ const Map<String, String> enAssets = {
   'claim.title': 'Claim',
   // 'claim.transaction': 'Claim Transaction',
   'claim.instruction': 'Only if you signal/lock outside of DataHighway app',
-  'claim.hash': 'Signal or Staking Transaction Hash',
+  'claim.hash': 'Signal or Locking Transaction Hash',
   'claim.which.chain': 'Which chain was the transaction on?',
   'claim.token.instruction': 'Token claims are handled as described in the ',
   'claim.dhx.document': 'DHX Documentation'
