@@ -58,7 +58,7 @@ const Map<String, String> enAssets = {
   'your.transaction': 'Your Transaction Message',
   'expected': 'Expected',
   'your.convenience': 'For your convenience',
-  'message.qrcode': 'Add my transaction message to the wallet QR code',
+  'message.qrcode': 'Add my transaction message to the smart contract QR code',
   'check.message': 'I understand I should always double check the transaction message',
   'back': 'Back',
   'agree': 'Agree',
