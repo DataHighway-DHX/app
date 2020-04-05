@@ -137,7 +137,3 @@ class _SignalPageState extends State<SignalPage> {
     );
   }
 }
-
-void _tapRule(){
-  
-}

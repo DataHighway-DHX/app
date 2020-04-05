@@ -190,7 +190,7 @@ Widget itemHeader(context,{store,symbol,name = ''}){
     title: Text(symbol ?? ''),
     subtitle: Text(name.isNotEmpty ? name : '~'),
     trailing: Container(
-      width: 140,
+      width: 120,
       // padding: const EdgeInsets.only(bottom:10),
       child: ListTile(
         isThreeLine: true,
@@ -198,7 +198,7 @@ Widget itemHeader(context,{store,symbol,name = ''}){
         contentPadding: EdgeInsets.zero,
         title: Text(
           Fmt.balance(store.assets.balance),
-          textAlign: TextAlign.center,
+          textAlign: TextAlign.left,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
@@ -207,18 +207,16 @@ Widget itemHeader(context,{store,symbol,name = ''}){
         ),
         subtitle: Row(
           // padding: EdgeInsets.zero,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Text(
               I18n.of(context).assets['balance'],
-              textAlign: TextAlign.left,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
               )
             ),
             const Text(' (~3000 USD)',
-              textAlign: TextAlign.left,
               style: TextStyle(
                 color: Colors.grey,
                 fontSize: 10

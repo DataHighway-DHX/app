@@ -99,7 +99,3 @@ class _LockPageState extends State<LockPage> {
     );
   }
 }
-
-void _tapRule(){
-  
-}

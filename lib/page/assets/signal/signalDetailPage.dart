@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/checkRule.dart';
+import 'package:polka_wallet/common/components/formulaComma.dart';
 import 'package:polka_wallet/common/components/formulaInput.dart';
+import 'package:polka_wallet/common/components/formulaLabel.dart';
 import 'package:polka_wallet/common/components/goPageBtn.dart';
 import 'package:polka_wallet/common/components/linkTap.dart';
 import 'package:polka_wallet/common/components/lockAppBtn.dart';
@@ -86,18 +88,9 @@ class _DetailPageState extends State<SignalDetailPage> {
                           });
                         })
                       ),
-                      Text(' , '),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10.0,horizontal: 30.0),
-                        child: Text(
-                          dic['signal'],
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 12
-                          )
-                        ),
-                      ),
-                      Text(' , '),
+                      formulaComma(),
+                      formulaLabel(dic['signal']),
+                      formulaComma(),
                       formulaInput(
                         controller: _amountCtl,
                         lable: dic['amount.tokens'],
@@ -128,7 +121,7 @@ class _DetailPageState extends State<SignalDetailPage> {
                       padding: const EdgeInsets.all(5),
                       color: Colors.grey[200],
                       child: Text(
-                        '${_durationCtl.text.isEmpty ? '??' : _durationCtl.text}, ${dic["signal"]}, ${_amountCtl.text.isEmpty ? '??' : _amountCtl.text}',
+                        '${_durationCtl.text.isEmpty ? '??' : _durationCtl.text},Signal,${_amountCtl.text.isEmpty ? '??' : _amountCtl.text}',
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -208,8 +201,4 @@ class _DetailPageState extends State<SignalDetailPage> {
       )
     );
   }
-}
-
-void _tapRule(){
-  
 }

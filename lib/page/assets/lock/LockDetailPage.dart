@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/checkRule.dart';
+import 'package:polka_wallet/common/components/formulaComma.dart';
 import 'package:polka_wallet/common/components/formulaInput.dart';
+import 'package:polka_wallet/common/components/formulaLabel.dart';
 import 'package:polka_wallet/common/components/goPageBtn.dart';
 import 'package:polka_wallet/common/components/linkTap.dart';
 import 'package:polka_wallet/common/components/lockAppBtn.dart';
@@ -40,8 +42,6 @@ class _DetailPageState extends State<LockDetailPage> {
   @override
   Widget build(BuildContext context) {
     var dic = I18n.of(context).assets;
-    Locale locale = Localizations.localeOf(context);
-    String space = locale.languageCode.contains('en') ? '\n' : ''; 
 
     return Scaffold(
       appBar: AppBar(
@@ -88,18 +88,9 @@ class _DetailPageState extends State<LockDetailPage> {
                           });
                         })
                       ),
-                      Text(' , '),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10.0,horizontal: 30.0),
-                        child: Text(
-                          dic['lock'],
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 12
-                          )
-                        ),
-                      ),
-                      Text(' , '),
+                      formulaComma(),
+                      formulaLabel(dic['lock']),
+                      formulaComma(),
                       formulaInput(
                         controller: _amountCtl,
                         lable: dic['amount.tokens'],
@@ -130,7 +121,7 @@ class _DetailPageState extends State<LockDetailPage> {
                       padding: const EdgeInsets.all(5),
                       color: Colors.grey[200],
                       child: Text(
-                        '${_durationCtl.text.isEmpty ? '??' : _durationCtl.text}, ${dic["lock"]}, ${_amountCtl.text.isEmpty ? '??' : _amountCtl.text}',
+                        '${_durationCtl.text.isEmpty ? '??' : _durationCtl.text},Lock,${_amountCtl.text.isEmpty ? '??' : _amountCtl.text}',
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -203,8 +194,4 @@ class _DetailPageState extends State<LockDetailPage> {
       )
     );
   }
-}
-
-void _tapRule(){
-  
 }

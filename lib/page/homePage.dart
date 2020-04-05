@@ -94,8 +94,7 @@ class _HomePageState extends State<HomePage> {
               appBar: AppBar(
                 title: Image.asset(
                   'assets/images/assets/logo.png',
-                  // width: 40,
-                  // height: 40,
+                  height: 50,
                 ),
                 centerTitle: false,
                 backgroundColor: Colors.transparent,
