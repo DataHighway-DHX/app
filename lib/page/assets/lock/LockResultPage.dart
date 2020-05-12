@@ -66,8 +66,8 @@ class _ResultPageState extends State<LockResultPage> {
                     ),
                     trailing: Icon(Icons.content_copy),
                   ),
-                  gesInput(dic['gas.limit'],dic['units']),
-                  gesInput(dic['gas.price'],dic['gwei']),
+                  gasInput(dic['gas.limit'],dic['units']),
+                  gasInput(dic['gas.price'],dic['gwei']),
                   linkTap(
                     dic['click.instructions'],
                     onTap: (){}

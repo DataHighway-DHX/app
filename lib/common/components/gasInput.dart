@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 
-Widget gesInput(title,subtile){
+Widget gasInput(title,subtile){
   return ListTile(
     leading: Text(
       title,
