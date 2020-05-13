@@ -17,6 +17,7 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
+  flutter_dotenv: ^2.1.0
   # intl - format numbers
   intl: ^0.16.0
   # state management with mobx & provider
@@ -44,6 +45,9 @@ dependencies:
   qr_flutter: ^3.1.0
   flutter_qr_reader: ^1.0.3
   permission_handler: ^4.2.0
+  # File
+  path: any
+  path_provider: ^1.6.8
   # PackageInfo
   package_info: ^0.4.0
   # charts
@@ -52,9 +56,11 @@ dependencies:
   flutter_svg: ^0.17.2
   # open link in browser
   url_launcher: ^5.4.2
+  # Ethereum smart contracts
+  web3dart: ^2.0.0-dev.6
 
 dev_dependencies:
-  flutter_launcher_icons: "^0.7.3"
+  flutter_launcher_icons: ^0.7.3
   build_runner: ^1.7.4
   flutter_test:
     sdk: flutter
@@ -77,8 +83,15 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    # flutter_dotenv
+    - .env
     # js service
     - lib/polkadot_js_service/dist/main.js
+    - assets/
+    # abi
+    - assets/data/abi_mxc_mainnet.json
+    - assets/data/abi_datahighway_iota_pegged_mining_mainnet.json
+    - assets/data/abi_datahighway_mxc_mining_mainnet.json
     # images
     - assets/images/public/app.png
     - assets/images/public/Mining.png

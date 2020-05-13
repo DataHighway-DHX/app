@@ -4,8 +4,10 @@ import 'package:polka_wallet/app.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:polka_wallet/service/notification.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
+  await DotEnv().load('.env');
   WidgetsFlutterBinding.ensureInitialized();
   // var notificationAppLaunchDetails =
   //     await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();

@@ -17,10 +17,9 @@ class CreateAccountEntryPage extends StatelessWidget {
         child: Column(
           children: <Widget>[
             Expanded(
-              child: Image.asset(
-                'assets/images/public/About_app.png',
-              )
-            ),
+                child: Image.asset(
+              'assets/images/public/About_app.png',
+            )),
             Padding(
               padding: EdgeInsets.all(16),
               child: RoundedButton(
