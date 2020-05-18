@@ -318,7 +318,7 @@ class _AssetsState extends State<Assets> {
     return Observer(
       builder: (_) {
         String symbol = store.settings.networkState.tokenSymbol;
-        String networkName = store.settings.networkName;
+        String networkName = store.settings.networkName ?? '';
         return RefreshIndicator(
           key: globalBalanceRefreshKey,
           onRefresh: _fetchBalance,
