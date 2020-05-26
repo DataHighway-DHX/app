@@ -8,14 +8,14 @@ const default_node_zh = {
   'info': 'datahighway-harbour-testnet',
   'text':
       'DataHighway (DataHighway Harbour Testnet, hosted by MXC Foundation gGmbH)',
-  'value': 'wss://testnet-frankfurt-v0.1.0-alpha.datahighway.com',
+  'value': 'wss://testnet-harbour.datahighway.com',
 };
 
 const default_node = {
   'info': 'datahighway-harbour-testnet',
   'text':
       'DataHighway (DataHighway Harbour Testnet, hosted by MXC Foundation gGmbH)',
-  'value': 'wss://testnet-frankfurt-v0.1.0-alpha.datahighway.com',
+  'value': 'wss://testnet-harbour.datahighway.com',
 };
 
 const nodeList = [
@@ -39,7 +39,8 @@ const nodeList = [
 ];
 
 const default_ss58_map = {
-  'datahighway-mainnet': 46, // DataHighway Mainnet
+  // https://github.com/paritytech/substrate/pull/5465
+  'datahighway-mainnet': 49, // DataHighway Mainnet
   'datahighway-harbour-testnet': 42, // DataHighway Harbour Testnet
   'kusama': 2,
   'substrate': 42,
