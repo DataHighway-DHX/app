@@ -4,7 +4,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 // Account
 var kSamplePrivateKey = DotEnv().env['SAMPLE_PRIVATE_KEY'];
 var kSampleAccountAddrMainnet =
-    EthereumAddress.fromHex('0x2733566693458ee7e35f63b309da864db2637dc1');
+    EthereumAddress.fromHex('0x022478d51bF0cF12799E443ccd19527e075B6B37');
+    //Latest 0x022478d51bF0cF12799E443ccd19527e075B6B37
+    //before 0x2733566693458ee7e35f63b309da864db2637dc1
 
 // Testnet
 var kRpcUrlInfuraGoerli =

@@ -43,6 +43,7 @@ import 'package:polka_wallet/page/staking/actions/setPayeePage.dart';
 import 'package:polka_wallet/page/staking/actions/stakingDetailPage.dart';
 import 'package:polka_wallet/page/staking/actions/unbondPage.dart';
 import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
+import 'package:polka_wallet/service/ethereumApi/api.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -97,6 +98,10 @@ class _WalletAppState extends State<WalletApp> {
       webApi.init();
 
       _changeLang(context, _appStore.settings.localeCode);
+
+      //init Ethereum
+      ethereum = Ethereum();
+      ethereum.init();
     }
 
     return _appStore.account.accountList.length;

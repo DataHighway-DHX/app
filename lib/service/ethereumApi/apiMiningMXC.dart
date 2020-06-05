@@ -1,6 +1,7 @@
 import 'dart:async' show Future;
 
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:polka_wallet/constants.dart';
 import 'package:web3dart/web3dart.dart';
 
 import 'api.dart';
@@ -334,10 +335,10 @@ class EthereumApiMiningMXC {
   // whose rewards have been claimed and pending approval 
   Future<BigInt>
       getAccountLockedClaimsPendingOfMXCAmountFromDataHighwayMXCMiningContract(
-          String rpcUrl, String wsUrl, EthereumAddress contractAddr,
+          EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: rpcUrl, wsUrl: wsUrl);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -400,10 +401,10 @@ class EthereumApiMiningMXC {
   // Get amount of MXC tokens that have been locked whose rewards have had their claim approved
   Future<BigInt>
       getAccountLockedClaimsApprovedOfMXCAmountFromDataHighwayMXCMiningContract(
-          String rpcUrl, String wsUrl, EthereumAddress contractAddr,
+          EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: rpcUrl, wsUrl: wsUrl);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -429,7 +430,17 @@ class EthereumApiMiningMXC {
     print(
         'You have ${claimsLockedApproved} of approved claims of DataHighwayMXCMiningToken after Locked');
 
-    // Listen for the ClaimLockedApproved event when emitted by the contract above
+    try{
+      _claimsLockedApprovedSubscrioption(client,contract,claimLockedApprovedEvent,ownAddress,claimsLockedApprovedList,claimsLockedApprovedFunction);
+    }catch(err){
+      print('_claimsLockedApprovedSubscrioption exception: $err');
+    }
+
+    return claimsLockedApproved;
+  }
+
+  Future<void> _claimsLockedApprovedSubscrioption(client,contract,claimLockedApprovedEvent,ownAddress,claimsLockedApprovedList,claimsLockedApprovedFunction) async{
+      // Listen for the ClaimLockedApproved event when emitted by the contract above
     final subscription = client
         .events(
             FilterOptions.events(contract: contract, event: claimLockedApprovedEvent))
@@ -460,7 +471,6 @@ class EthereumApiMiningMXC {
 
     await client.dispose();
 
-    return claimsLockedApproved;
   }
 
   // Get amount of MXC tokens that have been locked whose rewards have had their claim rejected

@@ -1,6 +1,7 @@
 import 'dart:async' show Future;
 
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:polka_wallet/constants.dart';
 import 'package:web3dart/web3dart.dart';
 
 import 'api.dart';
@@ -12,11 +13,10 @@ class EthereumApiAssetsMXC {
   BigInt balance;
 
   // Get an account balance of MXC tokens on the Ethereum network
-  Future<BigInt> getAccountBalanceFromMXCContract(
-      String rpcUrl, String wsUrl, EthereumAddress contractAddr,
+  Future<BigInt> getAccountBalanceFromMXCContract( EthereumAddress contractAddr,
       [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: rpcUrl, wsUrl: wsUrl);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -39,7 +39,17 @@ class EthereumApiAssetsMXC {
     balance = balanceList.first;
     print('You have ${balance} MXCToken');
 
-    // Listen for the Transfer event when emitted by the contract above
+    try{
+       _subscription(client,contract,transferEvent,ownAddress,balanceList,balanceFunction);
+    }catch(err){
+      print('_subscriptionListener exception: $err');
+    }
+
+    return balance;
+  }
+
+  Future<void> _subscription(client,contract,transferEvent,ownAddress,balanceList,balanceFunction) async{
+     // Listen for the Transfer event when emitted by the contract above
     final subscription = client
         .events(FilterOptions.events(contract: contract, event: transferEvent))
         .take(1)
@@ -65,7 +75,5 @@ class EthereumApiAssetsMXC {
     await subscription.cancel();
 
     await client.dispose();
-
-    return balance;
   }
 }

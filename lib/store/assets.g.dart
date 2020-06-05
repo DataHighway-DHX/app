@@ -13,7 +13,8 @@ mixin _$AssetsStore on _AssetsStore, Store {
 
   @override
   ObservableList<TransferData> get txsView => (_$txsViewComputed ??=
-          Computed<ObservableList<TransferData>>(() => super.txsView))
+          Computed<ObservableList<TransferData>>(() => super.txsView,
+              name: '_AssetsStore.txsView'))
       .value;
   Computed<ObservableList<Map<String, dynamic>>> _$balanceHistoryComputed;
 
@@ -21,158 +22,162 @@ mixin _$AssetsStore on _AssetsStore, Store {
   ObservableList<Map<String, dynamic>> get balanceHistory =>
       (_$balanceHistoryComputed ??=
               Computed<ObservableList<Map<String, dynamic>>>(
-                  () => super.balanceHistory))
+                  () => super.balanceHistory,
+                  name: '_AssetsStore.balanceHistory'))
           .value;
 
   final _$cacheTxsTimestampAtom = Atom(name: '_AssetsStore.cacheTxsTimestamp');
 
   @override
   int get cacheTxsTimestamp {
-    _$cacheTxsTimestampAtom.context.enforceReadPolicy(_$cacheTxsTimestampAtom);
-    _$cacheTxsTimestampAtom.reportObserved();
+    _$cacheTxsTimestampAtom.reportRead();
     return super.cacheTxsTimestamp;
   }
 
   @override
   set cacheTxsTimestamp(int value) {
-    _$cacheTxsTimestampAtom.context.conditionallyRunInAction(() {
+    _$cacheTxsTimestampAtom.reportWrite(value, super.cacheTxsTimestamp, () {
       super.cacheTxsTimestamp = value;
-      _$cacheTxsTimestampAtom.reportChanged();
-    }, _$cacheTxsTimestampAtom, name: '${_$cacheTxsTimestampAtom.name}_set');
+    });
   }
 
   final _$isTxsLoadingAtom = Atom(name: '_AssetsStore.isTxsLoading');
 
   @override
   bool get isTxsLoading {
-    _$isTxsLoadingAtom.context.enforceReadPolicy(_$isTxsLoadingAtom);
-    _$isTxsLoadingAtom.reportObserved();
+    _$isTxsLoadingAtom.reportRead();
     return super.isTxsLoading;
   }
 
   @override
   set isTxsLoading(bool value) {
-    _$isTxsLoadingAtom.context.conditionallyRunInAction(() {
+    _$isTxsLoadingAtom.reportWrite(value, super.isTxsLoading, () {
       super.isTxsLoading = value;
-      _$isTxsLoadingAtom.reportChanged();
-    }, _$isTxsLoadingAtom, name: '${_$isTxsLoadingAtom.name}_set');
+    });
   }
 
   final _$submittingAtom = Atom(name: '_AssetsStore.submitting');
 
   @override
   bool get submitting {
-    _$submittingAtom.context.enforceReadPolicy(_$submittingAtom);
-    _$submittingAtom.reportObserved();
+    _$submittingAtom.reportRead();
     return super.submitting;
   }
 
   @override
   set submitting(bool value) {
-    _$submittingAtom.context.conditionallyRunInAction(() {
+    _$submittingAtom.reportWrite(value, super.submitting, () {
       super.submitting = value;
-      _$submittingAtom.reportChanged();
-    }, _$submittingAtom, name: '${_$submittingAtom.name}_set');
+    });
   }
 
   final _$balanceAtom = Atom(name: '_AssetsStore.balance');
 
   @override
   String get balance {
-    _$balanceAtom.context.enforceReadPolicy(_$balanceAtom);
-    _$balanceAtom.reportObserved();
+    _$balanceAtom.reportRead();
     return super.balance;
   }
 
   @override
   set balance(String value) {
-    _$balanceAtom.context.conditionallyRunInAction(() {
+    _$balanceAtom.reportWrite(value, super.balance, () {
       super.balance = value;
-      _$balanceAtom.reportChanged();
-    }, _$balanceAtom, name: '${_$balanceAtom.name}_set');
+    });
+  }
+
+  final _$isExpandAtom = Atom(name: '_AssetsStore.isExpand');
+
+  @override
+  List<dynamic> get isExpand {
+    _$isExpandAtom.reportRead();
+    return super.isExpand;
+  }
+
+  @override
+  set isExpand(List<dynamic> value) {
+    _$isExpandAtom.reportWrite(value, super.isExpand, () {
+      super.isExpand = value;
+    });
   }
 
   final _$txsAtom = Atom(name: '_AssetsStore.txs');
 
   @override
   ObservableList<TransferData> get txs {
-    _$txsAtom.context.enforceReadPolicy(_$txsAtom);
-    _$txsAtom.reportObserved();
+    _$txsAtom.reportRead();
     return super.txs;
   }
 
   @override
   set txs(ObservableList<TransferData> value) {
-    _$txsAtom.context.conditionallyRunInAction(() {
+    _$txsAtom.reportWrite(value, super.txs, () {
       super.txs = value;
-      _$txsAtom.reportChanged();
-    }, _$txsAtom, name: '${_$txsAtom.name}_set');
+    });
   }
 
   final _$txsFilterAtom = Atom(name: '_AssetsStore.txsFilter');
 
   @override
   int get txsFilter {
-    _$txsFilterAtom.context.enforceReadPolicy(_$txsFilterAtom);
-    _$txsFilterAtom.reportObserved();
+    _$txsFilterAtom.reportRead();
     return super.txsFilter;
   }
 
   @override
   set txsFilter(int value) {
-    _$txsFilterAtom.context.conditionallyRunInAction(() {
+    _$txsFilterAtom.reportWrite(value, super.txsFilter, () {
       super.txsFilter = value;
-      _$txsFilterAtom.reportChanged();
-    }, _$txsFilterAtom, name: '${_$txsFilterAtom.name}_set');
+    });
   }
 
   final _$blockMapAtom = Atom(name: '_AssetsStore.blockMap');
 
   @override
   ObservableMap<int, BlockData> get blockMap {
-    _$blockMapAtom.context.enforceReadPolicy(_$blockMapAtom);
-    _$blockMapAtom.reportObserved();
+    _$blockMapAtom.reportRead();
     return super.blockMap;
   }
 
   @override
   set blockMap(ObservableMap<int, BlockData> value) {
-    _$blockMapAtom.context.conditionallyRunInAction(() {
+    _$blockMapAtom.reportWrite(value, super.blockMap, () {
       super.blockMap = value;
-      _$blockMapAtom.reportChanged();
-    }, _$blockMapAtom, name: '${_$blockMapAtom.name}_set');
+    });
   }
 
-  final _$clearTxsAsyncAction = AsyncAction('clearTxs');
+  final _$clearTxsAsyncAction = AsyncAction('_AssetsStore.clearTxs');
 
   @override
   Future<void> clearTxs() {
     return _$clearTxsAsyncAction.run(() => super.clearTxs());
   }
 
-  final _$addTxsAsyncAction = AsyncAction('addTxs');
+  final _$addTxsAsyncAction = AsyncAction('_AssetsStore.addTxs');
 
   @override
-  Future<void> addTxs(List ls, String address, {bool shouldCache = false}) {
+  Future<void> addTxs(List<dynamic> ls, String address,
+      {bool shouldCache = false}) {
     return _$addTxsAsyncAction
         .run(() => super.addTxs(ls, address, shouldCache: shouldCache));
   }
 
-  final _$setBlockMapAsyncAction = AsyncAction('setBlockMap');
+  final _$setBlockMapAsyncAction = AsyncAction('_AssetsStore.setBlockMap');
 
   @override
   Future<void> setBlockMap(String data) {
     return _$setBlockMapAsyncAction.run(() => super.setBlockMap(data));
   }
 
-  final _$loadAccountCacheAsyncAction = AsyncAction('loadAccountCache');
+  final _$loadAccountCacheAsyncAction =
+      AsyncAction('_AssetsStore.loadAccountCache');
 
   @override
   Future<void> loadAccountCache() {
     return _$loadAccountCacheAsyncAction.run(() => super.loadAccountCache());
   }
 
-  final _$loadCacheAsyncAction = AsyncAction('loadCache');
+  final _$loadCacheAsyncAction = AsyncAction('_AssetsStore.loadCache');
 
   @override
   Future<void> loadCache() {
@@ -182,8 +187,20 @@ mixin _$AssetsStore on _AssetsStore, Store {
   final _$_AssetsStoreActionController = ActionController(name: '_AssetsStore');
 
   @override
+  void setIsExpand(String name) {
+    final _$actionInfo = _$_AssetsStoreActionController.startAction(
+        name: '_AssetsStore.setIsExpand');
+    try {
+      return super.setIsExpand(name);
+    } finally {
+      _$_AssetsStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setTxsLoading(bool isLoading) {
-    final _$actionInfo = _$_AssetsStoreActionController.startAction();
+    final _$actionInfo = _$_AssetsStoreActionController.startAction(
+        name: '_AssetsStore.setTxsLoading');
     try {
       return super.setTxsLoading(isLoading);
     } finally {
@@ -193,7 +210,8 @@ mixin _$AssetsStore on _AssetsStore, Store {
 
   @override
   void setAccountBalance(String pubKey, String amt) {
-    final _$actionInfo = _$_AssetsStoreActionController.startAction();
+    final _$actionInfo = _$_AssetsStoreActionController.startAction(
+        name: '_AssetsStore.setAccountBalance');
     try {
       return super.setAccountBalance(pubKey, amt);
     } finally {
@@ -203,7 +221,8 @@ mixin _$AssetsStore on _AssetsStore, Store {
 
   @override
   void setTxsFilter(int filter) {
-    final _$actionInfo = _$_AssetsStoreActionController.startAction();
+    final _$actionInfo = _$_AssetsStoreActionController.startAction(
+        name: '_AssetsStore.setTxsFilter');
     try {
       return super.setTxsFilter(filter);
     } finally {
@@ -213,12 +232,29 @@ mixin _$AssetsStore on _AssetsStore, Store {
 
   @override
   void setSubmitting(bool isSubmitting) {
-    final _$actionInfo = _$_AssetsStoreActionController.startAction();
+    final _$actionInfo = _$_AssetsStoreActionController.startAction(
+        name: '_AssetsStore.setSubmitting');
     try {
       return super.setSubmitting(isSubmitting);
     } finally {
       _$_AssetsStoreActionController.endAction(_$actionInfo);
     }
+  }
+
+  @override
+  String toString() {
+    return '''
+cacheTxsTimestamp: ${cacheTxsTimestamp},
+isTxsLoading: ${isTxsLoading},
+submitting: ${submitting},
+balance: ${balance},
+isExpand: ${isExpand},
+txs: ${txs},
+txsFilter: ${txsFilter},
+blockMap: ${blockMap},
+txsView: ${txsView},
+balanceHistory: ${balanceHistory}
+    ''';
   }
 }
 
@@ -227,170 +263,166 @@ mixin _$TransferData on _TransferData, Store {
 
   @override
   String get type {
-    _$typeAtom.context.enforceReadPolicy(_$typeAtom);
-    _$typeAtom.reportObserved();
+    _$typeAtom.reportRead();
     return super.type;
   }
 
   @override
   set type(String value) {
-    _$typeAtom.context.conditionallyRunInAction(() {
+    _$typeAtom.reportWrite(value, super.type, () {
       super.type = value;
-      _$typeAtom.reportChanged();
-    }, _$typeAtom, name: '${_$typeAtom.name}_set');
+    });
   }
 
   final _$idAtom = Atom(name: '_TransferData.id');
 
   @override
   String get id {
-    _$idAtom.context.enforceReadPolicy(_$idAtom);
-    _$idAtom.reportObserved();
+    _$idAtom.reportRead();
     return super.id;
   }
 
   @override
   set id(String value) {
-    _$idAtom.context.conditionallyRunInAction(() {
+    _$idAtom.reportWrite(value, super.id, () {
       super.id = value;
-      _$idAtom.reportChanged();
-    }, _$idAtom, name: '${_$idAtom.name}_set');
+    });
   }
 
   final _$hashAtom = Atom(name: '_TransferData.hash');
 
   @override
   String get hash {
-    _$hashAtom.context.enforceReadPolicy(_$hashAtom);
-    _$hashAtom.reportObserved();
+    _$hashAtom.reportRead();
     return super.hash;
   }
 
   @override
   set hash(String value) {
-    _$hashAtom.context.conditionallyRunInAction(() {
+    _$hashAtom.reportWrite(value, super.hash, () {
       super.hash = value;
-      _$hashAtom.reportChanged();
-    }, _$hashAtom, name: '${_$hashAtom.name}_set');
+    });
   }
 
   final _$blockAtom = Atom(name: '_TransferData.block');
 
   @override
   int get block {
-    _$blockAtom.context.enforceReadPolicy(_$blockAtom);
-    _$blockAtom.reportObserved();
+    _$blockAtom.reportRead();
     return super.block;
   }
 
   @override
   set block(int value) {
-    _$blockAtom.context.conditionallyRunInAction(() {
+    _$blockAtom.reportWrite(value, super.block, () {
       super.block = value;
-      _$blockAtom.reportChanged();
-    }, _$blockAtom, name: '${_$blockAtom.name}_set');
+    });
   }
 
   final _$senderAtom = Atom(name: '_TransferData.sender');
 
   @override
   String get sender {
-    _$senderAtom.context.enforceReadPolicy(_$senderAtom);
-    _$senderAtom.reportObserved();
+    _$senderAtom.reportRead();
     return super.sender;
   }
 
   @override
   set sender(String value) {
-    _$senderAtom.context.conditionallyRunInAction(() {
+    _$senderAtom.reportWrite(value, super.sender, () {
       super.sender = value;
-      _$senderAtom.reportChanged();
-    }, _$senderAtom, name: '${_$senderAtom.name}_set');
+    });
   }
 
   final _$senderIdAtom = Atom(name: '_TransferData.senderId');
 
   @override
   String get senderId {
-    _$senderIdAtom.context.enforceReadPolicy(_$senderIdAtom);
-    _$senderIdAtom.reportObserved();
+    _$senderIdAtom.reportRead();
     return super.senderId;
   }
 
   @override
   set senderId(String value) {
-    _$senderIdAtom.context.conditionallyRunInAction(() {
+    _$senderIdAtom.reportWrite(value, super.senderId, () {
       super.senderId = value;
-      _$senderIdAtom.reportChanged();
-    }, _$senderIdAtom, name: '${_$senderIdAtom.name}_set');
+    });
   }
 
   final _$destinationAtom = Atom(name: '_TransferData.destination');
 
   @override
   String get destination {
-    _$destinationAtom.context.enforceReadPolicy(_$destinationAtom);
-    _$destinationAtom.reportObserved();
+    _$destinationAtom.reportRead();
     return super.destination;
   }
 
   @override
   set destination(String value) {
-    _$destinationAtom.context.conditionallyRunInAction(() {
+    _$destinationAtom.reportWrite(value, super.destination, () {
       super.destination = value;
-      _$destinationAtom.reportChanged();
-    }, _$destinationAtom, name: '${_$destinationAtom.name}_set');
+    });
   }
 
   final _$destinationIdAtom = Atom(name: '_TransferData.destinationId');
 
   @override
   String get destinationId {
-    _$destinationIdAtom.context.enforceReadPolicy(_$destinationIdAtom);
-    _$destinationIdAtom.reportObserved();
+    _$destinationIdAtom.reportRead();
     return super.destinationId;
   }
 
   @override
   set destinationId(String value) {
-    _$destinationIdAtom.context.conditionallyRunInAction(() {
+    _$destinationIdAtom.reportWrite(value, super.destinationId, () {
       super.destinationId = value;
-      _$destinationIdAtom.reportChanged();
-    }, _$destinationIdAtom, name: '${_$destinationIdAtom.name}_set');
+    });
   }
 
   final _$valueAtom = Atom(name: '_TransferData.value');
 
   @override
   int get value {
-    _$valueAtom.context.enforceReadPolicy(_$valueAtom);
-    _$valueAtom.reportObserved();
+    _$valueAtom.reportRead();
     return super.value;
   }
 
   @override
   set value(int value) {
-    _$valueAtom.context.conditionallyRunInAction(() {
+    _$valueAtom.reportWrite(value, super.value, () {
       super.value = value;
-      _$valueAtom.reportChanged();
-    }, _$valueAtom, name: '${_$valueAtom.name}_set');
+    });
   }
 
   final _$feeAtom = Atom(name: '_TransferData.fee');
 
   @override
   int get fee {
-    _$feeAtom.context.enforceReadPolicy(_$feeAtom);
-    _$feeAtom.reportObserved();
+    _$feeAtom.reportRead();
     return super.fee;
   }
 
   @override
   set fee(int value) {
-    _$feeAtom.context.conditionallyRunInAction(() {
+    _$feeAtom.reportWrite(value, super.fee, () {
       super.fee = value;
-      _$feeAtom.reportChanged();
-    }, _$feeAtom, name: '${_$feeAtom.name}_set');
+    });
+  }
+
+  @override
+  String toString() {
+    return '''
+type: ${type},
+id: ${id},
+hash: ${hash},
+block: ${block},
+sender: ${sender},
+senderId: ${senderId},
+destination: ${destination},
+destinationId: ${destinationId},
+value: ${value},
+fee: ${fee}
+    ''';
   }
 }
 
@@ -399,50 +431,53 @@ mixin _$BlockData on _BlockData, Store {
 
   @override
   int get id {
-    _$idAtom.context.enforceReadPolicy(_$idAtom);
-    _$idAtom.reportObserved();
+    _$idAtom.reportRead();
     return super.id;
   }
 
   @override
   set id(int value) {
-    _$idAtom.context.conditionallyRunInAction(() {
+    _$idAtom.reportWrite(value, super.id, () {
       super.id = value;
-      _$idAtom.reportChanged();
-    }, _$idAtom, name: '${_$idAtom.name}_set');
+    });
   }
 
   final _$hashAtom = Atom(name: '_BlockData.hash');
 
   @override
   String get hash {
-    _$hashAtom.context.enforceReadPolicy(_$hashAtom);
-    _$hashAtom.reportObserved();
+    _$hashAtom.reportRead();
     return super.hash;
   }
 
   @override
   set hash(String value) {
-    _$hashAtom.context.conditionallyRunInAction(() {
+    _$hashAtom.reportWrite(value, super.hash, () {
       super.hash = value;
-      _$hashAtom.reportChanged();
-    }, _$hashAtom, name: '${_$hashAtom.name}_set');
+    });
   }
 
   final _$timeAtom = Atom(name: '_BlockData.time');
 
   @override
   DateTime get time {
-    _$timeAtom.context.enforceReadPolicy(_$timeAtom);
-    _$timeAtom.reportObserved();
+    _$timeAtom.reportRead();
     return super.time;
   }
 
   @override
   set time(DateTime value) {
-    _$timeAtom.context.conditionallyRunInAction(() {
+    _$timeAtom.reportWrite(value, super.time, () {
       super.time = value;
-      _$timeAtom.reportChanged();
-    }, _$timeAtom, name: '${_$timeAtom.name}_set');
+    });
+  }
+
+  @override
+  String toString() {
+    return '''
+id: ${id},
+hash: ${hash},
+time: ${time}
+    ''';
   }
 }
