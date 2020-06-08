@@ -1,6 +1,7 @@
 import 'dart:async' show Future;
 
 import 'package:polka_wallet/constants.dart';
+import 'package:polka_wallet/service/ethereumApi/apiAssetsIOTAPegged.dart';
 import 'package:polka_wallet/service/ethereumApi/apiAssetsMXC.dart';
 import 'package:polka_wallet/service/ethereumApi/apiMiningIOTAPegged.dart';
 import 'package:polka_wallet/service/ethereumApi/apiMiningMXC.dart';
@@ -35,6 +36,7 @@ class Ethereum{
 
   EthereumApiAssetsMXC assetsMXC;
   EthereumApiMiningMXC ethApiMiningMXC;
+  EthereumApiAssetsIOTAPegged assetsIOTAPegged;
 
   void init() async{
     await getBalanceFormMXC(); 
@@ -44,6 +46,8 @@ class Ethereum{
     await fetchMXCSignalledClaimsApproved();
     await fetchMXCSignalledClaimsPending();
     await fetchMXCSignalledClaimsRejected();
+
+    await fetchBalanceIOTAPegged();
     await fetchIOTAPeggedSignalledClaimsApproved();
     await fetchIOTAPeggedSignalledClaimsPending();
     await fetchIOTAPeggedSignalledClaimsRejected();
@@ -136,6 +140,20 @@ class Ethereum{
     //count claims total
     store.ethereum.setClaimsTotalMXCSignaled();
     store.ethereum.countClaimsProportionsMXCSignaled();
+  }
+
+  //IOTA balance
+  Future<void> fetchBalanceIOTAPegged() async {
+    print(
+        'Getting amount of approved reward claims for signalling IOTA (pegged)');
+    EthereumApiAssetsIOTAPegged ethApiAssetsIOTAPegged =
+        EthereumApiAssetsIOTAPegged();
+    BigInt balance = await ethApiAssetsIOTAPegged
+        .getAccountBalanceIOTAPeggedFromDataHighwayMiningIOTAPeggedContract(
+            kContractAddrMXCMainnet,
+            kSamplePrivateKey);
+
+    store.ethereum.setBalanceIOTAPegged(balance);
   }
 
   //IOTA Signaled Approved

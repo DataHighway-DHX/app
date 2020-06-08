@@ -9,6 +9,9 @@ abstract class _EthereumStore with Store {
   BigInt balanceMXC = BigInt.parse('0');
 
   @observable
+  BigInt balanceIOTAPegged = BigInt.parse('0');
+
+  @observable
   BigInt claimsApprovedMXCLocked = BigInt.parse('0');
 
   @observable
@@ -74,6 +77,11 @@ abstract class _EthereumStore with Store {
   @action
   void setBalanceMXC(BigInt balance) {
     balanceMXC = balance;
+  }
+
+  @action
+  void setBalanceIOTAPegged(BigInt balance) {
+    balanceIOTAPegged = balance;
   }
 
   @action

@@ -357,7 +357,7 @@ class _AssetsState extends State<Assets> {
                 store: store,
                 symbol: AssetsConfigs.iota,
                 name: AssetsConfigs.pegged,
-                // balance: '${store.ethereum.balanceMXC}',
+                balance: '${store.ethereum.balanceIOTAPegged}',
                 expandSet: expandSet,
                 expandTap: () => store.assets.setIsExpand(AssetsConfigs.iota),
               )

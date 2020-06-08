@@ -1,6 +1,7 @@
 import 'dart:async' show Future;
 
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:polka_wallet/constants.dart';
 import 'package:polka_wallet/service/ethereumApi/apiAccount.dart';
 import 'package:web3dart/web3dart.dart';
 
@@ -14,12 +15,12 @@ class EthereumApiAssetsIOTAPegged {
 
   // Get an account balance of IOTA (pegged) tokens from the
   // DataHighway IOTA (pegged) smart contract on the Ethereum network
-  Future<String>
+  Future<BigInt>
       getAccountBalanceIOTAPeggedFromDataHighwayMiningIOTAPeggedContract(
-          String rpcUrl, String wsUrl, EthereumAddress contractAddr,
+          EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: rpcUrl, wsUrl: wsUrl);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -70,5 +71,7 @@ class EthereumApiAssetsIOTAPegged {
     await subscription.cancel();
 
     await client.dispose();
+
+    return balance;
   }
 }
