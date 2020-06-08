@@ -80,10 +80,10 @@ class EthereumApiMiningMXC {
   // whose rewards have been claimed and pending approval 
   Future<BigInt>
       getAccountSignalledClaimsPendingOfMXCAmountFromDataHighwayMXCMiningContract(
-          String rpcUrl, String wsUrl, EthereumAddress contractAddr,
+          EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: rpcUrl, wsUrl: wsUrl);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -146,10 +146,10 @@ class EthereumApiMiningMXC {
   // Get amount of MXC tokens that have been signalled whose rewards have had their claim approved
   Future<BigInt>
       getAccountSignalledClaimsApprovedOfMXCAmountFromDataHighwayMXCMiningContract(
-          String rpcUrl, String wsUrl, EthereumAddress contractAddr,
+          EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: rpcUrl, wsUrl: wsUrl);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -212,10 +212,10 @@ class EthereumApiMiningMXC {
   // Get amount of MXC tokens that have been signalled whose rewards have had their claim rejected
   Future<BigInt>
       getAccountSignalledClaimsRejectedOfMXCAmountFromDataHighwayMXCMiningContract(
-          String rpcUrl, String wsUrl, EthereumAddress contractAddr,
+          EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: rpcUrl, wsUrl: wsUrl);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -476,10 +476,10 @@ class EthereumApiMiningMXC {
   // Get amount of MXC tokens that have been locked whose rewards have had their claim rejected
   Future<BigInt>
       getAccountLockedClaimsRejectedOfMXCAmountFromDataHighwayMXCMiningContract(
-          String rpcUrl, String wsUrl, EthereumAddress contractAddr,
+          EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: rpcUrl, wsUrl: wsUrl);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();

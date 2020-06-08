@@ -1,6 +1,7 @@
 import 'dart:async' show Future;
 
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:polka_wallet/constants.dart';
 import 'package:web3dart/web3dart.dart';
 
 import 'api.dart';
@@ -77,10 +78,10 @@ class EthereumApiMiningIOTAPegged {
   // whose rewards have been claimed and pending approval 
   Future<BigInt>
       getAccountSignalledClaimsPendingOfIOTAPeggedAmountFromDataHighwayIOTAPeggedMiningContract(
-          String rpcUrl, String wsUrl, EthereumAddress contractAddr,
+          EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: rpcUrl, wsUrl: wsUrl);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -143,10 +144,10 @@ class EthereumApiMiningIOTAPegged {
   // Get amount of IOTA (pegged) tokens that have been signalled whose rewards have had their claim approved
   Future<BigInt>
       getAccountSignalledClaimsApprovedOfIOTAPeggedAmountFromDataHighwayIOTAPeggedMiningContract(
-          String rpcUrl, String wsUrl, EthereumAddress contractAddr,
+          EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: rpcUrl, wsUrl: wsUrl);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -209,10 +210,10 @@ class EthereumApiMiningIOTAPegged {
   // Get amount of IOTA (pegged) tokens that have been signalled whose rewards have had their claim rejected
   Future<BigInt>
       getAccountSignalledClaimsRejectedOfIOTAPeggedAmountFromDataHighwayIOTAPeggedMiningContract(
-          String rpcUrl, String wsUrl, EthereumAddress contractAddr,
+          EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: rpcUrl, wsUrl: wsUrl);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();

@@ -2,6 +2,7 @@ import 'dart:async' show Future;
 
 import 'package:polka_wallet/constants.dart';
 import 'package:polka_wallet/service/ethereumApi/apiAssetsMXC.dart';
+import 'package:polka_wallet/service/ethereumApi/apiMiningIOTAPegged.dart';
 import 'package:polka_wallet/service/ethereumApi/apiMiningMXC.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:web3dart/web3dart.dart';
@@ -38,9 +39,17 @@ class Ethereum{
   void init() async{
     await getBalanceFormMXC(); 
     await fetchMXCLockedClaimsApproved();
-    // await fetchMXCLockedClaimsPending();
+    await fetchMXCLockedClaimsPending();
+    await fetchMXCLockedClaimsRejected();
+    await fetchMXCSignalledClaimsApproved();
+    await fetchMXCSignalledClaimsPending();
+    await fetchMXCSignalledClaimsRejected();
+    await fetchIOTAPeggedSignalledClaimsApproved();
+    await fetchIOTAPeggedSignalledClaimsPending();
+    await fetchIOTAPeggedSignalledClaimsRejected();
   }
 
+  //MXC balance
   Future<void> getBalanceFormMXC() async{
     assetsMXC = EthereumApiAssetsMXC();
 
@@ -50,6 +59,19 @@ class Ethereum{
     store.ethereum.setBalanceMXC(balance);   
   }
 
+  //Locked Approved
+  Future<void> fetchMXCLockedClaimsApproved() async {
+    print('Getting amount of approved reward claims for locking MXC');
+    EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
+    BigInt claimsApproved = await ethApiMiningMXC
+        .getAccountLockedClaimsApprovedOfMXCAmountFromDataHighwayMXCMiningContract(
+            kContractAddrMXCMainnet,
+            kSamplePrivateKey);
+    
+    store.ethereum.setClaimsApprovedMXCLocked(claimsApproved);
+  }
+
+  //Locked Pending
   Future<void> fetchMXCLockedClaimsPending() async {
     print('Getting amount of pending reward claims for locking MXC');
     ethApiMiningMXC = await EthereumApiMiningMXC();
@@ -61,15 +83,104 @@ class Ethereum{
     store.ethereum.setClaimsPendingMXCLocked(claimsPending);
   }
 
-  Future<void> fetchMXCLockedClaimsApproved() async {
-    print('Getting amount of approved reward claims for locking MXC');
+  //Locked Rejected
+  Future<void> fetchMXCLockedClaimsRejected() async {
+    print('Getting amount of rejected reward claims for locking MXC');
     EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
-    BigInt claimsApproved = await ethApiMiningMXC
-        .getAccountLockedClaimsApprovedOfMXCAmountFromDataHighwayMXCMiningContract(
+    BigInt claimsRejected = await ethApiMiningMXC
+        .getAccountLockedClaimsRejectedOfMXCAmountFromDataHighwayMXCMiningContract(
             kContractAddrMXCMainnet,
             kSamplePrivateKey);
     
-    store.ethereum.setClaimsApprovedMXCLocked(claimsApproved);
+    store.ethereum.setClaimsRejectedMXCLocked(claimsRejected);
+
+    //count claims total
+    store.ethereum.setClaimsTotalMXCLocked();
+    store.ethereum.countClaimsProportionsMXCLocked();
+  }
+
+  //Signled Approved
+  Future<BigInt> fetchMXCSignalledClaimsApproved() async {
+    print('Getting amount of approved reward claims for signalling MXC');
+    EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
+    BigInt claimsApproved = await ethApiMiningMXC
+        .getAccountSignalledClaimsApprovedOfMXCAmountFromDataHighwayMXCMiningContract(
+            kContractAddrMXCMainnet,
+            kSamplePrivateKey);
+
+    store.ethereum.setClaimsApprovedMXCSignaled(claimsApproved);
+  }
+
+  Future<BigInt> fetchMXCSignalledClaimsPending() async {
+    print('Getting amount of pending reward claims for signalling MXC');
+    EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
+    BigInt claimsPending = await ethApiMiningMXC
+        .getAccountSignalledClaimsPendingOfMXCAmountFromDataHighwayMXCMiningContract(
+            kContractAddrMXCMainnet,
+            kSamplePrivateKey);
+
+    store.ethereum.setClaimsPendingMXCSignaled(claimsPending);
+  }
+
+  //Signaled reject
+  Future<BigInt> fetchMXCSignalledClaimsRejected() async {
+    print('Getting amount of rejected reward claims for signalling MXC');
+    EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
+    BigInt claimsRejected = await ethApiMiningMXC
+        .getAccountSignalledClaimsRejectedOfMXCAmountFromDataHighwayMXCMiningContract(
+            kContractAddrMXCMainnet,
+            kSamplePrivateKey);
+
+    store.ethereum.setClaimsRejectedMXCSignaled(claimsRejected);
+
+    //count claims total
+    store.ethereum.setClaimsTotalMXCSignaled();
+    store.ethereum.countClaimsProportionsMXCSignaled();
+  }
+
+  //IOTA Signaled Approved
+  Future<void> fetchIOTAPeggedSignalledClaimsApproved() async {
+    print(
+        'Getting amount of approved reward claims for signalling IOTA (pegged)');
+    EthereumApiMiningIOTAPegged ethApiMiningIOTAPegged =
+        await EthereumApiMiningIOTAPegged();
+    BigInt claimsSignalledApproved = await ethApiMiningIOTAPegged
+        .getAccountSignalledClaimsApprovedOfIOTAPeggedAmountFromDataHighwayIOTAPeggedMiningContract(
+            kContractAddrMXCMainnet,
+            kSamplePrivateKey);
+
+    store.ethereum.setClaimsApprovedIOTAPeggedSignaled(claimsSignalledApproved);
+  }
+
+  //IOTA Signaled Pending
+  Future<void> fetchIOTAPeggedSignalledClaimsPending() async {
+    print(
+        'Getting amount of pending reward claims for signalling IOTA (pegged)');
+    EthereumApiMiningIOTAPegged ethApiMiningIOTAPegged =
+        await EthereumApiMiningIOTAPegged();
+    BigInt claimsSignalledPending = await ethApiMiningIOTAPegged
+        .getAccountSignalledClaimsPendingOfIOTAPeggedAmountFromDataHighwayIOTAPeggedMiningContract(
+            kContractAddrMXCMainnet,
+            kSamplePrivateKey);
+
+    store.ethereum.setClaimsPendingIOTAPeggedSignaled(claimsSignalledPending);
+  }
+
+  //IOTA Signaled Rejected
+  Future<void> fetchIOTAPeggedSignalledClaimsRejected() async {
+    print(
+        'Getting amount of rejected reward claims for signalling IOTA (pegged)');
+    EthereumApiMiningIOTAPegged ethApiMiningIOTAPegged =
+        await EthereumApiMiningIOTAPegged();
+    BigInt claimsSignalledRejected = await ethApiMiningIOTAPegged
+        .getAccountSignalledClaimsRejectedOfIOTAPeggedAmountFromDataHighwayIOTAPeggedMiningContract(
+            kContractAddrMXCMainnet,
+            kSamplePrivateKey);
+
+    store.ethereum.setClaimsRejectedIOTAPeggedSignaled(claimsSignalledRejected);
+
+    store.ethereum.setClaimsTotalIOTAPeggedSignaled();
+    store.ethereum.countClaimsProportionsIOTAPeggedSignaled();
   }
 
 }
