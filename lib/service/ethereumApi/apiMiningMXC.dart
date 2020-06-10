@@ -346,6 +346,7 @@ class EthereumApiMiningMXC {
 
     // Read the contract ABI and to inform web3dart of its deployed contractAddr
     final abiCode = await rootBundle
+        // FIXME - change this to the lockdrop contract
         .loadString('assets/data/abi_datahighway_mxc_mining_mainnet.json');
     final contract = DeployedContract(
         ContractAbi.fromJson(abiCode, 'DataHighwayMXCMiningToken'),
@@ -431,15 +432,15 @@ class EthereumApiMiningMXC {
         'You have ${claimsLockedApproved} of approved claims of DataHighwayMXCMiningToken after Locked');
 
     try{
-      _claimsLockedApprovedSubscrioption(client,contract,claimLockedApprovedEvent,ownAddress,claimsLockedApprovedList,claimsLockedApprovedFunction);
+      _claimsLockedApprovedSubscription(client,contract,claimLockedApprovedEvent,ownAddress,claimsLockedApprovedList,claimsLockedApprovedFunction);
     }catch(err){
-      print('_claimsLockedApprovedSubscrioption exception: $err');
+      print('_claimsLockedApprovedSubscription exception: $err');
     }
 
     return claimsLockedApproved;
   }
 
-  Future<void> _claimsLockedApprovedSubscrioption(client,contract,claimLockedApprovedEvent,ownAddress,claimsLockedApprovedList,claimsLockedApprovedFunction) async{
+  Future<void> _claimsLockedApprovedSubscription(client,contract,claimLockedApprovedEvent,ownAddress,claimsLockedApprovedList,claimsLockedApprovedFunction) async{
       // Listen for the ClaimLockedApproved event when emitted by the contract above
     final subscription = client
         .events(
