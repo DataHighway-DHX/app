@@ -34,9 +34,9 @@ if (keystorePropertiesFile.exists()) {
 android {
     compileSdkVersion 28
 	 
-    sourceSets {
+    /*sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
-    }
+    }*/
 
     lintOptions {
         disable 'InvalidPackage'
@@ -52,23 +52,23 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    signingConfigs {
+    /*signingConfigs {
         release {
             storeFile rootProject.file("app/key.jks")
             storePassword System.getenv("APPCENTER_KEYSTORE_PASSWORD")
             keyAlias System.getenv("APPCENTER_KEY_ALIAS")
             keyPassword System.getenv("APPCENTER_KEY_PASSWORD")
         }
-    }
+    }*/
 
-    /*signingConfigs {
+    signingConfigs {
         release {
             keyAlias keystoreProperties['keyAlias']
             keyPassword keystoreProperties['keyPassword']
             storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
             storePassword keystoreProperties['storePassword']
         }
-    }*/
+    }
 
     buildTypes {
         release {
