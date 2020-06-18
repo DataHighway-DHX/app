@@ -13,6 +13,8 @@ import 'package:polka_wallet/page/assets/lock/lockResultPage.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
+import '../../../constants.dart';
+
 class LockDetailPage extends StatefulWidget {
   LockDetailPage(this.store);
 
@@ -36,6 +38,7 @@ class _DetailPageState extends State<LockDetailPage> {
   TextEditingController _durationCtl = TextEditingController(text: '');
   TextEditingController _amountCtl = TextEditingController(text: '');
   TextEditingController _publicKeyCtl = TextEditingController(text: '');
+  TextEditingController _genesisValidator = TextEditingController(text: 'false');
   bool _qrcodeValue = false;
   bool _doubleCheckValue = false;
 
@@ -111,6 +114,18 @@ class _DetailPageState extends State<LockDetailPage> {
                       )
                     ],
                   ),
+                  Row(
+                    children: <Widget>[
+                      formulaInput(
+                        controller: _genesisValidator,
+                        lable: dic['genesis.validator'],
+                        onChanged: (value){
+                          setState(() {});
+                        },
+                        value: 'false'
+                      )
+                    ],
+                  ),
                   linkTap(
                     dic['guide.public.key'],
                     onTap: (){}
@@ -124,7 +139,10 @@ class _DetailPageState extends State<LockDetailPage> {
                       padding: const EdgeInsets.all(5),
                       color: Colors.grey[200],
                       child: Text(
-                        '${_durationCtl.text.isEmpty ? '??' : _durationCtl.text},Lock,${_amountCtl.text.isEmpty ? '??' : _amountCtl.text},${_publicKeyCtl.text.isEmpty ? '??' : _publicKeyCtl.text}',
+                        '${_durationCtl.text.isEmpty ? '??' : _durationCtl.text},Lock,${_amountCtl.text.isEmpty ? '??' : _amountCtl.text},${_publicKeyCtl.text.isEmpty ? '??' : _publicKeyCtl.text},${kContractAddrMXCTestnet},${_genesisValidator.text.isEmpty ? '??' : _genesisValidator.text}',
+                        style: TextStyle(
+                          fontSize: 9
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ),
