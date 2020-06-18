@@ -39,16 +39,16 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.company.example"
+        applicationId "com.datahighway.app"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode System.getenv('APPCENTER_BUILD_ID').toInteger()
+        versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
         release {
-            storeFile rootProject.file("app/android.keystore")
+            storeFile rootProject.file("app/key.jks")
             storePassword System.getenv("APPCENTER_KEYSTORE_PASSWORD")
             keyAlias System.getenv("APPCENTER_KEY_ALIAS")
             keyPassword System.getenv("APPCENTER_KEY_PASSWORD")

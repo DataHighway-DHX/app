@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_appcenter/flutter_appcenter.dart';
 import 'package:polka_wallet/app.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -35,5 +36,10 @@ Future<void> main() async {
 
   runApp(
     WalletApp(),
+  );
+
+  FlutterAppCenter.init(
+    androidAppId: 'f37bf978-7d80-4798-ae45-ea13ad0ff077',
+    iOSAppId: '590a0334-84e0-4e44-9e8b-4f8611ba2e3b'
   );
 }
