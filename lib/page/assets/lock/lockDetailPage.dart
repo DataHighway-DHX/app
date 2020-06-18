@@ -141,7 +141,7 @@ class _DetailPageState extends State<LockDetailPage> {
                       child: Text(
                         '${_durationCtl.text.isEmpty ? '??' : _durationCtl.text},Lock,${_amountCtl.text.isEmpty ? '??' : _amountCtl.text},${_publicKeyCtl.text.isEmpty ? '??' : _publicKeyCtl.text},${kContractAddrMXCTestnet},${_genesisValidator.text.isEmpty ? '??' : _genesisValidator.text}',
                         style: TextStyle(
-                          fontSize: 9
+                          fontSize: 12
                         ),
                         textAlign: TextAlign.center,
                       ),

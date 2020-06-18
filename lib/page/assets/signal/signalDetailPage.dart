@@ -128,7 +128,7 @@ class _DetailPageState extends State<SignalDetailPage> {
                       child: Text(
                         '${_durationCtl.text.isEmpty ? '??' : _durationCtl.text},Signal,${_amountCtl.text.isEmpty ? '??' : _amountCtl.text},${_publicKeyCtl.text.isEmpty ? '??' : _publicKeyCtl.text},${kContractAddrMXCTestnet}',
                         style: TextStyle(
-                          fontSize: 9
+                          fontSize: 12
                         ),
                         textAlign: TextAlign.center,
                       ),
