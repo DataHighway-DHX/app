@@ -31,8 +31,6 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
-def enableProguardInReleaseBuilds = false
-
 android {
     compileSdkVersion 28
 
