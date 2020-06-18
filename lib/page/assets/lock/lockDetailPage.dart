@@ -9,7 +9,7 @@ import 'package:polka_wallet/common/components/linkTap.dart';
 import 'package:polka_wallet/common/components/lockAppBtn.dart';
 import 'package:polka_wallet/common/components/selectPicker.dart';
 import 'package:polka_wallet/common/components/subTitle.dart';
-import 'package:polka_wallet/page/assets/lock/LockResultPage.dart';
+import 'package:polka_wallet/page/assets/lock/lockResultPage.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 

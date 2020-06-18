@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/goPageBtn.dart';
 import 'package:polka_wallet/common/components/linkTap.dart';
-import 'package:polka_wallet/page/assets/lock/LockDetailPage.dart';
+import 'package:polka_wallet/page/assets/lock/lockDetailPage.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
