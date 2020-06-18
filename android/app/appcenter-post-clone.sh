@@ -20,6 +20,9 @@ yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
 flutter channel stable
 flutter doctor -v --android-licenses
 
+# Make gradlew executable in AppCenter
+chmod a+rx android/gradlew
+
 echo "Installed flutter to `pwd`/flutter"
 
 # build APK
