@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 
-Widget gasInput(title,subtile){
+Widget gasInput(title,gasText,subtile){
   return ListTile(
     leading: Text(
       title,
@@ -10,6 +10,7 @@ Widget gasInput(title,subtile){
       )
     ),
     title: TextField(
+      controller: TextEditingController()..text = gasText,
       textAlign: TextAlign.center,
       style: TextStyle(
         fontSize: 14

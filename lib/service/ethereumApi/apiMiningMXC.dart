@@ -12,13 +12,13 @@ class EthereumApiMiningMXC {
 
   BigInt signalled;
   BigInt claimsSignalledPending;
-  BigInt claimsSignalledApproved;
+  BigInt getClaimsSignalledApproved;
   BigInt claimsSignalledRejected;
 
   BigInt locked;
-  BigInt claimsLockedPending;
-  BigInt claimsLockedApproved;
-  BigInt claimsLockedRejected;
+  BigInt getClaimsLockedPending;
+  BigInt getClaimsLockedApproved;
+  BigInt getClaimsLockedRejected;
 
   // Get amount of MXC tokens that have been signalled
   Future<BigInt> getAccountSignalledMXCAmountFromDataHighwayMXCMiningContract(
@@ -33,7 +33,7 @@ class EthereumApiMiningMXC {
 
     // Read the contract ABI and to inform web3dart of its deployed contractAddr
     final abiCode = await rootBundle
-        .loadString('assets/data/abi_datahighway_mxc_mining_mainnet.json');
+        .loadString('assets/data/abi_datahighway_mxc_mining_testnet.json');
     final contract = DeployedContract(
         ContractAbi.fromJson(abiCode, 'DataHighwayMXCMiningToken'),
         contractAddr);
@@ -83,7 +83,7 @@ class EthereumApiMiningMXC {
           EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraTestnetRopsten, wsUrl: kWsUrlInfuraTestnetRopsten);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -91,7 +91,7 @@ class EthereumApiMiningMXC {
 
     // Read the contract ABI and to inform web3dart of its deployed contractAddr
     final abiCode = await rootBundle
-        .loadString('assets/data/abi_datahighway_mxc_mining_mainnet.json');
+        .loadString('assets/data/abi_datahighway_mxc_mining_testnet.json');
     final contract = DeployedContract(
         ContractAbi.fromJson(abiCode, 'DataHighwayMXCMiningToken'),
         contractAddr);
@@ -149,7 +149,7 @@ class EthereumApiMiningMXC {
           EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraTestnetRopsten, wsUrl: kWsUrlInfuraTestnetRopsten);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -157,23 +157,23 @@ class EthereumApiMiningMXC {
 
     // Read the contract ABI and to inform web3dart of its deployed contractAddr
     final abiCode = await rootBundle
-        .loadString('assets/data/abi_datahighway_mxc_mining_mainnet.json');
+        .loadString('assets/data/abi_datahighway_mxc_mining_testnet.json');
     final contract = DeployedContract(
         ContractAbi.fromJson(abiCode, 'DataHighwayMXCMiningToken'),
         contractAddr);
 
     // Extracting some functions and events for later use
     final claimSignalledApprovedEvent = contract.event('ClaimSignalledApproved');
-    final claimsSignalledApprovedFunction = contract.function('claimsSignalledApproved');
+    final getClaimsSignalledApprovedFunction = contract.function('getClaimsSignalledApproved');
 
     // Check claims Signalled approved amount of DataHighwayMXCMiningToken by calling the appropriate function
-    List claimsSignalledApprovedList = await client.call(
+    List getClaimsSignalledApprovedList = await client.call(
         contract: contract,
-        function: claimsSignalledApprovedFunction,
+        function: getClaimsSignalledApprovedFunction,
         params: [ownAddress]);
-    claimsSignalledApproved = claimsSignalledApprovedList.first;
+    getClaimsSignalledApproved = getClaimsSignalledApprovedList.first;
     print(
-        'You have ${claimsSignalledApproved} of approved claims of DataHighwayMXCMiningToken after Signalled');
+        'You have ${getClaimsSignalledApproved} of approved claims of DataHighwayMXCMiningToken after Signalled');
 
     // Listen for the ClaimSignalledApproved event when emitted by the contract above
     final subscription = client
@@ -191,13 +191,13 @@ class EthereumApiMiningMXC {
       if (from == ownAddress || to == ownAddress) {
         print(
             '$from claimed $value DataHighwayMXCMiningTokens to $to was approved after Signalled');
-        claimsSignalledApprovedList = await client.call(
+        getClaimsSignalledApprovedList = await client.call(
             contract: contract,
-            function: claimsSignalledApprovedFunction,
+            function: getClaimsSignalledApprovedFunction,
             params: [ownAddress]);
-        claimsSignalledApproved = claimsSignalledApprovedList.first;
+        getClaimsSignalledApproved = getClaimsSignalledApprovedList.first;
         print(
-            'You have ${claimsSignalledApproved} of approved claims of DataHighwayMXCMiningTokens after Signalled');
+            'You have ${getClaimsSignalledApproved} of approved claims of DataHighwayMXCMiningTokens after Signalled');
       }
     });
 
@@ -206,7 +206,7 @@ class EthereumApiMiningMXC {
 
     await client.dispose();
 
-    return claimsSignalledApproved;
+    return getClaimsSignalledApproved;
   }
 
   // Get amount of MXC tokens that have been signalled whose rewards have had their claim rejected
@@ -215,7 +215,7 @@ class EthereumApiMiningMXC {
           EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraTestnetRopsten, wsUrl: kWsUrlInfuraTestnetRopsten);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -223,7 +223,7 @@ class EthereumApiMiningMXC {
 
     // Read the contract ABI and to inform web3dart of its deployed contractAddr
     final abiCode = await rootBundle
-        .loadString('assets/data/abi_datahighway_mxc_mining_mainnet.json');
+        .loadString('assets/data/abi_datahighway_mxc_mining_testnet.json');
     final contract = DeployedContract(
         ContractAbi.fromJson(abiCode, 'DataHighwayMXCMiningToken'),
         contractAddr);
@@ -288,7 +288,7 @@ class EthereumApiMiningMXC {
 
     // Read the contract ABI and to inform web3dart of its deployed contractAddr
     final abiCode = await rootBundle
-        .loadString('assets/data/abi_datahighway_mxc_mining_mainnet.json');
+        .loadString('assets/data/abi_datahighway_mxc_mining_testnet.json');
     final contract = DeployedContract(
         ContractAbi.fromJson(abiCode, 'DataHighwayMXCMiningToken'),
         contractAddr);
@@ -338,7 +338,7 @@ class EthereumApiMiningMXC {
           EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraTestnetRopsten, wsUrl: kWsUrlInfuraTestnetRopsten);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -346,23 +346,24 @@ class EthereumApiMiningMXC {
 
     // Read the contract ABI and to inform web3dart of its deployed contractAddr
     final abiCode = await rootBundle
-        .loadString('assets/data/abi_datahighway_mxc_mining_mainnet.json');
+        // FIXME - change this to the lockdrop contract
+        .loadString('assets/data/abi_datahighway_mxc_mining_testnet.json');
     final contract = DeployedContract(
         ContractAbi.fromJson(abiCode, 'DataHighwayMXCMiningToken'),
         contractAddr);
 
     // Extracting some functions and events for later use
     final claimLockedPendingEvent = contract.event('ClaimLockedPending');
-    final claimsLockedPendingFunction = contract.function('claimsLockedPending');
+    final getClaimsLockedPendingFunction = contract.function('getClaimsLockedPending');
 
     // Check claims Locked pending amount of DataHighwayMXCMiningToken by calling the appropriate function
-    List claimsLockedPendingList = await client.call(
+    List getClaimsLockedPendingList = await client.call(
         contract: contract,
-        function: claimsLockedPendingFunction,
+        function: getClaimsLockedPendingFunction,
         params: [ownAddress]);
-    claimsLockedPending = claimsLockedPendingList.first;
+    getClaimsLockedPending = getClaimsLockedPendingList.first;
     print(
-        'You have ${claimsLockedPending} of pending claims of DataHighwayMXCMiningToken after Locked');
+        'You have ${getClaimsLockedPending} of pending claims of DataHighwayMXCMiningToken after Locked');
 
     // Listen for the ClaimLockedPending event when emitted by the contract above
     final subscription = client
@@ -380,13 +381,13 @@ class EthereumApiMiningMXC {
       if (from == ownAddress || to == ownAddress) {
         print(
             '$from claimed $value DataHighwayMXCMiningTokens to $to is pending after Locked');
-        claimsLockedPendingList = await client.call(
+        getClaimsLockedPendingList = await client.call(
             contract: contract,
-            function: claimsLockedPendingFunction,
+            function: getClaimsLockedPendingFunction,
             params: [ownAddress]);
-        claimsLockedPending = claimsLockedPendingList.first;
+        getClaimsLockedPending = getClaimsLockedPendingList.first;
         print(
-            'You have ${claimsLockedPending} of pending claims of DataHighwayMXCMiningTokens after Locked');
+            'You have ${getClaimsLockedPending} of pending claims of DataHighwayMXCMiningTokens after Locked');
       }
     });
 
@@ -395,7 +396,7 @@ class EthereumApiMiningMXC {
 
     await client.dispose();
 
-    return claimsLockedPending;
+    return getClaimsLockedPending;
   }
 
   // Get amount of MXC tokens that have been locked whose rewards have had their claim approved
@@ -404,7 +405,7 @@ class EthereumApiMiningMXC {
           EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraTestnetRopsten, wsUrl: kWsUrlInfuraTestnetRopsten);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -412,34 +413,34 @@ class EthereumApiMiningMXC {
 
     // Read the contract ABI and to inform web3dart of its deployed contractAddr
     final abiCode = await rootBundle
-        .loadString('assets/data/abi_datahighway_mxc_mining_mainnet.json');
+        .loadString('assets/data/abi_datahighway_mxc_mining_testnet.json');
     final contract = DeployedContract(
         ContractAbi.fromJson(abiCode, 'DataHighwayMXCMiningToken'),
         contractAddr);
 
     // Extracting some functions and events for later use
     final claimLockedApprovedEvent = contract.event('ClaimLockedApproved');
-    final claimsLockedApprovedFunction = contract.function('claimsLockedApproved');
+    final getClaimsLockedApprovedFunction = contract.function('getClaimsLockedApproved');
 
     // Check claims Locked approved amount of DataHighwayMXCMiningToken by calling the appropriate function
-    List claimsLockedApprovedList = await client.call(
+    List getClaimsLockedApprovedList = await client.call(
         contract: contract,
-        function: claimsLockedApprovedFunction,
+        function: getClaimsLockedApprovedFunction,
         params: [ownAddress]);
-    claimsLockedApproved = claimsLockedApprovedList.first;
+    getClaimsLockedApproved = getClaimsLockedApprovedList.first;
     print(
-        'You have ${claimsLockedApproved} of approved claims of DataHighwayMXCMiningToken after Locked');
+        'You have ${getClaimsLockedApproved} of approved claims of DataHighwayMXCMiningToken after Locked');
 
     try{
-      _claimsLockedApprovedSubscrioption(client,contract,claimLockedApprovedEvent,ownAddress,claimsLockedApprovedList,claimsLockedApprovedFunction);
+      _getClaimsLockedApprovedSubscription(client,contract,claimLockedApprovedEvent,ownAddress,getClaimsLockedApprovedList,getClaimsLockedApprovedFunction);
     }catch(err){
-      print('_claimsLockedApprovedSubscrioption exception: $err');
+      print('_getClaimsLockedApprovedSubscription exception: $err');
     }
 
-    return claimsLockedApproved;
+    return getClaimsLockedApproved;
   }
 
-  Future<void> _claimsLockedApprovedSubscrioption(client,contract,claimLockedApprovedEvent,ownAddress,claimsLockedApprovedList,claimsLockedApprovedFunction) async{
+  Future<void> _getClaimsLockedApprovedSubscription(client,contract,claimLockedApprovedEvent,ownAddress,getClaimsLockedApprovedList,getClaimsLockedApprovedFunction) async{
       // Listen for the ClaimLockedApproved event when emitted by the contract above
     final subscription = client
         .events(
@@ -456,13 +457,13 @@ class EthereumApiMiningMXC {
       if (from == ownAddress || to == ownAddress) {
         print(
             '$from claimed $value DataHighwayMXCMiningTokens to $to was approved after Locked');
-        claimsLockedApprovedList = await client.call(
+        getClaimsLockedApprovedList = await client.call(
             contract: contract,
-            function: claimsLockedApprovedFunction,
+            function: getClaimsLockedApprovedFunction,
             params: [ownAddress]);
-        claimsLockedApproved = claimsLockedApprovedList.first;
+        getClaimsLockedApproved = getClaimsLockedApprovedList.first;
         print(
-            'You have ${claimsLockedApproved} of approved claims of DataHighwayMXCMiningTokens after Locked');
+            'You have ${getClaimsLockedApproved} of approved claims of DataHighwayMXCMiningTokens after Locked');
       }
     });
 
@@ -479,7 +480,7 @@ class EthereumApiMiningMXC {
           EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraTestnetRopsten, wsUrl: kWsUrlInfuraTestnetRopsten);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -487,23 +488,23 @@ class EthereumApiMiningMXC {
 
     // Read the contract ABI and to inform web3dart of its deployed contractAddr
     final abiCode = await rootBundle
-        .loadString('assets/data/abi_datahighway_mxc_mining_mainnet.json');
+        .loadString('assets/data/abi_datahighway_mxc_mining_testnet.json');
     final contract = DeployedContract(
         ContractAbi.fromJson(abiCode, 'DataHighwayMXCMiningToken'),
         contractAddr);
 
     // Extracting some functions and events for later use
     final claimLockedRejectedEvent = contract.event('ClaimLockedRejected');
-    final claimsLockedRejectedFunction = contract.function('claimsLockedRejected');
+    final getClaimsLockedRejectedFunction = contract.function('getClaimsLockedRejected');
 
     // Check claims Locked rejected amount of DataHighwayMXCMiningToken by calling the appropriate function
-    List claimsLockedRejectedList = await client.call(
+    List getClaimsLockedRejectedList = await client.call(
         contract: contract,
-        function: claimsLockedRejectedFunction,
+        function: getClaimsLockedRejectedFunction,
         params: [ownAddress]);
-    claimsLockedRejected = claimsLockedRejectedList.first;
+    getClaimsLockedRejected = getClaimsLockedRejectedList.first;
     print(
-        'You have ${claimsLockedRejected} of rejected claims of DataHighwayMXCMiningToken after Locked');
+        'You have ${getClaimsLockedRejected} of rejected claims of DataHighwayMXCMiningToken after Locked');
 
     // Listen for the ClaimLockedRejected event when emitted by the contract above
     final subscription = client
@@ -521,13 +522,13 @@ class EthereumApiMiningMXC {
       if (from == ownAddress || to == ownAddress) {
         print(
             '$from claimed $value DataHighwayMXCMiningTokens to $to was rejected after Locked');
-        claimsLockedRejectedList = await client.call(
+        getClaimsLockedRejectedList = await client.call(
             contract: contract,
-            function: claimsLockedRejectedFunction,
+            function: getClaimsLockedRejectedFunction,
             params: [ownAddress]);
-        claimsLockedRejected = claimsLockedRejectedList.first;
+        getClaimsLockedRejected = getClaimsLockedRejectedList.first;
         print(
-            'You have ${claimsLockedRejected} of rejected claims of DataHighwayMXCMiningTokens after Locked');
+            'You have ${getClaimsLockedRejected} of rejected claims of DataHighwayMXCMiningTokens after Locked');
       }
     });
 
@@ -536,6 +537,6 @@ class EthereumApiMiningMXC {
 
     await client.dispose();
 
-    return claimsLockedRejected;
+    return getClaimsLockedRejected;
   }
 }
