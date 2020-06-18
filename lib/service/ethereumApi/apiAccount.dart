@@ -13,7 +13,7 @@ class EthereumApiAccount {
 //    final credentials = await client.credentialsFromPrivateKey(privateKey);
     // Derive the public key and the address from a private key
 //    final ownAddress = await credentials.extractAddress();
-    ownAddress = kSampleAccountAddrMainnet;
+    ownAddress = kAccountAddrTestnet;
     return ownAddress;
   }
 }

@@ -58,7 +58,7 @@ class Ethereum{
     assetsMXC = EthereumApiAssetsMXC();
 
     // print('Getting MXC account balance');
-    BigInt balance = await assetsMXC.getAccountBalanceFromMXCContract(kContractAddrMXCMainnet, kSamplePrivateKey);
+    BigInt balance = await assetsMXC.getAccountBalanceFromMXCContract(kContractAddrMXCTestnet, kMnemonicSeed);
 
     store.ethereum.setBalanceMXC(balance);   
   }
@@ -69,8 +69,8 @@ class Ethereum{
     EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
     BigInt claimsApproved = await ethApiMiningMXC
         .getAccountLockedClaimsApprovedOfMXCAmountFromDataHighwayMXCMiningContract(
-            kContractAddrMXCMainnet,
-            kSamplePrivateKey);
+            kContractAddrMXCTestnet,
+            kMnemonicSeed);
     
     store.ethereum.setClaimsApprovedMXCLocked(claimsApproved);
   }
@@ -81,8 +81,8 @@ class Ethereum{
     ethApiMiningMXC = await EthereumApiMiningMXC();
     BigInt claimsPending = await ethApiMiningMXC
         .getAccountLockedClaimsPendingOfMXCAmountFromDataHighwayMXCMiningContract(
-            kContractAddrMXCMainnet,
-            kSamplePrivateKey);
+            kContractAddrMXCTestnet,
+            kMnemonicSeed);
 
     store.ethereum.setClaimsPendingMXCLocked(claimsPending);
   }
@@ -93,8 +93,8 @@ class Ethereum{
     EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
     BigInt claimsRejected = await ethApiMiningMXC
         .getAccountLockedClaimsRejectedOfMXCAmountFromDataHighwayMXCMiningContract(
-            kContractAddrMXCMainnet,
-            kSamplePrivateKey);
+            kContractAddrMXCTestnet,
+            kMnemonicSeed);
     
     store.ethereum.setClaimsRejectedMXCLocked(claimsRejected);
 
@@ -109,8 +109,8 @@ class Ethereum{
     EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
     BigInt claimsApproved = await ethApiMiningMXC
         .getAccountSignalledClaimsApprovedOfMXCAmountFromDataHighwayMXCMiningContract(
-            kContractAddrMXCMainnet,
-            kSamplePrivateKey);
+            kContractAddrMXCTestnet,
+            kMnemonicSeed);
 
     store.ethereum.setClaimsApprovedMXCSignaled(claimsApproved);
   }
@@ -120,8 +120,8 @@ class Ethereum{
     EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
     BigInt claimsPending = await ethApiMiningMXC
         .getAccountSignalledClaimsPendingOfMXCAmountFromDataHighwayMXCMiningContract(
-            kContractAddrMXCMainnet,
-            kSamplePrivateKey);
+            kContractAddrMXCTestnet,
+            kMnemonicSeed);
 
     store.ethereum.setClaimsPendingMXCSignaled(claimsPending);
   }
@@ -132,8 +132,8 @@ class Ethereum{
     EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
     BigInt claimsRejected = await ethApiMiningMXC
         .getAccountSignalledClaimsRejectedOfMXCAmountFromDataHighwayMXCMiningContract(
-            kContractAddrMXCMainnet,
-            kSamplePrivateKey);
+            kContractAddrMXCTestnet,
+            kMnemonicSeed);
 
     store.ethereum.setClaimsRejectedMXCSignaled(claimsRejected);
 
@@ -150,8 +150,8 @@ class Ethereum{
         EthereumApiAssetsIOTAPegged();
     BigInt balance = await ethApiAssetsIOTAPegged
         .getAccountBalanceIOTAPeggedFromDataHighwayMiningIOTAPeggedContract(
-            kContractAddrMXCMainnet,
-            kSamplePrivateKey);
+            kContractAddrMXCTestnet,
+            kMnemonicSeed);
 
     store.ethereum.setBalanceIOTAPegged(balance);
   }
@@ -164,8 +164,8 @@ class Ethereum{
         await EthereumApiMiningIOTAPegged();
     BigInt getClaimsSignalledApproved = await ethApiMiningIOTAPegged
         .getAccountSignalledClaimsApprovedOfIOTAPeggedAmountFromDataHighwayIOTAPeggedMiningContract(
-            kContractAddrMXCMainnet,
-            kSamplePrivateKey);
+            kContractAddrMXCTestnet,
+            kMnemonicSeed);
 
     store.ethereum.setClaimsApprovedIOTAPeggedSignaled(getClaimsSignalledApproved);
   }
@@ -178,8 +178,8 @@ class Ethereum{
         await EthereumApiMiningIOTAPegged();
     BigInt claimsSignalledPending = await ethApiMiningIOTAPegged
         .getAccountSignalledClaimsPendingOfIOTAPeggedAmountFromDataHighwayIOTAPeggedMiningContract(
-            kContractAddrMXCMainnet,
-            kSamplePrivateKey);
+            kContractAddrMXCTestnet,
+            kMnemonicSeed);
 
     store.ethereum.setClaimsPendingIOTAPeggedSignaled(claimsSignalledPending);
   }
@@ -192,8 +192,8 @@ class Ethereum{
         await EthereumApiMiningIOTAPegged();
     BigInt claimsSignalledRejected = await ethApiMiningIOTAPegged
         .getAccountSignalledClaimsRejectedOfIOTAPeggedAmountFromDataHighwayIOTAPeggedMiningContract(
-            kContractAddrMXCMainnet,
-            kSamplePrivateKey);
+            kContractAddrMXCTestnet,
+            kMnemonicSeed);
 
     store.ethereum.setClaimsRejectedIOTAPeggedSignaled(claimsSignalledRejected);
 

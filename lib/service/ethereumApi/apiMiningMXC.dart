@@ -33,7 +33,7 @@ class EthereumApiMiningMXC {
 
     // Read the contract ABI and to inform web3dart of its deployed contractAddr
     final abiCode = await rootBundle
-        .loadString('assets/data/abi_datahighway_mxc_mining_mainnet.json');
+        .loadString('assets/data/abi_datahighway_mxc_mining_testnet.json');
     final contract = DeployedContract(
         ContractAbi.fromJson(abiCode, 'DataHighwayMXCMiningToken'),
         contractAddr);
@@ -83,7 +83,7 @@ class EthereumApiMiningMXC {
           EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraTestnetRopsten, wsUrl: kWsUrlInfuraTestnetRopsten);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -91,7 +91,7 @@ class EthereumApiMiningMXC {
 
     // Read the contract ABI and to inform web3dart of its deployed contractAddr
     final abiCode = await rootBundle
-        .loadString('assets/data/abi_datahighway_mxc_mining_mainnet.json');
+        .loadString('assets/data/abi_datahighway_mxc_mining_testnet.json');
     final contract = DeployedContract(
         ContractAbi.fromJson(abiCode, 'DataHighwayMXCMiningToken'),
         contractAddr);
@@ -149,7 +149,7 @@ class EthereumApiMiningMXC {
           EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraTestnetRopsten, wsUrl: kWsUrlInfuraTestnetRopsten);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -157,7 +157,7 @@ class EthereumApiMiningMXC {
 
     // Read the contract ABI and to inform web3dart of its deployed contractAddr
     final abiCode = await rootBundle
-        .loadString('assets/data/abi_datahighway_mxc_mining_mainnet.json');
+        .loadString('assets/data/abi_datahighway_mxc_mining_testnet.json');
     final contract = DeployedContract(
         ContractAbi.fromJson(abiCode, 'DataHighwayMXCMiningToken'),
         contractAddr);
@@ -215,7 +215,7 @@ class EthereumApiMiningMXC {
           EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraTestnetRopsten, wsUrl: kWsUrlInfuraTestnetRopsten);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -223,7 +223,7 @@ class EthereumApiMiningMXC {
 
     // Read the contract ABI and to inform web3dart of its deployed contractAddr
     final abiCode = await rootBundle
-        .loadString('assets/data/abi_datahighway_mxc_mining_mainnet.json');
+        .loadString('assets/data/abi_datahighway_mxc_mining_testnet.json');
     final contract = DeployedContract(
         ContractAbi.fromJson(abiCode, 'DataHighwayMXCMiningToken'),
         contractAddr);
@@ -288,7 +288,7 @@ class EthereumApiMiningMXC {
 
     // Read the contract ABI and to inform web3dart of its deployed contractAddr
     final abiCode = await rootBundle
-        .loadString('assets/data/abi_datahighway_mxc_mining_mainnet.json');
+        .loadString('assets/data/abi_datahighway_mxc_mining_testnet.json');
     final contract = DeployedContract(
         ContractAbi.fromJson(abiCode, 'DataHighwayMXCMiningToken'),
         contractAddr);
@@ -338,7 +338,7 @@ class EthereumApiMiningMXC {
           EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraTestnetRopsten, wsUrl: kWsUrlInfuraTestnetRopsten);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -347,7 +347,7 @@ class EthereumApiMiningMXC {
     // Read the contract ABI and to inform web3dart of its deployed contractAddr
     final abiCode = await rootBundle
         // FIXME - change this to the lockdrop contract
-        .loadString('assets/data/abi_datahighway_mxc_mining_mainnet.json');
+        .loadString('assets/data/abi_datahighway_mxc_mining_testnet.json');
     final contract = DeployedContract(
         ContractAbi.fromJson(abiCode, 'DataHighwayMXCMiningToken'),
         contractAddr);
@@ -405,7 +405,7 @@ class EthereumApiMiningMXC {
           EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraTestnetRopsten, wsUrl: kWsUrlInfuraTestnetRopsten);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -413,7 +413,7 @@ class EthereumApiMiningMXC {
 
     // Read the contract ABI and to inform web3dart of its deployed contractAddr
     final abiCode = await rootBundle
-        .loadString('assets/data/abi_datahighway_mxc_mining_mainnet.json');
+        .loadString('assets/data/abi_datahighway_mxc_mining_testnet.json');
     final contract = DeployedContract(
         ContractAbi.fromJson(abiCode, 'DataHighwayMXCMiningToken'),
         contractAddr);
@@ -480,7 +480,7 @@ class EthereumApiMiningMXC {
           EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraTestnetRopsten, wsUrl: kWsUrlInfuraTestnetRopsten);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -488,7 +488,7 @@ class EthereumApiMiningMXC {
 
     // Read the contract ABI and to inform web3dart of its deployed contractAddr
     final abiCode = await rootBundle
-        .loadString('assets/data/abi_datahighway_mxc_mining_mainnet.json');
+        .loadString('assets/data/abi_datahighway_mxc_mining_testnet.json');
     final contract = DeployedContract(
         ContractAbi.fromJson(abiCode, 'DataHighwayMXCMiningToken'),
         contractAddr);
