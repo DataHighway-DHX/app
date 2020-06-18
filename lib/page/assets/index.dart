@@ -200,11 +200,11 @@ class _AssetsState extends State<Assets> {
         'Getting amount of approved reward claims for signalling IOTA (pegged)');
     EthereumApiMiningIOTAPegged ethApiMiningIOTAPegged =
         await EthereumApiMiningIOTAPegged();
-    BigInt claimsSignalledApproved = await ethApiMiningIOTAPegged
+    BigInt getClaimsSignalledApproved = await ethApiMiningIOTAPegged
         .getAccountSignalledClaimsApprovedOfIOTAPeggedAmountFromDataHighwayIOTAPeggedMiningContract(
             kContractAddrMXCMainnet,
             kSamplePrivateKey);
-    return claimsSignalledApproved;
+    return getClaimsSignalledApproved;
   }
 
   Future<BigInt> _fetchIOTAPeggedSignalledClaimsRejected() async {

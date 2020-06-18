@@ -162,12 +162,12 @@ class Ethereum{
         'Getting amount of approved reward claims for signalling IOTA (pegged)');
     EthereumApiMiningIOTAPegged ethApiMiningIOTAPegged =
         await EthereumApiMiningIOTAPegged();
-    BigInt claimsSignalledApproved = await ethApiMiningIOTAPegged
+    BigInt getClaimsSignalledApproved = await ethApiMiningIOTAPegged
         .getAccountSignalledClaimsApprovedOfIOTAPeggedAmountFromDataHighwayIOTAPeggedMiningContract(
             kContractAddrMXCMainnet,
             kSamplePrivateKey);
 
-    store.ethereum.setClaimsApprovedIOTAPeggedSignaled(claimsSignalledApproved);
+    store.ethereum.setClaimsApprovedIOTAPeggedSignaled(getClaimsSignalledApproved);
   }
 
   //IOTA Signaled Pending
