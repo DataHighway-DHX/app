@@ -51,10 +51,10 @@ class _AssetsState extends State<Assets> {
     EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
     BigInt locked = await ethApiMiningMXC
         .getAccountLockedMXCAmountFromDataHighwayMXCMiningContract(
-            kRpcUrlInfuraMainnet,
-            kWsUrlInfuraMainnet,
-            kContractAddrMXCMainnet,
-            kSamplePrivateKey);
+            kRpcUrlInfuraTestnetRopsten,
+            kWsUrlInfuraTestnetRopsten,
+            kContractAddrMXCTestnet,
+            kMnemonicSeed);
     return locked;
   }
 
@@ -63,8 +63,8 @@ class _AssetsState extends State<Assets> {
     EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
     BigInt claimsPending = await ethApiMiningMXC
         .getAccountLockedClaimsPendingOfMXCAmountFromDataHighwayMXCMiningContract(
-            kContractAddrMXCMainnet,
-            kSamplePrivateKey);
+            kContractAddrMXCTestnet,
+            kMnemonicSeed);
     return claimsPending;
   }
 
@@ -73,8 +73,8 @@ class _AssetsState extends State<Assets> {
     EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
     BigInt claimsApproved = await ethApiMiningMXC
         .getAccountLockedClaimsApprovedOfMXCAmountFromDataHighwayMXCMiningContract(
-            kContractAddrMXCMainnet,
-            kSamplePrivateKey);
+            kContractAddrMXCTestnet,
+            kMnemonicSeed);
     return claimsApproved;
   }
 
@@ -83,8 +83,8 @@ class _AssetsState extends State<Assets> {
     EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
     BigInt claimsRejected = await ethApiMiningMXC
         .getAccountLockedClaimsRejectedOfMXCAmountFromDataHighwayMXCMiningContract(
-            kContractAddrMXCMainnet,
-            kSamplePrivateKey);
+            kContractAddrMXCTestnet,
+            kMnemonicSeed);
     return claimsRejected;
   }
 
@@ -113,10 +113,10 @@ class _AssetsState extends State<Assets> {
     EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
     BigInt signalled = await ethApiMiningMXC
         .getAccountSignalledMXCAmountFromDataHighwayMXCMiningContract(
-            kRpcUrlInfuraMainnet,
-            kWsUrlInfuraMainnet,
-            kContractAddrMXCMainnet,
-            kSamplePrivateKey);
+            kRpcUrlInfuraTestnetRopsten,
+            kWsUrlInfuraTestnetRopsten,
+            kContractAddrMXCTestnet,
+            kMnemonicSeed);
     return signalled;
   }
 
@@ -125,8 +125,8 @@ class _AssetsState extends State<Assets> {
     EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
     BigInt claimsPending = await ethApiMiningMXC
         .getAccountSignalledClaimsPendingOfMXCAmountFromDataHighwayMXCMiningContract(
-            kContractAddrMXCMainnet,
-            kSamplePrivateKey);
+            kContractAddrMXCTestnet,
+            kMnemonicSeed);
     return claimsPending;
   }
 
@@ -135,8 +135,8 @@ class _AssetsState extends State<Assets> {
     EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
     BigInt claimsApproved = await ethApiMiningMXC
         .getAccountSignalledClaimsApprovedOfMXCAmountFromDataHighwayMXCMiningContract(
-            kContractAddrMXCMainnet,
-            kSamplePrivateKey);
+            kContractAddrMXCTestnet,
+            kMnemonicSeed);
     return claimsApproved;
   }
 
@@ -145,8 +145,8 @@ class _AssetsState extends State<Assets> {
     EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
     BigInt claimsRejected = await ethApiMiningMXC
         .getAccountSignalledClaimsRejectedOfMXCAmountFromDataHighwayMXCMiningContract(
-            kContractAddrMXCMainnet,
-            kSamplePrivateKey);
+            kContractAddrMXCTestnet,
+            kMnemonicSeed);
     return claimsRejected;
   }
 
@@ -176,10 +176,10 @@ class _AssetsState extends State<Assets> {
         await EthereumApiMiningIOTAPegged();
     BigInt signalled = await ethApiMiningIOTAPegged
         .getAccountSignalledIOTAPeggedAmountFromDataHighwayIOTAPeggedMiningContract(
-            kRpcUrlInfuraMainnet,
-            kWsUrlInfuraMainnet,
-            kContractAddrMXCMainnet,
-            kSamplePrivateKey);
+            kRpcUrlInfuraTestnetRopsten,
+            kWsUrlInfuraTestnetRopsten,
+            kContractAddrMXCTestnet,
+            kMnemonicSeed);
     return signalled;
   }
 
@@ -190,8 +190,8 @@ class _AssetsState extends State<Assets> {
         await EthereumApiMiningIOTAPegged();
     BigInt claimsSignalledPending = await ethApiMiningIOTAPegged
         .getAccountSignalledClaimsPendingOfIOTAPeggedAmountFromDataHighwayIOTAPeggedMiningContract(
-            kContractAddrMXCMainnet,
-            kSamplePrivateKey);
+            kContractAddrMXCTestnet,
+            kMnemonicSeed);
     return claimsSignalledPending;
   }
 
@@ -200,11 +200,11 @@ class _AssetsState extends State<Assets> {
         'Getting amount of approved reward claims for signalling IOTA (pegged)');
     EthereumApiMiningIOTAPegged ethApiMiningIOTAPegged =
         await EthereumApiMiningIOTAPegged();
-    BigInt claimsSignalledApproved = await ethApiMiningIOTAPegged
+    BigInt getClaimsSignalledApproved = await ethApiMiningIOTAPegged
         .getAccountSignalledClaimsApprovedOfIOTAPeggedAmountFromDataHighwayIOTAPeggedMiningContract(
-            kContractAddrMXCMainnet,
-            kSamplePrivateKey);
-    return claimsSignalledApproved;
+            kContractAddrMXCTestnet,
+            kMnemonicSeed);
+    return getClaimsSignalledApproved;
   }
 
   Future<BigInt> _fetchIOTAPeggedSignalledClaimsRejected() async {
@@ -214,8 +214,8 @@ class _AssetsState extends State<Assets> {
         await EthereumApiMiningIOTAPegged();
     BigInt claimsSignalledRejected = await ethApiMiningIOTAPegged
         .getAccountSignalledClaimsRejectedOfIOTAPeggedAmountFromDataHighwayIOTAPeggedMiningContract(
-            kContractAddrMXCMainnet,
-            kSamplePrivateKey);
+            kContractAddrMXCTestnet,
+            kMnemonicSeed);
     return claimsSignalledRejected;
   }
 

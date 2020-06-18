@@ -13,6 +13,8 @@ import 'package:polka_wallet/page/assets/signal/signalResultPage.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
+import '../../../constants.dart';
+
 class SignalDetailPage extends StatefulWidget {
   SignalDetailPage(this.store);
 
@@ -105,6 +107,9 @@ class _DetailPageState extends State<SignalDetailPage> {
                       formulaInput(
                         controller: _publicKeyCtl,
                         lable: dic['public.key'],
+                        onChanged: (value){
+                          setState(() {});
+                        }
                       )
                     ],
                   ),
@@ -121,7 +126,10 @@ class _DetailPageState extends State<SignalDetailPage> {
                       padding: const EdgeInsets.all(5),
                       color: Colors.grey[200],
                       child: Text(
-                        '${_durationCtl.text.isEmpty ? '??' : _durationCtl.text},Signal,${_amountCtl.text.isEmpty ? '??' : _amountCtl.text}',
+                        '${_durationCtl.text.isEmpty ? '??' : _durationCtl.text},Signal,${_amountCtl.text.isEmpty ? '??' : _amountCtl.text},${_publicKeyCtl.text.isEmpty ? '??' : _publicKeyCtl.text},${kContractAddrMXCTestnet}',
+                        style: TextStyle(
+                          fontSize: 12
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ),

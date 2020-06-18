@@ -6,6 +6,8 @@ import 'package:polka_wallet/common/components/linkTap.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
+import '../../../constants.dart';
+
 class SignalResultPage extends StatefulWidget {
   SignalResultPage(this.store);
 
@@ -60,14 +62,14 @@ class _ResultPageState extends State<SignalResultPage> {
                       padding: const EdgeInsets.all(5),
                       color: Colors.grey[200],
                       child: Text(
-                        'Wallet Address',
+                        '${kContractAddrDataHighwayLockdropTestnet}',
                         textAlign: TextAlign.center,
                       ),
                     ),
                     trailing: Icon(Icons.content_copy),
                   ),
-                  gasInput(dic['gas.limit'],dic['units']),
-                  gasInput(dic['gas.price'],dic['gwei']),
+                  gasInput(dic['gas.limit'],kGasLimitRecommended,dic['units']),
+                  gasInput(dic['gas.price'],kGasPriceRecommended,dic['gwei']),
                   linkTap(
                     dic['click.instructions'],
                     onTap: (){}

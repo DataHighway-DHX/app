@@ -12,7 +12,7 @@ class EthereumApiMiningIOTAPegged {
 
   BigInt signalled;
   BigInt claimsSignalledPending;
-  BigInt claimsSignalledApproved;
+  BigInt getClaimsSignalledApproved;
   BigInt claimsSignalledRejected;
 
   // Get amount of IOTA (pegged) tokens that have been signalled
@@ -81,7 +81,7 @@ class EthereumApiMiningIOTAPegged {
           EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraTestnetRopsten, wsUrl: kWsUrlInfuraTestnetRopsten);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -147,7 +147,7 @@ class EthereumApiMiningIOTAPegged {
           EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraTestnetRopsten, wsUrl: kWsUrlInfuraTestnetRopsten);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
@@ -162,16 +162,16 @@ class EthereumApiMiningIOTAPegged {
 
     // Extracting some functions and events for later use
     final claimSignalledApprovedEvent = contract.event('ClaimSignalledApproved');
-    final claimsSignalledApprovedFunction = contract.function('claimsSignalledApproved');
+    final getClaimsSignalledApprovedFunction = contract.function('getClaimsSignalledApproved');
 
     // Check claims Signalled approved amount of DataHighwayIOTAPeggedMiningToken by calling the appropriate function
-    List claimsSignalledApprovedList = await client.call(
+    List getClaimsSignalledApprovedList = await client.call(
         contract: contract,
-        function: claimsSignalledApprovedFunction,
+        function: getClaimsSignalledApprovedFunction,
         params: [ownAddress]);
-    claimsSignalledApproved = claimsSignalledApprovedList.first;
+    getClaimsSignalledApproved = getClaimsSignalledApprovedList.first;
     print(
-        'You have ${claimsSignalledApproved} of approved claims of DataHighwayIOTAPeggedMiningToken after Signalled');
+        'You have ${getClaimsSignalledApproved} of approved claims of DataHighwayIOTAPeggedMiningToken after Signalled');
 
     // Listen for the ClaimSignalledApproved event when emitted by the contract above
     final subscription = client
@@ -189,13 +189,13 @@ class EthereumApiMiningIOTAPegged {
       if (from == ownAddress || to == ownAddress) {
         print(
             '$from claimed $value DataHighwayIOTAPeggedMiningToken to $to was approved after Signalled');
-        claimsSignalledApprovedList = await client.call(
+        getClaimsSignalledApprovedList = await client.call(
             contract: contract,
-            function: claimsSignalledApprovedFunction,
+            function: getClaimsSignalledApprovedFunction,
             params: [ownAddress]);
-        claimsSignalledApproved = claimsSignalledApprovedList.first;
+        getClaimsSignalledApproved = getClaimsSignalledApprovedList.first;
         print(
-            'You have ${claimsSignalledApproved} of approved claims of DataHighwayIOTAPeggedMiningToken after Signalled');
+            'You have ${getClaimsSignalledApproved} of approved claims of DataHighwayIOTAPeggedMiningToken after Signalled');
       }
     });
 
@@ -204,7 +204,7 @@ class EthereumApiMiningIOTAPegged {
 
     await client.dispose();
 
-    return claimsSignalledApproved;
+    return getClaimsSignalledApproved;
   }
 
   // Get amount of IOTA (pegged) tokens that have been signalled whose rewards have had their claim rejected
@@ -213,7 +213,7 @@ class EthereumApiMiningIOTAPegged {
           EthereumAddress contractAddr,
           [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraMainnet, wsUrl: kWsUrlInfuraMainnet);
+    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraTestnetRopsten, wsUrl: kWsUrlInfuraTestnetRopsten);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
