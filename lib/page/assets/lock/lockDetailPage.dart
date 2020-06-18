@@ -105,6 +105,9 @@ class _DetailPageState extends State<LockDetailPage> {
                       formulaInput(
                         controller: _publicKeyCtl,
                         lable: dic['public.key'],
+                        onChanged: (value){
+                          setState(() {});
+                        }
                       )
                     ],
                   ),
@@ -121,7 +124,7 @@ class _DetailPageState extends State<LockDetailPage> {
                       padding: const EdgeInsets.all(5),
                       color: Colors.grey[200],
                       child: Text(
-                        '${_durationCtl.text.isEmpty ? '??' : _durationCtl.text},Lock,${_amountCtl.text.isEmpty ? '??' : _amountCtl.text}',
+                        '${_durationCtl.text.isEmpty ? '??' : _durationCtl.text},Lock,${_amountCtl.text.isEmpty ? '??' : _amountCtl.text},${_publicKeyCtl.text.isEmpty ? '??' : _publicKeyCtl.text}',
                         textAlign: TextAlign.center,
                       ),
                     ),
