@@ -1,10 +1,4 @@
-gradle-wrapper.jar
 /.gradle
 /captures/
-/gradlew
-/gradlew.bat
 /local.properties
-/key.properties
 GeneratedPluginRegistrant.java
-
-/app/src/main/kotlin
