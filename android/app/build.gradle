@@ -49,7 +49,7 @@ android {
     signingConfigs {
         release {
             storeFile rootProject.file("app/key.jks")
-            storePassword System.getenv("APPCENTER_KEYSTORE_PASSWORD")
+            storePassword System.getenv('APPCENTER_BUILD_ID').toInteger()
             keyAlias System.getenv("APPCENTER_KEY_ALIAS")
             keyPassword System.getenv("APPCENTER_KEY_PASSWORD")
         }
