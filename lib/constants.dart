@@ -1,6 +1,10 @@
 import 'package:web3dart/web3dart.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+var kEnvironment = DotEnv().env['ENVIRONMENT'];
+
+var kAbiCodeFile = (kEnvironment == "testnet" ? "abi_datahighway_mxc_mining_testnet.json" : "abi_mxc_mainnet.json");
+
 // Account
 var kMnemonicSeed = DotEnv().env['MNENOMIC'];
 var kAccountAddrTestnet =
