@@ -39,7 +39,7 @@ class Ethereum{
   EthereumApiAssetsIOTAPegged assetsIOTAPegged;
 
   void init() async{
-    await getBalanceFormMXC(); 
+    await getBalanceMXC(); 
     await fetchMXCLockedClaimsApproved();
     await fetchMXCLockedClaimsPending();
     await fetchMXCLockedClaimsRejected();
@@ -54,7 +54,7 @@ class Ethereum{
   }
 
   //MXC balance
-  Future<void> getBalanceFormMXC() async{
+  Future<void> getBalanceMXC() async{
     assetsMXC = EthereumApiAssetsMXC();
 
     // print('Getting MXC account balance');
