@@ -42,7 +42,7 @@ class _AssetsState extends State<Assets> {
     await Future.wait([
       webApi.assets.fetchBalance(store.account.currentAccount.pubKey),
       webApi.staking.fetchAccountStaking(store.account.currentAccount.pubKey),
-      ethereum.getBalanceFormMXC()
+      ethereum.getBalanceMXC()
     ]);
   }
 
