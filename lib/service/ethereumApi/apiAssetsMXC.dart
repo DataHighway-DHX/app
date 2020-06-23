@@ -13,18 +13,18 @@ class EthereumApiAssetsMXC {
   BigInt balance;
 
   // Get an account balance of MXC tokens on the Ethereum network
-  Future<BigInt> getAccountBalanceFromMXCContract( EthereumAddress contractAddr,
+  Future<BigInt> getAccountBalanceFromMXCContract(EthereumAddress contractAddr,
       [String privateKey]) async {
     // TODO - move this into singleton
-    EthereumApi ethereumApi = EthereumApi(rpcUrl: kRpcUrlInfuraTestnetRopsten, wsUrl: kWsUrlInfuraTestnetRopsten);
+    EthereumApi ethereumApi = EthereumApi(
+        rpcUrl: kRpcUrlInfuraTestnetRopsten, wsUrl: kWsUrlInfuraTestnetRopsten);
     Web3Client client = await ethereumApi.connectToWeb3EthereumClient();
     EthereumApiAccount ethereumApiAccount = EthereumApiAccount();
     EthereumAddress ownAddress = await ethereumApiAccount.getOwnAddress();
     print('Ethereum account address ${ownAddress.hex}');
 
     // Read the contract ABI and to inform web3dart of its deployed contractAddr
-    final abiCode =
-        await rootBundle.loadString('assets/data/abi_mxc_mainnet.json');
+    final abiCode = await rootBundle.loadString("assets/data/${kAbiCodeFile}");
     final contract = DeployedContract(
         ContractAbi.fromJson(abiCode, 'MXCToken'), contractAddr);
 
@@ -39,17 +39,19 @@ class EthereumApiAssetsMXC {
     balance = balanceList.first;
     print('You have ${balance} MXCToken');
 
-    try{
-       _subscription(client,contract,transferEvent,ownAddress,balanceList,balanceFunction);
-    }catch(err){
+    try {
+      _subscription(client, contract, transferEvent, ownAddress, balanceList,
+          balanceFunction);
+    } catch (err) {
       print('_subscriptionListener exception: $err');
     }
 
     return balance;
   }
 
-  Future<void> _subscription(client,contract,transferEvent,ownAddress,balanceList,balanceFunction) async{
-     // Listen for the Transfer event when emitted by the contract above
+  Future<void> _subscription(client, contract, transferEvent, ownAddress,
+      balanceList, balanceFunction) async {
+    // Listen for the Transfer event when emitted by the contract above
     final subscription = client
         .events(FilterOptions.events(contract: contract, event: transferEvent))
         .take(1)
