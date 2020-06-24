@@ -47,6 +47,18 @@
 			{
 				"indexed": false,
 				"internalType": "uint256",
+				"name": "pendingTokenERC20Amount",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "rejectedTokenERC20Amount",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
 				"name": "time",
 				"type": "uint256"
 			}
@@ -187,6 +199,16 @@
 			{
 				"internalType": "uint256",
 				"name": "_approvedTokenERC20Amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_pendingTokenERC20Amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_rejectedTokenERC20Amount",
 				"type": "uint256"
 			}
 		],
@@ -354,191 +376,6 @@
 	},
 	{
 		"constant": true,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_user",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_tokenContractAddress",
-				"type": "address"
-			}
-		],
-		"name": "getLockWalletInfoPartOne",
-		"outputs": [
-			{
-				"internalType": "enum Lockdrop.ClaimStatus",
-				"name": "",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			},
-			{
-				"internalType": "enum Lockdrop.Term",
-				"name": "",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bytes",
-				"name": "",
-				"type": "bytes"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_user",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_tokenContractAddress",
-				"type": "address"
-			}
-		],
-		"name": "getLockWalletInfoPartTwo",
-		"outputs": [
-			{
-				"internalType": "contract Lock",
-				"name": "",
-				"type": "address"
-			},
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "getMe",
-		"outputs": [
-			{
-				"internalType": "int256",
-				"name": "",
-				"type": "int256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_user",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_tokenContractAddress",
-				"type": "address"
-			}
-		],
-		"name": "getSignalWalletInfoPartOne",
-		"outputs": [
-			{
-				"internalType": "enum Lockdrop.ClaimStatus",
-				"name": "",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			},
-			{
-				"internalType": "enum Lockdrop.Term",
-				"name": "",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bytes",
-				"name": "",
-				"type": "bytes"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_user",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_tokenContractAddress",
-				"type": "address"
-			}
-		],
-		"name": "getSignalWalletInfoPartTwo",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
 		"inputs": [],
 		"name": "LOCK_DROP_PERIOD",
 		"outputs": [
@@ -624,6 +461,16 @@
 				"type": "uint256"
 			},
 			{
+				"internalType": "uint256",
+				"name": "pendingTokenERC20Amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "rejectedTokenERC20Amount",
+				"type": "uint256"
+			},
+			{
 				"internalType": "enum Lockdrop.Term",
 				"name": "term",
 				"type": "uint8"
@@ -682,6 +529,16 @@
 			{
 				"internalType": "uint256",
 				"name": "approvedTokenERC20Amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "pendingTokenERC20Amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "rejectedTokenERC20Amount",
 				"type": "uint256"
 			},
 			{

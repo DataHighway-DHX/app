@@ -88,6 +88,15 @@ abstract class _EthereumStore with Store {
   @observable
   Map claimsDataIOTAPeggedSignaled = new Map();
 
+  @observable
+  BigInt claimsStatusMXCLocked = BigInt.parse('0');
+
+  @observable
+  BigInt claimsStatusMXCSignaled = BigInt.parse('0');
+
+  @observable
+  BigInt claimsStatusIOTAPeggedSignaled = BigInt.parse('0');
+
   @action
   void setBalanceMXC(BigInt balance) {
     balanceMXC = balance;
@@ -115,50 +124,56 @@ abstract class _EthereumStore with Store {
 
   @action
   void setClaimsPendingMXCSignaled(BigInt pending) {
-    claimsPendingMXCLocked = pending;
+    claimsPendingMXCSignaled = pending;
   }
 
   @action
   void setClaimsApprovedMXCSignaled(BigInt approved) {
-    claimsApprovedMXCLocked = approved;
+    claimsApprovedMXCSignaled = approved;
   }
 
   @action
   void setClaimsRejectedMXCSignaled(BigInt rejected) {
-    claimsRejectedMXCLocked = rejected;
+    claimsRejectedMXCSignaled = rejected;
+  }
+
+  @action
+  void setClaimsStatusMXCLocked(BigInt claimsStatus) {
+    claimsStatusMXCLocked = claimsStatus;
+  }
+
+  @action
+  void setClaimsStatusMXCSignaled(BigInt claimsStatus) {
+    claimsStatusMXCSignaled = claimsStatus;
+  }
+
+  @action
+  void setClaimsStatusIOTAPeggedSignaled(BigInt claimsStatus) {
+    claimsStatusIOTAPeggedSignaled = claimsStatus;
   }
 
   @action
   void setClaimsDataMXCLocked(Map data) {
     print('setClaimsDataMXCLocked with data ${data}');
-    // print(data['claimStatus'].runtimeType);
+    print(data['claimStatus'].runtimeType);
     claimsDataMXCLocked = data;
 
-    // Claim Rejected
-    if (data['claimStatus'].toInt() == 2 ) {
-      print('setClaimsDataMXCLocked with rejected status ${data['approvedTokenERC20Amount']}');
-      store.ethereum.setClaimsPendingMXCLocked(BigInt.parse('0'));
-      store.ethereum.setClaimsApprovedMXCLocked(BigInt.parse('0'));
-      store.ethereum.setClaimsRejectedMXCLocked(BigInt.tryParse(data['approvedTokenERC20Amount'].toString()));
+    store.ethereum.setClaimsApprovedMXCLocked(BigInt.tryParse(data['approvedTokenERC20Amount'].toString()));
+    store.ethereum.setClaimsPendingMXCLocked(BigInt.tryParse(data['pendingTokenERC20Amount'].toString()));
+    store.ethereum.setClaimsRejectedMXCLocked(BigInt.tryParse(data['rejectedTokenERC20Amount'].toString()));
+
+    // Claim Finalized
+    if (data['claimStatus'].toInt() == 1 ) {
+      print('setClaimsDataMXCLocked with claim finalized status');
+      store.ethereum.setClaimsStatusMXCLocked(data['claimStatus']);
     // Claim Pending
     } else if (data['claimStatus'].toInt() == 0) {
-      print('setClaimsDataMXCLocked with pending status ${data['approvedTokenERC20Amount']}');
-      store.ethereum.setClaimsPendingMXCLocked(BigInt.tryParse(data['approvedTokenERC20Amount'].toString()));
-      store.ethereum.setClaimsApprovedMXCLocked(BigInt.parse('0'));
-      store.ethereum.setClaimsRejectedMXCLocked(BigInt.parse('0'));
-    // Claim Approved
-    } else if (data['claimStatus'].toInt() == 1) {
-      print('setClaimsDataMXCLocked with approved status ${data['approvedTokenERC20Amount']}');
-      // If approved, the proportion not approved is pending
-      store.ethereum.setClaimsPendingMXCLocked(BigInt.tryParse((data['tokenERC20Amount'] - data['approvedTokenERC20Amount']).toString()));
-      store.ethereum.setClaimsApprovedMXCLocked(BigInt.tryParse(data['approvedTokenERC20Amount'].toString()));
-      store.ethereum.setClaimsRejectedMXCLocked(BigInt.parse('0'));
+      print('setClaimsDataMXCLocked with claim pending status');
+       store.ethereum.setClaimsStatusMXCLocked(data['claimStatus']);
     }
 
     store.ethereum.setClaimsTotalMXCLockedCapacity(BigInt.tryParse(data['tokenERC20Amount'].toString()));
     store.ethereum.countClaimsProportionsMXCLocked();
-
-    print('done1 $claimsApprovedMXCLocked');
   }
 
   @action
@@ -168,39 +183,45 @@ abstract class _EthereumStore with Store {
 
     // FIXME - when this code is uncommented, for some reason it overwrites the data in the Lock row of MXC
     // in the UI, instead of the Signal row of MXC.
-    // // Claim Rejected
-    // if (data['claimStatus'].toInt() == 2) {
-    //   print('setClaimsDataMXCSignaled with rejected status ${data['approvedTokenERC20Amount']}');
-    //   store.ethereum.setClaimsPendingMXCSignaled(BigInt.parse('0'));
-    //   store.ethereum.setClaimsApprovedMXCSignaled(BigInt.parse('0'));
-    //   store.ethereum.setClaimsRejectedMXCSignaled(BigInt.tryParse(data['approvedTokenERC20Amount'].toString()));
-    // // Claim Pending
-    // } else if (data['claimStatus'].toInt() == 0) {
-    //   print('setClaimsDataMXCSignaled with pending status ${data['approvedTokenERC20Amount']}');
-    //   store.ethereum.setClaimsPendingMXCSignaled(BigInt.tryParse(data['approvedTokenERC20Amount'].toString()));
-    //   store.ethereum.setClaimsApprovedMXCSignaled(BigInt.parse('0'));
-    //   store.ethereum.setClaimsRejectedMXCSignaled(BigInt.parse('0'));
-    // // Claim Approved
-    // } else if (data['claimStatus'].toInt() == 1) {
-    //   print('setClaimsDataMXCSignaled with approved status ${data['approvedTokenERC20Amount']}');
-    //   // If approved, the proportion not approved is pending
-    //   store.ethereum.setClaimsPendingMXCSignaled(BigInt.tryParse((data['tokenERC20Amount'] - data['approvedTokenERC20Amount']).toString()));
-    //   store.ethereum.setClaimsApprovedMXCSignaled(BigInt.tryParse(data['approvedTokenERC20Amount'].toString()));
-    //   store.ethereum.setClaimsRejectedMXCSignaled(BigInt.parse('0'));
-    // }
 
-    // store.ethereum.setClaimsTotalMXCSignaledCapacity(BigInt.tryParse(data['tokenERC20Amount'].toString()));
-    // store.ethereum.countClaimsProportionsMXCSignaled();
+    store.ethereum.setClaimsApprovedMXCSignaled(BigInt.tryParse(data['approvedTokenERC20Amount'].toString()));
+    store.ethereum.setClaimsPendingMXCSignaled(BigInt.tryParse(data['pendingTokenERC20Amount'].toString()));
+    store.ethereum.setClaimsRejectedMXCSignaled(BigInt.tryParse(data['rejectedTokenERC20Amount'].toString()));
 
-    // print('done2 $claimsDataMXCSignaled');
+    // Claim Finalized
+    if (data['claimStatus'].toInt() == 1 ) {
+      print('setClaimsDataMXCSignaled with claim finalized status');
+      store.ethereum.setClaimsStatusMXCSignaled(data['claimStatus']);
+    // Claim Pending
+    } else if (data['claimStatus'].toInt() == 0) {
+      print('setClaimsDataMXCSignaled with claim pending status');
+       store.ethereum.setClaimsStatusMXCSignaled(data['claimStatus']);
+    }
+
+    store.ethereum.setClaimsTotalMXCSignaledCapacity(BigInt.tryParse(data['tokenERC20Amount'].toString()));
+    store.ethereum.countClaimsProportionsMXCSignaled();
   }
 
   @action
   void setClaimsDataIOTAPeggedSignaled(Map data) {
     claimsDataIOTAPeggedSignaled = data;
 
-    // TODO - update to be similar to `setClaimsDataMXCSignaled` once we resolve why the lock approved data (except for the proportion)
-    // no longer appears in the UI momentarily if we run `setClaimsDataMXCSignaled` after running `setClaimsDataMXCLocked` 
+    // store.ethereum.setClaimsApprovedIOTAPeggedSignaled(BigInt.tryParse(data['approvedTokenERC20Amount'].toString()));
+    // store.ethereum.setClaimsPendingIOTAPeggedSignaled(BigInt.tryParse(data['pendingTokenERC20Amount'].toString()));
+    // store.ethereum.setClaimsRejectedIOTAPeggedSignaled(BigInt.tryParse(data['rejectedTokenERC20Amount'].toString()));
+
+    // // Claim Finalized
+    // if (data['claimStatus'].toInt() == 1 ) {
+    //   print('setClaimsDataIOTAPeggedSignaled with claim finalized status');
+    //   store.ethereum.setClaimsStatusIOTAPeggedSignaled(data['claimStatus']);
+    // // Claim Pending
+    // } else if (data['claimStatus'].toInt() == 0) {
+    //   print('setClaimsDataMXCSignaled with claim pending status');
+    //    store.ethereum.setClaimsStatusIOTAPeggedSignaled(data['claimStatus']);
+    // }
+
+    // store.ethereum.setClaimsTotalIOTAPeggedSignaledCapacity(BigInt.tryParse(data['tokenERC20Amount'].toString()));
+    // store.ethereum.countClaimsProportionsIOTAPeggedSignaled();
   }
 
   @action

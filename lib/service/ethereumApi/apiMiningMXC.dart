@@ -44,12 +44,14 @@ class EthereumApiMiningMXC {
     var signalWalletStructs = new Map(); 
     signalWalletStructs['claimStatus'] = signalWalletStructsList[0]; 
     signalWalletStructs['approvedTokenERC20Amount'] = signalWalletStructsList[1];
-    signalWalletStructs['term'] = signalWalletStructsList[2];
-    signalWalletStructs['tokenERC20Amount'] = signalWalletStructsList[3];
-    signalWalletStructs['dataHighwayPublicKey'] = signalWalletStructsList[4];
-    signalWalletStructs['contractAddr'] = signalWalletStructsList[5];
-    signalWalletStructs['nonce'] = signalWalletStructsList[6];
-    signalWalletStructs['createdAt'] = signalWalletStructsList[7];
+    signalWalletStructs['pendingTokenERC20Amount'] = signalWalletStructsList[2];
+    signalWalletStructs['rejectedTokenERC20Amount'] = signalWalletStructsList[3];
+    signalWalletStructs['term'] = signalWalletStructsList[4];
+    signalWalletStructs['tokenERC20Amount'] = signalWalletStructsList[5];
+    signalWalletStructs['dataHighwayPublicKey'] = signalWalletStructsList[6];
+    signalWalletStructs['contractAddr'] = signalWalletStructsList[7];
+    signalWalletStructs['nonce'] = signalWalletStructsList[8];
+    signalWalletStructs['createdAt'] = signalWalletStructsList[9];
 
     claimDataSignaled = signalWalletStructs;
     print('Your signaled claim data is: ${signalWalletStructs}');
@@ -67,6 +69,8 @@ class EthereumApiMiningMXC {
     //   final tokenContractAddress = decoded[2] as EthereumAddress;
     //   final claimStatus = decoded[3] as int;
     //   final approvedTokenERC20Amount = decoded[4] as BigInt;
+    //   final pendingTokenERC20Amount = decoded[5] as BigInt;
+    //   final rejectedTokenERC20Amount = decoded[6] as BigInt;
     //   final time = decoded[5] as int;
 
     //   if (user == ownAddress && tokenContractAddress == kContractAddrMXCTestnet) {
@@ -127,12 +131,14 @@ class EthereumApiMiningMXC {
     var lockWalletStructs = new Map(); 
     lockWalletStructs['claimStatus'] = lockWalletStructsList[0]; 
     lockWalletStructs['approvedTokenERC20Amount'] = lockWalletStructsList[1];
-    lockWalletStructs['term'] = lockWalletStructsList[2];
-    lockWalletStructs['tokenERC20Amount'] = lockWalletStructsList[3];
-    lockWalletStructs['dataHighwayPublicKey'] = lockWalletStructsList[4];
-    lockWalletStructs['lockAddr'] = lockWalletStructsList[5];
-    lockWalletStructs['isValidator'] = lockWalletStructsList[6];
-    lockWalletStructs['createdAt'] = lockWalletStructsList[7];
+    lockWalletStructs['pendingTokenERC20Amount'] = lockWalletStructsList[2];
+    lockWalletStructs['rejectedTokenERC20Amount'] = lockWalletStructsList[3];
+    lockWalletStructs['term'] = lockWalletStructsList[4];
+    lockWalletStructs['tokenERC20Amount'] = lockWalletStructsList[5];
+    lockWalletStructs['dataHighwayPublicKey'] = lockWalletStructsList[6];
+    lockWalletStructs['lockAddr'] = lockWalletStructsList[7];
+    lockWalletStructs['isValidator'] = lockWalletStructsList[8];
+    lockWalletStructs['createdAt'] = lockWalletStructsList[9];
 
     claimDataLocked = lockWalletStructs;
     print('Your locked claim data is: ${lockWalletStructs}');
@@ -150,13 +156,30 @@ class EthereumApiMiningMXC {
     //   final tokenContractAddress = decoded[2] as EthereumAddress;
     //   final claimStatus = decoded[3] as int;
     //   final approvedTokenERC20Amount = decoded[4] as BigInt;
-    //   final time = decoded[5] as int;
+    //   final pendingTokenERC20Amount = decoded[5] as BigInt;
+    //   final rejectedTokenERC20Amount = decoded[6] as BigInt;
+    //   final time = decoded[7] as int;
 
     //   if (user == ownAddress && tokenContractAddress == kContractAddrMXCTestnet && claimType == 0) {
     //     print('Updated locked claim data ($claimType) of $user using token $tokenContractAddress to status $claimStatus');
     //     lockWalletStructsList = await client.call(
     //         contract: contract, function: lockWalletStructsFunction, params: [ownAddress, kContractAddrMXCTestnet]);
-    //     claimDataLocked = lockWalletStructsList.first;
+
+    //     // TODO - refactor into utils since this is repeat code
+    //     // Convert List to Map so we have named keys
+    //     var lockWalletStructs = new Map(); 
+    //     lockWalletStructs['claimStatus'] = lockWalletStructsList[0]; 
+    //     lockWalletStructs['approvedTokenERC20Amount'] = lockWalletStructsList[1];
+    //     lockWalletStructs['pendingTokenERC20Amount'] = lockWalletStructsList[2];
+    //     lockWalletStructs['rejectedTokenERC20Amount'] = lockWalletStructsList[3];
+    //     lockWalletStructs['term'] = lockWalletStructsList[4];
+    //     lockWalletStructs['tokenERC20Amount'] = lockWalletStructsList[5];
+    //     lockWalletStructs['dataHighwayPublicKey'] = lockWalletStructsList[6];
+    //     lockWalletStructs['lockAddr'] = lockWalletStructsList[7];
+    //     lockWalletStructs['isValidator'] = lockWalletStructsList[8];
+    //     lockWalletStructs['createdAt'] = lockWalletStructsList[9];
+
+    //     claimDataLocked = lockWalletStructs;
     //     print('Your latest locked claim data is: ${claimDataLocked}');
     //   }
     // });

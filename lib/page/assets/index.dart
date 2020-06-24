@@ -383,7 +383,7 @@ Widget tabClaimEligibilityMXC(
         content(dic['rejected']),
       ]),
       Row(children: <Widget>[
-        content(dic['locked']),
+        content('${dic['locked']} ${store.ethereum.claimsStatusMXCLocked.toString() == '1' ? '(finalized)' : ''}'),
         content(
             '${Fmt.balanceNoDecimals(store.ethereum.claimsApprovedMXCLocked.toString(), decimals: decimals)}(${store.ethereum.claimsApprovedProportionsMXCLocked}%)',
             color: Colors.green),
@@ -395,7 +395,7 @@ Widget tabClaimEligibilityMXC(
             color: Colors.red)
       ]),
       Row(children: <Widget>[
-        content(dic['signaled']),
+        content('${dic['signaled']} ${store.ethereum.claimsStatusMXCSignaled.toString() == '1' ? '(finalized)' : ''}'),
         content(
             '${Fmt.balanceNoDecimals(store.ethereum.claimsApprovedMXCSignaled.toString(), decimals: decimals)}(${store.ethereum.claimsApprovedProportionsMXCSignaled}%)',
             color: Colors.green),
@@ -435,7 +435,7 @@ Widget tabClaimEligibilityIOTA(
         content('N/A', color: Colors.grey),
       ]),
       Row(children: <Widget>[
-        content(dic['signaled']),
+        content('${dic['signaled']} ${store.ethereum.claimsStatusIOTAPeggedSignaled.toString() == '1' ? '(finalized)' : ''}'),
         content(
             '${Fmt.balanceNoDecimals(store.ethereum.claimsApprovedIOTAPeggedSignaled.toString(), decimals: decimals)}(${store.ethereum.claimsApprovedProportionsIOTAPeggedSignaled}%)',
             color: Colors.green),
