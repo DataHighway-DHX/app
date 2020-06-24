@@ -124,17 +124,17 @@ abstract class _EthereumStore with Store {
 
   @action
   void setClaimsPendingMXCSignaled(BigInt pending) {
-    claimsPendingMXCLocked = pending;
+    claimsPendingMXCSignaled = pending;
   }
 
   @action
   void setClaimsApprovedMXCSignaled(BigInt approved) {
-    claimsApprovedMXCLocked = approved;
+    claimsApprovedMXCSignaled = approved;
   }
 
   @action
   void setClaimsRejectedMXCSignaled(BigInt rejected) {
-    claimsRejectedMXCLocked = rejected;
+    claimsRejectedMXCSignaled = rejected;
   }
 
   @action
@@ -158,24 +158,22 @@ abstract class _EthereumStore with Store {
     print(data['claimStatus'].runtimeType);
     claimsDataMXCLocked = data;
 
-    // store.ethereum.setClaimsApprovedMXCLocked(BigInt.tryParse(data['approvedTokenERC20Amount'].toString()));
-    // store.ethereum.setClaimsPendingMXCLocked(BigInt.tryParse(data['pendingTokenERC20Amount'].toString()));
-    // store.ethereum.setClaimsRejectedMXCLocked(BigInt.tryParse(data['rejectedTokenERC20Amount'].toString()));
+    store.ethereum.setClaimsApprovedMXCLocked(BigInt.tryParse(data['approvedTokenERC20Amount'].toString()));
+    store.ethereum.setClaimsPendingMXCLocked(BigInt.tryParse(data['pendingTokenERC20Amount'].toString()));
+    store.ethereum.setClaimsRejectedMXCLocked(BigInt.tryParse(data['rejectedTokenERC20Amount'].toString()));
 
-    // // Claim Finalized
-    // if (data['claimStatus'].toInt() == 1 ) {
-    //   print('setClaimsDataMXCLocked with claim finalized status');
-    //   store.ethereum.setClaimsStatusMXCLocked(data['claimStatus']);
-    // // Claim Pending
-    // } else if (data['claimStatus'].toInt() == 0) {
-    //   print('setClaimsDataMXCLocked with claim pending status');
-    //    store.ethereum.setClaimsStatusMXCLocked(data['claimStatus']);
-    // }
+    // Claim Finalized
+    if (data['claimStatus'].toInt() == 1 ) {
+      print('setClaimsDataMXCLocked with claim finalized status');
+      store.ethereum.setClaimsStatusMXCLocked(data['claimStatus']);
+    // Claim Pending
+    } else if (data['claimStatus'].toInt() == 0) {
+      print('setClaimsDataMXCLocked with claim pending status');
+       store.ethereum.setClaimsStatusMXCLocked(data['claimStatus']);
+    }
 
-    // store.ethereum.setClaimsTotalMXCLockedCapacity(BigInt.tryParse(data['tokenERC20Amount'].toString()));
-    // store.ethereum.countClaimsProportionsMXCLocked();
-
-    // print('done1 $claimsApprovedMXCLocked');
+    store.ethereum.setClaimsTotalMXCLockedCapacity(BigInt.tryParse(data['tokenERC20Amount'].toString()));
+    store.ethereum.countClaimsProportionsMXCLocked();
   }
 
   @action
@@ -202,8 +200,6 @@ abstract class _EthereumStore with Store {
 
     store.ethereum.setClaimsTotalMXCSignaledCapacity(BigInt.tryParse(data['tokenERC20Amount'].toString()));
     store.ethereum.countClaimsProportionsMXCSignaled();
-
-    print('done2 $claimsDataMXCSignaled');
   }
 
   @action
