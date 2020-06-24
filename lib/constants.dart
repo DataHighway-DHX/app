@@ -3,8 +3,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 var kEnvironment = DotEnv().env['ENVIRONMENT'];
 
-var kAbiCodeFile = "abi_mxc_mainnet.json";
-
 // Account
 var kMnemonicSeed = DotEnv().env['MNENOMIC'];
 var kAccountAddrTestnet =
@@ -19,17 +17,29 @@ var kRpcUrlInfuraTestnetRopsten =
     'https://ropsten.infura.io/v3/${DotEnv().env['INFURA_API_PROJECT_ID']}';
 var kWsUrlInfuraTestnetRopsten =
     'wss://ropsten.infura.io/ws/v3/${DotEnv().env['INFURA_API_PROJECT_ID']}';
-
-// FIXME - deploy contract and replace address below
 final EthereumAddress kContractAddrDataHighwayLockdropTestnet =
     EthereumAddress.fromHex(DotEnv().env['CONTRACT_ADDRESS_LOCKDROP_TESTNET']);
 final EthereumAddress kContractAddrMXCTestnet =
     EthereumAddress.fromHex(DotEnv().env['CONTRACT_ADDRESS_MXC_TESTNET']);
+// TODO - add address of IOTA Pegged ERC20 contract to .env file
+final EthereumAddress kContractAddrIOTAPeggedTestnet =
+    EthereumAddress.fromHex(DotEnv().env['CONTRACT_ADDRESS_IOTA_PEGGED_TESTNET']);
+var kAbiCodeFileMXC = "abi_mxc.json";
+var kAbiCodeFileDataHighwayLockdropTestnet = "abi_datahighway_lockdrop_testnet.json";
+// TODO - deploy IOTA Pegged ERC20 contract and copy ABI into JSON file
+var kAbiCodeFileDataHighwayIOTAPeggedTestnet = "abi_datahighway_iota_pegged_testnet.json";
 
 // // Mainnet
 // var kRpcUrlInfuraMainnet =
 //     'https://mainnet.infura.io/v3/${DotEnv().env['INFURA_API_PROJECT_ID']}';
 // var kWsUrlInfuraMainnet =
 //     'wss://mainnet.infura.io/v3/${DotEnv().env['INFURA_API_PROJECT_ID']}';
-// final EthereumAddress kContractAddrMXCTestnet =
-//     EthereumAddress.fromHex('0x5Ca381bBfb58f0092df149bD3D243b08B9a8386e');
+// final EthereumAddress kContractAddrDataHighwayLockdropMainnet =
+//     EthereumAddress.fromHex(DotEnv().env['CONTRACT_ADDRESS_LOCKDROP_MAINNET']);
+// final EthereumAddress kContractAddrMXCMainnet =
+//     EthereumAddress.fromHex(DotEnv().env['CONTRACT_ADDRESS_MXC_MAINNET']);
+// final EthereumAddress kContractAddrIOTAPeggedMainnet =
+//     EthereumAddress.fromHex(DotEnv().env['CONTRACT_ADDRESS_IOTA_PEGGED_MAINNET']);
+// Note: kAbiCodeFileMXC is same for both testnet and mainnet
+// var kAbiCodeFileDataHighwayLockdropMainnet = "abi_datahighway_lockdrop_mainnet.json";
+// var kAbiCodeFileDataHighwayIOTAPeggedMainnet = "abi_datahighway_iota_pegged_mainnet.json";

@@ -41,202 +41,8 @@ class _AssetsState extends State<Assets> {
   Future<void> _fetchBalance() async {
     await Future.wait([
       webApi.assets.fetchBalance(store.account.currentAccount.pubKey),
-      webApi.staking.fetchAccountStaking(store.account.currentAccount.pubKey),
-      ethereum.getBalanceMXC()
+      webApi.staking.fetchAccountStaking(store.account.currentAccount.pubKey)
     ]);
-  }
-
-  Future<BigInt> _fetchMXCLocked() async {
-    print('Getting MXC locked');
-    EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
-    BigInt locked = await ethApiMiningMXC
-        .getAccountLockedMXCAmountFromDataHighwayMXCMiningContract(
-            kRpcUrlInfuraTestnetRopsten,
-            kWsUrlInfuraTestnetRopsten,
-            kContractAddrMXCTestnet,
-            kMnemonicSeed);
-    return locked;
-  }
-
-  Future<BigInt> _fetchMXCLockedClaimsPending() async {
-    print('Getting amount of pending reward claims for locking MXC');
-    EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
-    BigInt claimsPending = await ethApiMiningMXC
-        .getAccountLockedClaimsPendingOfMXCAmountFromDataHighwayMXCMiningContract(
-            kContractAddrMXCTestnet,
-            kMnemonicSeed);
-    return claimsPending;
-  }
-
-  Future<BigInt> _fetchMXCLockedClaimsApproved() async {
-    print('Getting amount of approved reward claims for locking MXC');
-    EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
-    BigInt claimsApproved = await ethApiMiningMXC
-        .getAccountLockedClaimsApprovedOfMXCAmountFromDataHighwayMXCMiningContract(
-            kContractAddrMXCTestnet,
-            kMnemonicSeed);
-    return claimsApproved;
-  }
-
-  Future<BigInt> _fetchMXCLockedClaimsRejected() async {
-    print('Getting amount of rejected reward claims for locking MXC');
-    EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
-    BigInt claimsRejected = await ethApiMiningMXC
-        .getAccountLockedClaimsRejectedOfMXCAmountFromDataHighwayMXCMiningContract(
-            kContractAddrMXCTestnet,
-            kMnemonicSeed);
-    return claimsRejected;
-  }
-
-  Future<BigInt> _countMXCLockedTotalClaimed() async {
-    BigInt count = await _fetchMXCLockedClaimsPending() +
-        await _fetchMXCLockedClaimsApproved() +
-        await _fetchMXCLockedClaimsRejected();
-    return count;
-  }
-
-  Future<Map<String, double>>
-      _calculateMXCLockedClaimEligibilityProportions() async {
-    Map<String, double> claimEligibilityProportionsMXCLocked = {
-      'pending': await _fetchMXCLockedClaimsPending() /
-          await _countMXCLockedTotalClaimed(),
-      'approved': await _fetchMXCLockedClaimsApproved() /
-          await _countMXCLockedTotalClaimed(),
-      'rejected': await _fetchMXCLockedClaimsRejected() /
-          await _countMXCLockedTotalClaimed()
-    };
-    return claimEligibilityProportionsMXCLocked;
-  }
-
-  Future<BigInt> _fetchMXCSignalled() async {
-    print('Getting MXC signalled');
-    EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
-    BigInt signalled = await ethApiMiningMXC
-        .getAccountSignalledMXCAmountFromDataHighwayMXCMiningContract(
-            kRpcUrlInfuraTestnetRopsten,
-            kWsUrlInfuraTestnetRopsten,
-            kContractAddrMXCTestnet,
-            kMnemonicSeed);
-    return signalled;
-  }
-
-  Future<BigInt> _fetchMXCSignalledClaimsPending() async {
-    print('Getting amount of pending reward claims for signalling MXC');
-    EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
-    BigInt claimsPending = await ethApiMiningMXC
-        .getAccountSignalledClaimsPendingOfMXCAmountFromDataHighwayMXCMiningContract(
-            kContractAddrMXCTestnet,
-            kMnemonicSeed);
-    return claimsPending;
-  }
-
-  Future<BigInt> _fetchMXCSignalledClaimsApproved() async {
-    print('Getting amount of approved reward claims for signalling MXC');
-    EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
-    BigInt claimsApproved = await ethApiMiningMXC
-        .getAccountSignalledClaimsApprovedOfMXCAmountFromDataHighwayMXCMiningContract(
-            kContractAddrMXCTestnet,
-            kMnemonicSeed);
-    return claimsApproved;
-  }
-
-  Future<BigInt> _fetchMXCSignalledClaimsRejected() async {
-    print('Getting amount of rejected reward claims for signalling MXC');
-    EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
-    BigInt claimsRejected = await ethApiMiningMXC
-        .getAccountSignalledClaimsRejectedOfMXCAmountFromDataHighwayMXCMiningContract(
-            kContractAddrMXCTestnet,
-            kMnemonicSeed);
-    return claimsRejected;
-  }
-
-  Future<BigInt> _countMXCSignalledTotalClaimed() async {
-    BigInt count = await _fetchMXCSignalledClaimsPending() +
-        await _fetchMXCSignalledClaimsApproved() +
-        await _fetchMXCSignalledClaimsRejected();
-    return count;
-  }
-
-  Future<Map<String, double>>
-      _calculateMXCSignalledClaimEligibilityProportions() async {
-    Map<String, double> claimEligibilityProportionsMXCSignalled = {
-      'pending': await _fetchMXCSignalledClaimsPending() /
-          await _countMXCSignalledTotalClaimed(),
-      'approved': await _fetchMXCSignalledClaimsApproved() /
-          await _countMXCSignalledTotalClaimed(),
-      'rejected': await _fetchMXCSignalledClaimsRejected() /
-          await _countMXCSignalledTotalClaimed()
-    };
-    return claimEligibilityProportionsMXCSignalled;
-  }
-
-  Future<BigInt> _fetchIOTAPeggedSignalled() async {
-    print('Getting IOTA (pegged) signalled');
-    EthereumApiMiningIOTAPegged ethApiMiningIOTAPegged =
-        await EthereumApiMiningIOTAPegged();
-    BigInt signalled = await ethApiMiningIOTAPegged
-        .getAccountSignalledIOTAPeggedAmountFromDataHighwayIOTAPeggedMiningContract(
-            kRpcUrlInfuraTestnetRopsten,
-            kWsUrlInfuraTestnetRopsten,
-            kContractAddrMXCTestnet,
-            kMnemonicSeed);
-    return signalled;
-  }
-
-  Future<BigInt> _fetchIOTAPeggedSignalledClaimsPending() async {
-    print(
-        'Getting amount of pending reward claims for signalling IOTA (pegged)');
-    EthereumApiMiningIOTAPegged ethApiMiningIOTAPegged =
-        await EthereumApiMiningIOTAPegged();
-    BigInt claimsSignalledPending = await ethApiMiningIOTAPegged
-        .getAccountSignalledClaimsPendingOfIOTAPeggedAmountFromDataHighwayIOTAPeggedMiningContract(
-            kContractAddrMXCTestnet,
-            kMnemonicSeed);
-    return claimsSignalledPending;
-  }
-
-  Future<BigInt> _fetchIOTAPeggedSignalledClaimsApproved() async {
-    print(
-        'Getting amount of approved reward claims for signalling IOTA (pegged)');
-    EthereumApiMiningIOTAPegged ethApiMiningIOTAPegged =
-        await EthereumApiMiningIOTAPegged();
-    BigInt getClaimsSignalledApproved = await ethApiMiningIOTAPegged
-        .getAccountSignalledClaimsApprovedOfIOTAPeggedAmountFromDataHighwayIOTAPeggedMiningContract(
-            kContractAddrMXCTestnet,
-            kMnemonicSeed);
-    return getClaimsSignalledApproved;
-  }
-
-  Future<BigInt> _fetchIOTAPeggedSignalledClaimsRejected() async {
-    print(
-        'Getting amount of rejected reward claims for signalling IOTA (pegged)');
-    EthereumApiMiningIOTAPegged ethApiMiningIOTAPegged =
-        await EthereumApiMiningIOTAPegged();
-    BigInt claimsSignalledRejected = await ethApiMiningIOTAPegged
-        .getAccountSignalledClaimsRejectedOfIOTAPeggedAmountFromDataHighwayIOTAPeggedMiningContract(
-            kContractAddrMXCTestnet,
-            kMnemonicSeed);
-    return claimsSignalledRejected;
-  }
-
-  Future<BigInt> _countIOTAPeggedSignalledTotalClaimed() async {
-    BigInt count = await _fetchIOTAPeggedSignalledClaimsPending() +
-        await _fetchIOTAPeggedSignalledClaimsApproved() +
-        await _fetchIOTAPeggedSignalledClaimsRejected();
-    return count;
-  }
-
-  Future<Map<String, double>>
-      _calculateIOTAPeggedSignalledClaimEligibilityProportions() async {
-    Map<String, double> claimEligibilityProportionsIOTAPeggedSignalled = {
-      'pending': await _fetchIOTAPeggedSignalledClaimsPending() /
-          await _countIOTAPeggedSignalledTotalClaimed(),
-      'approved': await _fetchIOTAPeggedSignalledClaimsApproved() /
-          await _countIOTAPeggedSignalledTotalClaimed(),
-      'rejected': await _fetchIOTAPeggedSignalledClaimsRejected() /
-          await _countIOTAPeggedSignalledTotalClaimed()
-    };
-    return claimEligibilityProportionsIOTAPeggedSignalled;
   }
 
   Widget _buildTopCard(BuildContext context) {
@@ -290,6 +96,7 @@ class _AssetsState extends State<Assets> {
     return Observer(
       builder: (_) {
         String symbol = store.settings.networkState.tokenSymbol;
+        int decimals = store.settings.networkState.tokenDecimals;
         String networkName = store.settings.networkName ?? '';
         List expandSet = store.assets.isExpand;
 
@@ -320,44 +127,17 @@ class _AssetsState extends State<Assets> {
                 store: store,
                 symbol: AssetsConfigs.mxc,
                 name: AssetsConfigs.ethereum,
-                balance: '${store.ethereum.balanceMXC}',
+                balance: Fmt.balance(store.ethereum.balanceMXC.toString(), decimals: decimals),
                 expandSet: expandSet,
                 expandTap: () => store.assets.setIsExpand(AssetsConfigs.mxc),
-              //   methods: {
-              //     'fetchMXCLocked': _fetchMXCLocked,
-              //     'fetchMXCLockedClaimsPending': _fetchMXCLockedClaimsPending,
-              //     'fetchMXCLockedClaimsApproved':
-              //         _fetchMXCLockedClaimsApproved,
-              //     'fetchMXCLockedClaimsRejected':
-              //         _fetchMXCLockedClaimsRejected,
-              //     'calculateMXCLockedClaimEligibilityProportions':
-              //         _calculateMXCLockedClaimEligibilityProportions,
-              //     'fetchMXCSignalled': _fetchMXCSignalled,
-              //     'fetchMXCSignalledClaimsPending':
-              //         _fetchMXCSignalledClaimsPending,
-              //     'fetchMXCSignalledClaimsApproved':
-              //         _fetchMXCSignalledClaimsApproved,
-              //     'fetchMXCSignalledClaimsRejected':
-              //         _fetchMXCSignalledClaimsRejected,
-              //     'calculateMXCSignalledClaimEligibilityProportions':
-              //         _calculateMXCSignalledClaimEligibilityProportions,
-              //     'fetchIOTAPeggedSignalled': _fetchIOTAPeggedSignalled,
-              //     'fetchIOTAPeggedSignalledClaimsPending':
-              //         _fetchIOTAPeggedSignalledClaimsPending,
-              //     'fetchIOTAPeggedSignalledClaimsApproved':
-              //         _fetchIOTAPeggedSignalledClaimsApproved,
-              //     'fetchIOTAPeggedSignalledClaimsRejected':
-              //         _fetchIOTAPeggedSignalledClaimsRejected,
-              //     'calculateIOTAPeggedSignalledClaimEligibilityProportions':
-              //         _calculateIOTAPeggedSignalledClaimEligibilityProportions
-              //   }
+                methods: {}
               ),
               item(
                 context,
                 store: store,
                 symbol: AssetsConfigs.iota,
                 name: AssetsConfigs.pegged,
-                balance: '${store.ethereum.balanceIOTAPegged}',
+                balance: Fmt.balance(store.ethereum.balanceIOTAPegged.toString(), decimals: decimals),
                 expandSet: expandSet,
                 expandTap: () => store.assets.setIsExpand(AssetsConfigs.iota),
               )
@@ -369,40 +149,31 @@ class _AssetsState extends State<Assets> {
   }
 }
 
-Widget item(BuildContext context,{AppStore store, String symbol = '', String name = '', String balance = '0',List expandSet, Function expandTap, Map methods}) {
+Widget item(BuildContext context,
+    {AppStore store,
+    String symbol = '',
+    String name = '',
+    String balance = '0',
+    List expandSet,
+    Function expandTap,
+    Map methods}) {
   return RoundedCard(
-    margin: EdgeInsets.only(top: 16),
-    child: Column(
-      children: <Widget>[
-        itemHeader(
-          context, 
-          balance: balance, 
-          symbol: symbol, 
-          name: name
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            itemButtons(context),
-            operate(
-              context,
-              name: symbol, 
-              expandSet: expandSet, 
-              expandTap: expandTap
-            ),
-          ]
-        ),
+      margin: EdgeInsets.only(top: 16),
+      child: Column(children: <Widget>[
+        itemHeader(context, balance: balance, symbol: symbol, name: name),
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+          itemButtons(context),
+          operate(context,
+              name: symbol, expandSet: expandSet, expandTap: expandTap),
+        ]),
         Visibility(
-          visible: expandSet.contains(symbol),
-          child: expandTab(context, store, symbol)
-        )
-      ]
-    )
-  );
+            visible: expandSet.contains(symbol),
+            child: expandTab(context, store, symbol))
+      ]));
 }
 
-Widget itemHeader(BuildContext context, {String balance = '0', String symbol, String name = ''}) {
-
+Widget itemHeader(BuildContext context,
+    {String balance = '0', String symbol, String name = ''}) {
   return ListTile(
     // contentPadding: EdgeInsets.symmetric(vertical:0),
     leading: Container(
@@ -454,23 +225,20 @@ Widget itemHeader(BuildContext context, {String balance = '0', String symbol, St
 
 Widget operate(BuildContext context, {name = '', expandSet, expandTap}) {
   return Container(
-    child: Row(
-      children: <Widget>[
-        GestureDetector(
-          child: Icon(
-            expandSet.contains(name) ? Icons.expand_less : Icons.expand_more,
-          ),
-          onTap: expandTap,
-        ),
-        GestureDetector(
-          child: Icon(
-            Icons.fullscreen,
-          ),
-          onTap: () => Navigator.pushNamed(context, AssetPage.route),
-        )
-      ]
+      child: Row(children: <Widget>[
+    GestureDetector(
+      child: Icon(
+        expandSet.contains(name) ? Icons.expand_less : Icons.expand_more,
+      ),
+      onTap: expandTap,
+    ),
+    GestureDetector(
+      child: Icon(
+        Icons.fullscreen,
+      ),
+      onTap: () => Navigator.pushNamed(context, AssetPage.route),
     )
-  );
+  ]));
 }
 
 final List<String> itemButtonsList = [
@@ -537,141 +305,118 @@ void _tapBtns(context, index) {
   }
 }
 
-
 final itemList = {
-  'menus': ['claim.eligibility','rewards'],
+  'menus': ['claim.eligibility', 'rewards'],
   'menus_DHX': ['rewards']
 };
-
 
 Widget expandTab(BuildContext context, AppStore store, String symbol) {
   var dic = I18n.of(context).assets;
   String menus = symbol == 'DHX' ? 'menus_DHX' : 'menus';
 
   return DefaultTabController(
-    length: itemList[menus].length,
-    child: Column(children: <Widget>[
-      TabBar(
-        onTap: (index) {},
-        isScrollable: true,
-        // indicator: const BoxDecoration(),
-        indicatorSize: TabBarIndicatorSize.label,
-        labelColor: Colors.black87,
-        unselectedLabelColor: Colors.black38,
-        tabs: itemList[menus].map((itemTab) {
-          if (itemTab == 'claim.eligibility') {
-            return Tab(
-              text: '${dic['claim.eligibility']} ($symbol)',
-            );
-          } else {
-            return Tab(
-              text: '${dic[itemTab]}($symbol)',
-            );
-          }
-        }).toList(),
-      ),
-      Container(
-        height: 110,
-        child: TabBarView(
-            children: itemList[menus].map((itemTab) {
-              switch(symbol){
+      length: itemList[menus].length,
+      child: Column(children: <Widget>[
+        TabBar(
+          onTap: (index) {},
+          isScrollable: true,
+          // indicator: const BoxDecoration(),
+          indicatorSize: TabBarIndicatorSize.label,
+          labelColor: Colors.black87,
+          unselectedLabelColor: Colors.black38,
+          tabs: itemList[menus].map((itemTab) {
+            if (itemTab == 'claim.eligibility') {
+              return Tab(
+                text: '${dic['claim.eligibility']} ($symbol)',
+              );
+            } else {
+              return Tab(
+                text: '${dic[itemTab]}($symbol)',
+              );
+            }
+          }).toList(),
+        ),
+        Container(
+            height: 110,
+            child: TabBarView(
+                children: itemList[menus].map((itemTab) {
+              switch (symbol) {
                 case AssetsConfigs.mxc:
                   if (itemTab == 'claim.eligibility') {
                     return tabClaimEligibilityMXC(context, store, symbol);
                   } else {
                     return tabRewards(context, '0', '0');
                   }
-                break;
+                  break;
                 case AssetsConfigs.iota:
                   if (itemTab == 'claim.eligibility') {
                     return tabClaimEligibilityIOTA(context, store, symbol);
                   } else {
                     return tabRewards(context, '0', '0');
                   }
-                break;
+                  break;
                 default:
                   int staking = store.staking.staked ?? 0;
                   int total = store.staking.accountRewardTotal ?? 0;
                   return tabRewards(context, '$staking', '$total');
               }
-        }).toList()))
-      ]
-    )
-  );
+            }).toList()))
+      ]));
 }
 
-Widget tabClaimEligibilityMXC(BuildContext context, AppStore store, String symbol) {
+Widget tabClaimEligibilityMXC(
+    BuildContext context, AppStore store, String symbol) {
   var dic = I18n.of(context).assets;
+  int decimals = store.settings.networkState.tokenDecimals;
 
   return Center(
-    child: Container(
-      alignment: Alignment.center,
-      padding: const EdgeInsets.all(8),
-      child: Column(children: <Widget>[
-        Row(children: <Widget>[
-          content(
-            '',
-          ),
-          content(dic['approved']),
-          content(dic['pending']),
-          content(dic['rejected']),
-        ]),
-        Row(
-          children: <Widget>[
-            content(dic['locked']),
-            content('${store.ethereum.claimsApprovedMXCLocked}(${store.ethereum.claimsApprovedProportionsMXCLocked}%)',color: Colors.green),
-            content('${store.ethereum.claimsPendingMXCLocked}(${store.ethereum.claimsPendingProportionsMXCLocked}%)',color: Colors.orange),
-            content('${store.ethereum.claimsRejectedMXCLocked}(${store.ethereum.claimsRejectedProportionsMXCLocked}%)',color: Colors.red)
-          ]
+      child: Container(
+    alignment: Alignment.center,
+    padding: const EdgeInsets.all(8),
+    child: Column(children: <Widget>[
+      Row(children: <Widget>[
+        content(
+          '',
         ),
-        Row(
-          children: <Widget>[
-            content(dic['signaled']),
-            content('${store.ethereum.claimsApprovedMXCSignaled}(${store.ethereum.claimsApprovedProportionsMXCSignaled}%)',color: Colors.green),
-            content('${store.ethereum.claimsPendingMXCSignaled}(${store.ethereum.claimsPendingProportionsMXCSignaled}%)',color: Colors.orange),
-            content('${store.ethereum.claimsRejectedMXCSignaled}(${store.ethereum.claimsRejectedProportionsMXCSignaled}%)',color: Colors.red)
-          ]
-        )
-        // Row(children: <Widget>[
-        //   content(dic['locked']),
-        //   content(
-        //       '${methods['fetchMXCLockedClaimsApproved']()} ${methods['calculateMXCLockedClaimEligibilityProportions']()['approved']}%',
-        //       color: Colors.green), // Approved
-        //   content(
-        //       '${methods['fetchMXCLockedClaimsPending']()} ${methods['calculateMXCLockedClaimEligibilityProportions']()['pending']}%',
-        //       color: Colors.orange), // Pending
-        //   content(
-        //       '${methods['fetchMXCLockedClaimsRejected']()} ${methods['calculateMXCLockedClaimEligibilityProportions']()['rejected']}%',
-        //       color: Colors.red), // Rejected
-        // ]),
-        // Row(children: <Widget>[
-        //   content(dic['signaled']),
-        //   content(
-        //       '${methods['fetchMXCSignalledClaimsApproved']()} ${methods['calculateMXCSignalledClaimEligibilityProportions']()['approved']}%',
-        //       color: methods['fetchMXCSignalledClaimsApproved']() > 0
-        //           ? Colors.green
-        //           : Colors.grey), // Approved
-        //   content(
-        //       '${methods['fetchMXCSignalledClaimsPending']()} ${methods['calculateMXCSignalledClaimEligibilityProportions']()['pending']}%',
-        //       color: methods['fetchMXCSignalledClaimsPending']() > 0
-        //           ? Colors.orange
-        //           : Colors.grey), // Pending
-        //   content(
-        //       '${methods['fetchMXCSignalledClaimsRejected']()} ${methods['calculateMXCSignalledClaimEligibilityProportions']()['rejected']}%',
-        //       color: methods['fetchMXCSignalledClaimsRejected']()
-        //           ? Colors.red
-        //           : Colors.grey), // Rejected
-        // ]),
+        content(dic['approved']),
+        content(dic['pending']),
+        content(dic['rejected']),
       ]),
-    )
-  );
+      Row(children: <Widget>[
+        content(dic['locked']),
+        content(
+            '${Fmt.balanceNoDecimals(store.ethereum.claimsApprovedMXCLocked.toString(), decimals: decimals)}(${store.ethereum.claimsApprovedProportionsMXCLocked}%)',
+            color: Colors.green),
+        content(
+            '${Fmt.balanceNoDecimals(store.ethereum.claimsPendingMXCLocked.toString(), decimals: decimals)}(${store.ethereum.claimsPendingProportionsMXCLocked}%)',
+            color: Colors.orange),
+        content(
+            '${Fmt.balanceNoDecimals(store.ethereum.claimsRejectedMXCLocked.toString(), decimals: decimals)}(${store.ethereum.claimsRejectedProportionsMXCLocked}%)',
+            color: Colors.red)
+      ]),
+      Row(children: <Widget>[
+        content(dic['signaled']),
+        content(
+            '${Fmt.balanceNoDecimals(store.ethereum.claimsApprovedMXCSignaled.toString(), decimals: decimals)}(${store.ethereum.claimsApprovedProportionsMXCSignaled}%)',
+            color: Colors.green),
+        content(
+            '${Fmt.balanceNoDecimals(store.ethereum.claimsPendingMXCSignaled.toString(), decimals: decimals)}(${store.ethereum.claimsPendingProportionsMXCSignaled}%)',
+            color: Colors.orange),
+        content(
+            '${Fmt.balanceNoDecimals(store.ethereum.claimsRejectedMXCSignaled.toString(), decimals: decimals)}(${store.ethereum.claimsRejectedProportionsMXCSignaled}%)',
+            color: Colors.red)
+      ])
+    ]),
+  ));
 }
 
-Widget tabClaimEligibilityIOTA(BuildContext context, AppStore store, String symbol) {
+Widget tabClaimEligibilityIOTA(
+    BuildContext context, AppStore store, String symbol) {
   var dic = I18n.of(context).assets;
+  int decimals = store.settings.networkState.tokenDecimals;
 
   return Center(
-    child: Container(
+      child: Container(
     alignment: Alignment.center,
     padding: const EdgeInsets.all(8),
     child: Column(children: <Widget>[
@@ -691,24 +436,15 @@ Widget tabClaimEligibilityIOTA(BuildContext context, AppStore store, String symb
       ]),
       Row(children: <Widget>[
         content(dic['signaled']),
-        content('${store.ethereum.claimsApprovedIOTAPeggedSignaled}(${store.ethereum.claimsApprovedProportionsIOTAPeggedSignaled}%)',color: Colors.green),
-        content('${store.ethereum.claimsPendingIOTAPeggedSignaled}(${store.ethereum.claimsPendingProportionsIOTAPeggedSignaled}%)',color: Colors.orange),
-        content('${store.ethereum.claimsRejectedIOTAPeggedSignaled}(${store.ethereum.claimsRejectedProportionsIOTAPeggedSignaled}%)',color: Colors.red)
-        // content(
-        //     '${methods['fetchIOTAPeggedSignalledClaimsApproved']()} ${methods['calculateIOTAPeggedSignalledClaimEligibilityProportions']()['approved']}%',
-        //     color: methods['fetchIOTAPeggedSignalledClaimsApproved']() > 0
-        //         ? Colors.green
-        //         : Colors.grey), // Approved
-        // content(
-        //     '${methods['fetchIOTAPeggedSignalledClaimsPending']()} ${methods['calculateIOTAPeggedSignalledClaimEligibilityProportions']()['pending']}%',
-        //     color: methods['fetchIOTAPeggedSignalledClaimsPending']() > 0
-        //         ? Colors.orange
-        //         : Colors.grey), // Pending
-        // content(
-        //     '${methods['fetchIOTAPeggedSignalledClaimsRejected']()} ${methods['calculateIOTAPeggedSignalledClaimEligibilityProportions']()['rejected']}%',
-        //     color: methods['fetchIOTAPeggedSignalledClaimsRejected']() > 0
-        //         ? Colors.red
-        //         : Colors.grey), // Rejected
+        content(
+            '${Fmt.balanceNoDecimals(store.ethereum.claimsApprovedIOTAPeggedSignaled.toString(), decimals: decimals)}(${store.ethereum.claimsApprovedProportionsIOTAPeggedSignaled}%)',
+            color: Colors.green),
+        content(
+            '${Fmt.balanceNoDecimals(store.ethereum.claimsPendingIOTAPeggedSignaled.toString(), decimals: decimals)}(${store.ethereum.claimsPendingProportionsIOTAPeggedSignaled}%)',
+            color: Colors.orange),
+        content(
+            '${Fmt.balanceNoDecimals(store.ethereum.claimsRejectedIOTAPeggedSignaled.toString(), decimals: decimals)}(${store.ethereum.claimsRejectedProportionsIOTAPeggedSignaled}%)',
+            color: Colors.red)
       ]),
     ]),
   ));
@@ -718,34 +454,32 @@ Widget tabRewards(BuildContext context, String staking, String total) {
   var dic = I18n.of(context).assets;
 
   return Center(
-    child: Container(
-      alignment: Alignment.center,
-      padding: const EdgeInsets.all(8),
-      child: Column(children: <Widget>[
-        Row(children: <Widget>[
-          content(dic['staking']),
-          content(
-            'MSB',
-          ),
-          content(dic['total']),
-        ]),
-        Row(children: <Widget>[
-          content(
-            staking,
-          ),
-          content(
-            '1.025',
-          ),
-          content(
-            total, 
-            color: double.parse(total) >= 0 ? Colors.green : Colors.red
-          ),
-        ])
+      child: Container(
+    alignment: Alignment.center,
+    padding: const EdgeInsets.all(8),
+    child: Column(children: <Widget>[
+      Row(children: <Widget>[
+        content(dic['staking']),
+        content(
+          'MSB',
+        ),
+        content(dic['total']),
       ]),
-    ));
-  }
+      Row(children: <Widget>[
+        content(
+          staking,
+        ),
+        content(
+          '1.025',
+        ),
+        content(total,
+            color: double.parse(total) >= 0 ? Colors.green : Colors.red),
+      ])
+    ]),
+  ));
+}
 
-  Widget content(text, {color = Colors.black, fontWeight = FontWeight.normal}) {
+Widget content(text, {color = Colors.black, fontWeight = FontWeight.normal}) {
   return Expanded(
     child: Container(
       padding: const EdgeInsets.symmetric(vertical: 5),
@@ -753,10 +487,9 @@ Widget tabRewards(BuildContext context, String staking, String total) {
         text,
         textAlign: TextAlign.center,
         style: TextStyle(
-          color: text.contains('0(') ? Colors.grey : color, 
-          fontSize: 14, 
-          fontWeight: fontWeight
-        ),
+            color: text.contains('0(') ? Colors.grey : color,
+            fontSize: 14,
+            fontWeight: fontWeight),
       ),
     ),
   );

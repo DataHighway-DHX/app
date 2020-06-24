@@ -38,17 +38,18 @@ class Ethereum{
   final store = globalAppStore;
 
   EthereumApiAssetsMXC assetsMXC;
-  EthereumApiMiningMXC ethApiMiningMXC;
   EthereumApiAssetsIOTAPegged assetsIOTAPegged;
+  EthereumApiMiningMXC ethApiMiningMXC;
+  EthereumApiMiningIOTAPegged ethApiMiningIOTAPegged;
 
   void init() async{
     await getBalanceMXC(); 
     await fetchMXCLockedClaimsData();
     await fetchMXCSignaledClaimsData();
 
-    // TODO
-    // await fetchBalanceIOTAPegged();
-    // await fetchIOTAPeggedSignaledClaimsData();
+    await getBalanceIOTAPegged();
+    // Note: Do not support locking IOTA Pegged tokens
+    await fetchIOTAPeggedSignaledClaimsData();
   }
 
   //MXC balance
@@ -64,7 +65,7 @@ class Ethereum{
   //MXC locked claim data
   Future<void> fetchMXCLockedClaimsData() async {
     print('Getting data of reward claims for locking MXC');
-    EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
+    ethApiMiningMXC = EthereumApiMiningMXC();
     Map claimsData = await ethApiMiningMXC
         .getAccountLockedClaimsDataFromDataHighwayMXCMiningContract(
             kRpcUrlInfuraTestnetRopsten,
@@ -79,7 +80,7 @@ class Ethereum{
   //MXC signaled claim data
   Future<void> fetchMXCSignaledClaimsData() async {
     print('Getting data of reward claims for signaling MXC');
-    EthereumApiMiningMXC ethApiMiningMXC = await EthereumApiMiningMXC();
+    ethApiMiningMXC = EthereumApiMiningMXC();
     Map claimsData = await ethApiMiningMXC
         .getAccountSignaledClaimsDataFromDataHighwayMXCMiningContract(
             kRpcUrlInfuraTestnetRopsten,
@@ -91,38 +92,35 @@ class Ethereum{
     store.ethereum.setClaimsDataMXCSignaled(claimsData);
   }
 
-  // TODO
-  // //IOTA balance
-  // Future<void> fetchBalanceIOTAPegged() async {
-  //   print(
-  //       'Getting balance of IOTA (pegged)');
-  //   EthereumApiAssetsIOTAPegged ethApiAssetsIOTAPegged =
-  //       EthereumApiAssetsIOTAPegged();
-  //   BigInt balance = await ethApiAssetsIOTAPegged
-  //       .getAccountBalanceIOTAPeggedFromDataHighwayMiningIOTAPeggedContract(
-  //           kRpcUrlInfuraTestnetRopsten,
-  //           kWsUrlInfuraTestnetRopsten,
-  //           kContractAddrIOTATestnet,
-  //           kMnemonicSeed
-  //       );
+  //IOTA Pegged balance
+  Future<void> getBalanceIOTAPegged() async {
+    print('Getting balance of IOTA Pegged');
+    assetsIOTAPegged = EthereumApiAssetsIOTAPegged();
+    EthereumApiAssetsIOTAPegged ethApiAssetsIOTAPegged =
+        EthereumApiAssetsIOTAPegged();
+    BigInt balance = await assetsIOTAPegged
+        .getAccountBalanceFromIOTAPeggedContract(
+            kContractAddrIOTAPeggedTestnet,
+            kMnemonicSeed
+        );
 
-  //   store.ethereum.setBalanceIOTAPegged(balance);
-  // }
+    store.ethereum.setBalanceIOTAPegged(balance);
+  }
 
-  // TODO
-  // //IOTA signaled claim data
-  // Future<void> fetchIOTAPeggedSignaledClaimsData() async {
-  //   print('Getting data of reward claims for signaling IOTAPegged');
-  //   EthereumApiMiningIOTAPegged ethApiMiningIOTAPegged =
-  //       await EthereumApiMiningIOTAPegged();
-  //   BigInt claimsData = await ethApiMiningIOTAPegged
-  //       .getAccountSignaledIOTAPeggedClaimsDataFromDataHighwayIOTAPeggedMiningContract(
-  //           kRpcUrlInfuraTestnetRopsten,
-  //           kWsUrlInfuraTestnetRopsten,
-  //           kContractAddrDataHighwayLockdropTestnet,
-  //           kMnemonicSeed
-  //       );
+  // Note: Do not support locking IOTA Pegged tokens
 
-  //   store.ethereum.setClaimsDataIOTAPeggedSignaled(claimsData);
-  // }
+  //IOTA Pegged signaled claim data
+  Future<void> fetchIOTAPeggedSignaledClaimsData() async {
+    print('Getting data of reward claims for signaling IOTAPegged');
+    ethApiMiningIOTAPegged = EthereumApiMiningIOTAPegged();
+    Map claimsData = await ethApiMiningIOTAPegged
+        .getAccountSignaledClaimsDataFromDataHighwayIOTAPeggedMiningContract(
+            kRpcUrlInfuraTestnetRopsten,
+            kWsUrlInfuraTestnetRopsten,
+            kContractAddrDataHighwayLockdropTestnet,
+            kMnemonicSeed
+        );
+
+    store.ethereum.setClaimsDataIOTAPeggedSignaled(claimsData);
+  }
 }

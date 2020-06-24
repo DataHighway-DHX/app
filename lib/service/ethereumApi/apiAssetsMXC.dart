@@ -24,7 +24,7 @@ class EthereumApiAssetsMXC {
     print('Ethereum account address ${ownAddress.hex}');
 
     // Read the contract ABI and to inform web3dart of its deployed contractAddr
-    final abiCode = await rootBundle.loadString("assets/data/${kAbiCodeFile}");
+    final abiCode = await rootBundle.loadString("assets/data/${kAbiCodeFileMXC}");
     final contract = DeployedContract(
         ContractAbi.fromJson(abiCode, 'MXCToken'), contractAddr);
 
