@@ -47,9 +47,10 @@ class Ethereum{
     await fetchMXCLockedClaimsData();
     await fetchMXCSignaledClaimsData();
 
-    await getBalanceIOTAPegged();
+    // TODO - temporarily disabled IOTA Pegged
+    // await getBalanceIOTAPegged();
     // Note: Do not support locking IOTA Pegged tokens
-    await fetchIOTAPeggedSignaledClaimsData();
+    // await fetchIOTAPeggedSignaledClaimsData();
   }
 
   //MXC balance
