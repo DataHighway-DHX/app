@@ -42,7 +42,7 @@ touch ./android/app/src/main/kotlin/com/datahighway/app/MainActivity.kt
 * Paste the following in MainActivity.kt
 
 ```bash
-package com.datahighway.app
+package com.datahighway.mobile
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
