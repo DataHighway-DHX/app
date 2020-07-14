@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
@@ -28,7 +29,7 @@ class Profile extends StatelessWidget {
         body: ListView(
           children: <Widget>[
             Container(
-              color: Colors.pink,
+              color: Colors.deepPurple,
               padding: EdgeInsets.only(bottom: 16),
               child: ListTile(
                 leading: AddressIcon('', pubKey: store.currentAccount.pubKey),
@@ -47,7 +48,7 @@ class Profile extends StatelessWidget {
                 children: <Widget>[
                   RaisedButton(
                     padding: EdgeInsets.fromLTRB(24, 8, 24, 8),
-                    color: Colors.pinkAccent,
+                    color: Colors.deepPurpleAccent,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(24)),
                     child: Text(
@@ -61,22 +62,37 @@ class Profile extends StatelessWidget {
               ),
             ),
             ListTile(
-              leading: Image.asset('assets/images/profile/address.png'),
-              title: Text(dic['contact']),
-              trailing: Icon(Icons.arrow_forward_ios, size: 18),
-              onTap: () => Navigator.of(context).pushNamed(ContactsPage.route),
-            ),
-            ListTile(
               leading: Image.asset('assets/images/profile/setting.png'),
               title: Text(dic['setting']),
               trailing: Icon(Icons.arrow_forward_ios, size: 18),
               onTap: () => Navigator.of(context).pushNamed(SettingsPage.route),
             ),
             ListTile(
+              leading: Image.asset('assets/images/profile/address.png'),
+              title: Text(dic['contact']),
+              trailing: Icon(Icons.arrow_forward_ios, size: 18),
+              onTap: () => Navigator.of(context).pushNamed(ContactsPage.route),
+            ),
+            ListTile(
               leading: Image.asset('assets/images/profile/about.png'),
               title: Text(dic['about']),
               trailing: Icon(Icons.arrow_forward_ios, size: 18),
               onTap: () => Navigator.of(context).pushNamed(AboutPage.route),
+            ),
+            ListTile(
+              leading: Icon(Icons.lock_open),//Image.asset('assets/images/profile/about.png'),
+              title: Text(dic['password']),
+              trailing: Icon(Icons.arrow_forward_ios, size: 18),
+              onTap: () {},
+            ),
+             ListTile(
+              leading: Icon(Icons.fingerprint),//Image.asset('assets/images/profile/about.png'),
+              title: Text(dic['faceId']),
+              trailing: CupertinoSwitch(
+                value: true,
+                onChanged: (_){}
+              ),
+              onTap: () {},
             ),
           ],
         ),

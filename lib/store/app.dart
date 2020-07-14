@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:mobx/mobx.dart';
+import 'package:polka_wallet/store/ethereum.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/store/staking.dart';
 import 'package:polka_wallet/store/account.dart';
@@ -31,6 +31,9 @@ abstract class _AppStore with Store {
   @observable
   bool isReady = false;
 
+  @observable
+  EthereumStore ethereum;
+
   @action
   Future<void> init(String sysLocaleCode) async {
     // wait settings store loaded
@@ -46,5 +49,8 @@ abstract class _AppStore with Store {
     gov.loadCache();
 
     isReady = true;
+
+    //init Ethereum
+    ethereum = EthereumStore();
   }
 }

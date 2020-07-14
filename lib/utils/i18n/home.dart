@@ -1,4 +1,5 @@
 const Map<String, String> enHome = {
+  'mining': 'Mining',
   'assets': 'Assets',
   'staking': 'Staking',
   'governance': 'Governance',
@@ -19,15 +20,22 @@ const Map<String, String> enHome = {
   'submit.from': 'You are about to sign a transaction from ',
   'submit.call': 'Calling ',
   'unlock': 'Unlock Account with Password',
+  'tx.queued': 'Queued',
+  'tx.Ready': 'Ready',
+  'tx.Broadcast': 'Broadcast',
+  'tx.Inblock': 'Inblock',
+  'tx.error': 'Error',
   'edit': 'Edit',
   'delete': 'Delete',
   'detail': 'Detail',
   'notify.submitted': 'Tx submitted in block',
   'data.empty': 'No Data',
   'copy': 'Copy to clipboard',
+  'scan.helper': 'Please put the QR code in the box'
 };
 
 const Map<String, String> zhHome = {
+  'mining': '挖矿',
   'assets': '资产',
   'staking': '抵押',
   'governance': '治理',
@@ -45,10 +53,16 @@ const Map<String, String> zhHome = {
   'submit.from': '你将使用以下账户发送交易：',
   'submit.call': '调用 ',
   'unlock': '使用密码解锁账户',
+  'tx.queued': '已加入队列',
+  'tx.Ready': '准备广播',
+  'tx.Broadcast': '正在广播',
+  'tx.Inblock': '已被打包',
+  'tx.error': '发送失败',
   'edit': '编辑',
   'delete': '删除',
   'detail': '详情',
   'notify.finish': '交易已被打包',
   'data.empty': '暂无数据',
   'copy': '复制到剪贴板',
+  'scan.helper': '请将二维码置于方框中',
 };

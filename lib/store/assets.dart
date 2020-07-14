@@ -36,6 +36,9 @@ abstract class _AssetsStore with Store {
   String balance = '0';
 
   @observable
+  List isExpand = [];
+
+  @observable
   ObservableList<TransferData> txs = ObservableList<TransferData>();
 
   @observable
@@ -78,6 +81,17 @@ abstract class _AssetsStore with Store {
       }
     });
     return ObservableList.of(res.reversed);
+  }
+
+  @action
+  void setIsExpand(String name) {
+    if(name == null || name.isEmpty) return;
+
+    if (isExpand.contains(name)) {
+      isExpand = isExpand.where((item) => item != name).toList();
+    } else {
+      isExpand = isExpand..add(name)..toList();
+    }
   }
 
   @action

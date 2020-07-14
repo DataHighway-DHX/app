@@ -13,108 +13,124 @@ mixin _$AppStore on _AppStore, Store {
 
   @override
   AccountStore get account {
-    _$accountAtom.context.enforceReadPolicy(_$accountAtom);
-    _$accountAtom.reportObserved();
+    _$accountAtom.reportRead();
     return super.account;
   }
 
   @override
   set account(AccountStore value) {
-    _$accountAtom.context.conditionallyRunInAction(() {
+    _$accountAtom.reportWrite(value, super.account, () {
       super.account = value;
-      _$accountAtom.reportChanged();
-    }, _$accountAtom, name: '${_$accountAtom.name}_set');
+    });
   }
 
   final _$assetsAtom = Atom(name: '_AppStore.assets');
 
   @override
   AssetsStore get assets {
-    _$assetsAtom.context.enforceReadPolicy(_$assetsAtom);
-    _$assetsAtom.reportObserved();
+    _$assetsAtom.reportRead();
     return super.assets;
   }
 
   @override
   set assets(AssetsStore value) {
-    _$assetsAtom.context.conditionallyRunInAction(() {
+    _$assetsAtom.reportWrite(value, super.assets, () {
       super.assets = value;
-      _$assetsAtom.reportChanged();
-    }, _$assetsAtom, name: '${_$assetsAtom.name}_set');
+    });
   }
 
   final _$stakingAtom = Atom(name: '_AppStore.staking');
 
   @override
   StakingStore get staking {
-    _$stakingAtom.context.enforceReadPolicy(_$stakingAtom);
-    _$stakingAtom.reportObserved();
+    _$stakingAtom.reportRead();
     return super.staking;
   }
 
   @override
   set staking(StakingStore value) {
-    _$stakingAtom.context.conditionallyRunInAction(() {
+    _$stakingAtom.reportWrite(value, super.staking, () {
       super.staking = value;
-      _$stakingAtom.reportChanged();
-    }, _$stakingAtom, name: '${_$stakingAtom.name}_set');
+    });
   }
 
   final _$govAtom = Atom(name: '_AppStore.gov');
 
   @override
   GovernanceStore get gov {
-    _$govAtom.context.enforceReadPolicy(_$govAtom);
-    _$govAtom.reportObserved();
+    _$govAtom.reportRead();
     return super.gov;
   }
 
   @override
   set gov(GovernanceStore value) {
-    _$govAtom.context.conditionallyRunInAction(() {
+    _$govAtom.reportWrite(value, super.gov, () {
       super.gov = value;
-      _$govAtom.reportChanged();
-    }, _$govAtom, name: '${_$govAtom.name}_set');
+    });
   }
 
   final _$settingsAtom = Atom(name: '_AppStore.settings');
 
   @override
   SettingsStore get settings {
-    _$settingsAtom.context.enforceReadPolicy(_$settingsAtom);
-    _$settingsAtom.reportObserved();
+    _$settingsAtom.reportRead();
     return super.settings;
   }
 
   @override
   set settings(SettingsStore value) {
-    _$settingsAtom.context.conditionallyRunInAction(() {
+    _$settingsAtom.reportWrite(value, super.settings, () {
       super.settings = value;
-      _$settingsAtom.reportChanged();
-    }, _$settingsAtom, name: '${_$settingsAtom.name}_set');
+    });
   }
 
   final _$isReadyAtom = Atom(name: '_AppStore.isReady');
 
   @override
   bool get isReady {
-    _$isReadyAtom.context.enforceReadPolicy(_$isReadyAtom);
-    _$isReadyAtom.reportObserved();
+    _$isReadyAtom.reportRead();
     return super.isReady;
   }
 
   @override
   set isReady(bool value) {
-    _$isReadyAtom.context.conditionallyRunInAction(() {
+    _$isReadyAtom.reportWrite(value, super.isReady, () {
       super.isReady = value;
-      _$isReadyAtom.reportChanged();
-    }, _$isReadyAtom, name: '${_$isReadyAtom.name}_set');
+    });
   }
 
-  final _$initAsyncAction = AsyncAction('init');
+  final _$ethereumAtom = Atom(name: '_AppStore.ethereum');
+
+  @override
+  EthereumStore get ethereum {
+    _$ethereumAtom.reportRead();
+    return super.ethereum;
+  }
+
+  @override
+  set ethereum(EthereumStore value) {
+    _$ethereumAtom.reportWrite(value, super.ethereum, () {
+      super.ethereum = value;
+    });
+  }
+
+  final _$initAsyncAction = AsyncAction('_AppStore.init');
 
   @override
   Future<void> init(String sysLocaleCode) {
     return _$initAsyncAction.run(() => super.init(sysLocaleCode));
+  }
+
+  @override
+  String toString() {
+    return '''
+account: ${account},
+assets: ${assets},
+staking: ${staking},
+gov: ${gov},
+settings: ${settings},
+isReady: ${isReady},
+ethereum: ${ethereum}
+    ''';
   }
 }

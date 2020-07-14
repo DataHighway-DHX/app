@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
   NotificationPlugin _notificationPlugin;
 
   final List<String> _tabList = [
-    'Assets',
+    'Mining',
     'Staking',
     'Governance',
     'Profile',
@@ -41,13 +41,14 @@ class _HomePageState extends State<HomePage> {
         .map((i) => BottomNavigationBarItem(
               icon: Image.asset(_tabList[activeItem] == i
                   ? 'assets/images/public/$i.png'
-                  : 'assets/images/public/${i}_dark.png'),
+                  : 'assets/images/public/${i}_dark.png',
+                  color: _tabList[activeItem] == i ? Colors.deepPurple : Colors.grey),
               title: Text(
                 tabs[i.toLowerCase()],
                 style: TextStyle(
                     fontSize: 14,
                     color:
-                        _tabList[activeItem] == i ? Colors.pink : Colors.grey),
+                        _tabList[activeItem] == i ? Colors.deepPurple : Colors.grey),
               ),
             ))
         .toList();
@@ -91,7 +92,10 @@ class _HomePageState extends State<HomePage> {
             Scaffold(
               backgroundColor: Colors.transparent,
               appBar: AppBar(
-                title: Image.asset('assets/images/assets/logo.png'),
+                title: Image.asset(
+                  'assets/images/assets/logo.png',
+                  height: 50,
+                ),
                 centerTitle: false,
                 backgroundColor: Colors.transparent,
                 elevation: 0.0,

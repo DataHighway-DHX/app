@@ -5,15 +5,19 @@ import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 const default_node_zh = {
-  'info': 'kusama',
-  'text': 'Kusama (Polkadot Canary, hosted by Polkawallet)',
-  'value': 'ws://mandala-01.acala.network:9954/',
+  'info': 'datahighway-harbour-testnet',
+  'text':
+      'DataHighway (DataHighway Harbour Testnet, hosted by MXC Foundation gGmbH)',
+  'value': 'wss://testnet-harbour.datahighway.com',
 };
+
 const default_node = {
-  'info': 'kusama',
-  'text': 'Kusama (Polkadot Canary, hosted by Parity)',
-  'value': 'wss://kusama-rpc.polkadot.io/',
+  'info': 'datahighway-harbour-testnet',
+  'text':
+      'DataHighway (DataHighway Harbour Testnet, hosted by MXC Foundation gGmbH)',
+  'value': 'wss://testnet-harbour.datahighway.com',
 };
+
 const nodeList = [
   default_node_zh,
   default_node,
@@ -33,11 +37,15 @@ const nodeList = [
     'value': 'wss://rpc.kulupu.network/ws',
   },
 ];
+
 const default_ss58_map = {
+  // https://github.com/paritytech/substrate/pull/5465
+  'datahighway-mainnet': 49, // DataHighway Mainnet
+  'datahighway-harbour-testnet': 42, // DataHighway Harbour Testnet
   'kusama': 2,
   'substrate': 42,
   'westend': 42,
-  'polkadot': 0,
+  'polkadot': 0
 };
 
 class RemoteNodeListPage extends StatelessWidget {

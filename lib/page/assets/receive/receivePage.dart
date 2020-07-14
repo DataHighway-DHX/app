@@ -33,7 +33,10 @@ class ReceivePage extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(top: 32),
                   child:
-                      Image.asset('assets/images/assets/sweep_code_line.png'),
+                      Image.asset(
+                        'assets/images/assets/sweep_code_line.png',
+                        color: Colors.deepPurpleAccent,
+                      ),
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 40),
@@ -58,7 +61,7 @@ class ReceivePage extends StatelessWidget {
                       Container(
                         decoration: BoxDecoration(
                           border:
-                              Border.all(width: 4, color: Colors.pinkAccent),
+                              Border.all(width: 4, color: Colors.deepPurpleAccent),
                           borderRadius:
                               BorderRadius.all(const Radius.circular(8)),
                         ),
@@ -80,7 +83,7 @@ class ReceivePage extends StatelessWidget {
                         width: MediaQuery.of(context).size.width / 2,
                         padding: EdgeInsets.only(top: 16, bottom: 32),
                         child: RoundedButton(
-                          color: Colors.pinkAccent,
+                          color: Colors.deepPurpleAccent,
                           text: I18n.of(context).assets['copy'],
                           onPressed: () =>
                               UI.copyAndNotify(context, store.currentAddress),

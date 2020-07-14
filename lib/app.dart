@@ -6,12 +6,20 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
+import 'package:polka_wallet/page/assets/claim/claimPage.dart';
+import 'package:polka_wallet/page/assets/lock/lockDetailPage.dart';
+import 'package:polka_wallet/page/assets/lock/lockResultPage.dart';
+import 'package:polka_wallet/page/assets/lock/lockPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
+import 'package:polka_wallet/page/assets/signal/signalDetailPage.dart';
+import 'package:polka_wallet/page/assets/signal/signalPage.dart';
+import 'package:polka_wallet/page/assets/signal/signalResultPage.dart';
 import 'package:polka_wallet/page/assets/transfer/detailPage.dart';
 import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
 import 'package:polka_wallet/page/governance/council/candidateDetailPage.dart';
 import 'package:polka_wallet/page/governance/council/candidateListPage.dart';
 import 'package:polka_wallet/page/governance/council/councilVotePage.dart';
+import 'package:polka_wallet/page/governance/democracy/referendumVotePage.dart';
 import 'package:polka_wallet/page/profile/aboutPage.dart';
 import 'package:polka_wallet/page/profile/account/accountManagePage.dart';
 import 'package:polka_wallet/page/profile/account/changeNamePage.dart';
@@ -35,6 +43,7 @@ import 'package:polka_wallet/page/staking/actions/setPayeePage.dart';
 import 'package:polka_wallet/page/staking/actions/stakingDetailPage.dart';
 import 'package:polka_wallet/page/staking/actions/unbondPage.dart';
 import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
+import 'package:polka_wallet/service/ethereumApi/api.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -89,6 +98,10 @@ class _WalletAppState extends State<WalletApp> {
       webApi.init();
 
       _changeLang(context, _appStore.settings.localeCode);
+
+      //init Ethereum
+      ethereum = Ethereum();
+      ethereum.init();
     }
 
     return _appStore.account.accountList.length;
@@ -104,7 +117,7 @@ class _WalletAppState extends State<WalletApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'PolkaWallet',
+      title: 'DataHighway',
       localizationsDelegates: [
         AppLocalizationsDelegate(_locale),
         GlobalMaterialLocalizations.delegate,
@@ -143,6 +156,14 @@ class _WalletAppState extends State<WalletApp> {
         ImportAccountPage.route: (_) => ImportAccountPage(_appStore),
         ScanPage.route: (_) => ScanPage(),
         TxConfirmPage.route: (_) => TxConfirmPage(_appStore),
+         // mining
+        SignalPage.route: (_) => SignalPage(_appStore),
+        SignalDetailPage.route: (_) => SignalDetailPage(_appStore),
+        SignalResultPage.route: (_) => SignalResultPage(_appStore),
+        LockPage.route: (_) => LockPage(_appStore),
+        LockDetailPage.route: (_) => LockDetailPage(_appStore),
+        LockResultPage.route: (_) => LockResultPage(_appStore),
+        ClaimPage.route: (_) => ClaimPage(_appStore),
         // assets
         AssetPage.route: (_) => AssetPage(_appStore),
         TransferPage.route: (_) => TransferPage(_appStore),
@@ -164,6 +185,7 @@ class _WalletAppState extends State<WalletApp> {
         CandidateDetailPage.route: (_) => CandidateDetailPage(_appStore),
         CouncilVotePage.route: (_) => CouncilVotePage(_appStore),
         CandidateListPage.route: (_) => CandidateListPage(_appStore),
+        ReferendumVotePage.route: (_) => ReferendumVotePage(_appStore),
         // profile
         AccountManagePage.route: (_) => AccountManagePage(_appStore),
         ContactsPage.route: (_) => ContactsPage(_appStore.settings),

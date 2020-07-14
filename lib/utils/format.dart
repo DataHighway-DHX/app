@@ -21,6 +21,15 @@ class Fmt {
     return addr.substring(0, pad) + '...' + addr.substring(addr.length - pad);
   }
 
+  static String balanceNoDecimals(String raw, {int decimals = 12}) {
+    if (raw == null || raw.length == 0) {
+      return raw;
+    }
+    NumberFormat f = NumberFormat(",##0");
+    var num = f.parse(raw);
+    return f.format(num / pow(10, decimals));
+  }
+
   static String balance(String raw, {int decimals = 12}) {
     if (raw == null || raw.length == 0) {
       return raw;
