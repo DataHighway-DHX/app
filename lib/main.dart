@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_appcenter/flutter_appcenter.dart';
@@ -6,6 +8,7 @@ import 'package:polka_wallet/app.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:polka_wallet/service/subscan.dart';
 
 Future<void> main() async {
   await DotEnv().load('.env');
@@ -33,6 +36,8 @@ Future<void> main() async {
     selectNotificationSubject.add(payload);
   });
   print('notification_plugin initialised: $initialised');
+
+  HttpOverrides.global = MyHttpOverrides();
 
   runApp(
     WalletApp(),

@@ -1,4 +1,5 @@
 /.gradle
 /captures/
 /local.properties
+/key.properties
 GeneratedPluginRegistrant.java

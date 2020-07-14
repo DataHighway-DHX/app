@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/infoItem.dart';
+import 'package:polka_wallet/common/components/listTail.dart';
 import 'package:polka_wallet/page/account/import/importAccountPage.dart';
 import 'package:polka_wallet/page/staking/actions/bondExtraPage.dart';
 import 'package:polka_wallet/page/staking/actions/bondPage.dart';
@@ -10,19 +12,19 @@ import 'package:polka_wallet/page/staking/actions/redeemPage.dart';
 import 'package:polka_wallet/page/staking/actions/setPayeePage.dart';
 import 'package:polka_wallet/page/staking/actions/stakingDetailPage.dart';
 import 'package:polka_wallet/page/staking/actions/unbondPage.dart';
+import 'package:polka_wallet/service/subscan.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/outlinedCircle.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/assets.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
-import 'package:polka_wallet/utils/localStorage.dart';
 
+// TODO: txs list rendered in UI thread issue
 class StakingActions extends StatefulWidget {
   StakingActions(this.store);
   final AppStore store;
@@ -36,13 +38,30 @@ class _StakingActions extends State<StakingActions>
 
   final AppStore store;
 
-  int _txsPage = 1;
+  bool _loading = false;
+
+  int _txsPage = 0;
+  bool _isLastPage = false;
+  ScrollController _scrollController;
 
   Future<void> _updateStakingTxs() async {
-    if (store.settings.loading) {
+    if (store.settings.loading || _loading) {
       return;
     }
-    await webApi.staking.updateStaking(_txsPage);
+    setState(() {
+      _loading = true;
+    });
+    Map res = await webApi.staking.updateStaking(_txsPage);
+    setState(() {
+      _loading = false;
+    });
+    if (mounted &&
+        (res['extrinsics'] == null ||
+            res['extrinsics'].length < tx_list_page_size)) {
+      setState(() {
+        _isLastPage = true;
+      });
+    }
   }
 
   Future<void> _updateStakingInfo() async {
@@ -50,80 +69,41 @@ class _StakingActions extends State<StakingActions>
       return;
     }
     await Future.wait([
-      webApi.assets.fetchBalance(store.account.currentAccount.pubKey),
-      webApi.staking.fetchAccountStaking(store.account.currentAccount.pubKey),
+      webApi.assets.fetchBalance(),
+      webApi.staking.fetchAccountStaking(),
     ]);
-    webApi.staking.fetchAccountRewards(store.account.currentAddress);
   }
 
   void _changeCurrentAccount(AccountData acc) {
-    store.account.setCurrentAccount(acc);
-    // refresh user's assets info
-    store.assets.loadAccountCache();
-    // refresh user's staking & gov info
-    store.gov.clearSate();
-    store.staking.loadAccountCache();
+    webApi.account.changeCurrentAccount(pubKey: acc.pubKey);
     globalBondingRefreshKey.currentState.show();
   }
 
   List<Widget> _buildTxList() {
-    if (store.staking.txs.length == 0) {
-      return <Widget>[
-        Container(
-          color: Theme.of(context).cardColor,
-          padding: EdgeInsets.all(16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                I18n.of(context).home['data.empty'],
-                style: TextStyle(color: Colors.black54),
-              )
-            ],
-          ),
-        )
-      ];
-    }
-    return store.staking.txs.map((i) {
-      String call = i['attributes']['call_id'];
-      String value = '';
-      bool success = i['detail']['success'] > 0;
-      switch (call) {
-        case 'bond':
-          value = Fmt.token(i['detail']['params'][1]['value']);
-          break;
-        case 'bond_extra':
-        case 'unbond':
-          value = Fmt.token(i['detail']['params'][0]['value']);
-          break;
-      }
-      BlockData block = store.assets.blockMap[i['attributes']['block_id']];
-      String time = 'time';
-      if (block != null) {
-        time = block.time.toString().split('.')[0];
-      }
+    List<Widget> res = [];
+    res.addAll(store.staking.txs.map((i) {
       return Container(
         color: Theme.of(context).cardColor,
         child: ListTile(
           leading: Padding(
             padding: EdgeInsets.only(top: 4),
-            child: success
+            child: i.success
                 ? Image.asset('assets/images/staking/ok.png')
                 : Image.asset('assets/images/staking/error.png'),
           ),
-          title: Text(call),
-          subtitle: Text(time),
+          title: Text(i.call),
+          subtitle: Text(DateTime.fromMillisecondsSinceEpoch(i.blockTimestamp).toString()),
           trailing: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
-              value.isNotEmpty
+              i.txNumber.isNotEmpty // TODO MERGE
                   ? Text(
-                      value,
+                      i.txNumber,
                       style: Theme.of(context).textTheme.display4,
                     )
                   : Container(width: 8),
-              success
+              i.success
                   ? Text(
                       'Success',
                       style: TextStyle(color: Colors.green),
@@ -134,7 +114,7 @@ class _StakingActions extends State<StakingActions>
                     )
             ],
           ),
-          onTap: block != null
+          onTap: i.blockNum != null
               ? () {
                   Navigator.of(context)
                       .pushNamed(StakingDetailPage.route, arguments: i);
@@ -142,28 +122,36 @@ class _StakingActions extends State<StakingActions>
               : null,
         ),
       );
-    }).toList();
+    }));
+
+    res.add(ListTail(
+      isLoading: store.staking.txsLoading,
+      isEmpty: store.staking.txs.length == 0,
+    ));
+
+    return res;
   }
 
   Widget _buildActionCard() {
     var dic = I18n.of(context).staking;
     bool hasData = store.staking.ledger['stakingLedger'] != null;
 
+    String controllerId = store.staking.ledger['controllerId'] ??
+        store.staking.ledger['accountId'];
     String payee = store.staking.ledger['rewardDestination'];
-    String stashId = store.staking.ledger['stashId'];
+    String stashId = store.staking.ledger['stashId'] ?? controllerId;
     if (hasData) {
       stashId = store.staking.ledger['stakingLedger']['stash'];
       if (payee == null) {
         payee = store.staking.ledger['stakingLedger']['payee'];
       }
     }
-    String controllerId = store.staking.ledger['controllerId'] ??
-        store.staking.ledger['accountId'];
     bool isStash = store.staking.ledger['accountId'] == stashId;
     bool controllerEqualStash = controllerId == stashId;
     String account02 = isStash ? controllerId : stashId;
     String account02PubKey;
-    store.account.pubKeyAddressMap.forEach((k, v) {
+    store.account.pubKeyAddressMap[store.settings.endpoint.ss58]
+        .forEach((k, v) {
       if (v == account02) {
         account02PubKey = k;
       }
@@ -175,18 +163,20 @@ class _StakingActions extends State<StakingActions>
       acc02 = store.account.accountList[acc02Index];
     }
 
-    int balance = Fmt.balanceInt(store.assets.balance);
-    int bonded = 0;
-    int redeemable = 0;
+    String symbol = store.settings.networkState.tokenSymbol;
+
+    BigInt balance = store.assets.balances[symbol].total;
+    BigInt bonded = BigInt.zero;
+    BigInt redeemable = BigInt.zero;
     if (hasData) {
-      bonded = store.staking.ledger['stakingLedger']['active'];
-      redeemable = store.staking.ledger['redeemable'];
+      bonded = BigInt.parse(
+          store.staking.ledger['stakingLedger']['active'].toString());
+      redeemable = BigInt.parse(store.staking.ledger['redeemable'].toString());
     }
-    int unlocking = store.staking.accountUnlockingTotal;
+    BigInt unlocking = store.staking.accountUnlockingTotal;
     unlocking -= redeemable;
 
-    int available = isStash ? balance - bonded - unlocking : balance;
-    int rewards = store.staking.accountRewardTotal;
+    BigInt available = isStash ? balance - bonded - unlocking : balance;
 
     return RoundedCard(
       margin: EdgeInsets.fromLTRB(16, 12, 16, 24),
@@ -208,8 +198,8 @@ class _StakingActions extends State<StakingActions>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      store.account.currentAccount.name,
-                      style: Theme.of(context).textTheme.display4,
+                      Fmt.accountName(context, store.account.currentAccount),
+                      style: Theme.of(context).textTheme.headline4,
                     ),
                     Text(Fmt.address(store.account.currentAddress))
                   ],
@@ -222,10 +212,11 @@ class _StakingActions extends State<StakingActions>
                   children: <Widget>[
                     Text(
                       '${Fmt.balance(balance.toString())}',
-                      style: Theme.of(context).textTheme.display4,
+                      style: Theme.of(context).textTheme.headline4,
                     ),
                     Text(
                       dic['balance'],
+                      style: TextStyle(fontSize: 13),
                     ),
                   ],
                 ),
@@ -241,15 +232,16 @@ class _StakingActions extends State<StakingActions>
           ),
           Divider(),
           StakingInfoPanel(
-              hasData: hasData,
-              isStash: isStash,
-              controllerEqualStash: controllerEqualStash,
-              bonded: bonded,
-              unlocking: unlocking,
-              redeemable: redeemable,
-              available: available,
-              payee: payee,
-              rewards: rewards),
+            hasData: hasData,
+            isStash: isStash,
+            controllerEqualStash: controllerEqualStash,
+            bonded: bonded,
+            unlocking: unlocking,
+            redeemable: redeemable,
+            available: available,
+            payee: payee,
+            networkLoading: store.settings.loading,
+          ),
           Divider(),
           StakingActionsPanel(
             isStash: isStash,
@@ -266,14 +258,22 @@ class _StakingActions extends State<StakingActions>
   void initState() {
     super.initState();
 
+    _scrollController = ScrollController();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent) {
+        setState(() {
+          if (!_isLastPage) {
+            _txsPage += 1;
+            _updateStakingTxs();
+          }
+        });
+      }
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (LocalStorage.checkCacheTimeout(store.staking.cacheTxsTimestamp)) {
+      if (globalBondingRefreshKey.currentState != null) {
         globalBondingRefreshKey.currentState.show();
-      } else {
-        // if we don't need to reload data, do we need to reload reward data?
-        if (store.staking.accountRewardTotal == null) {
-          webApi.staking.fetchAccountRewards(store.account.currentAddress);
-        }
       }
     });
   }
@@ -284,6 +284,9 @@ class _StakingActions extends State<StakingActions>
 
     return Observer(
       builder: (_) {
+        if (store.settings.loading) {
+          return CupertinoActivityIndicator();
+        }
         List<Widget> list = <Widget>[
           _buildActionCard(),
           Container(
@@ -300,6 +303,7 @@ class _StakingActions extends State<StakingActions>
             await _updateStakingInfo();
           },
           child: ListView(
+            controller: _scrollController,
             children: list,
           ),
         );
@@ -399,7 +403,8 @@ class RowAccount02 extends StatelessWidget {
                 Container(
                   margin: EdgeInsets.only(left: 4, right: 20),
                   child: acc02 != null
-                      ? AddressIcon('', pubKey: acc02.pubKey, size: 32)
+                      ? AddressIcon(acc02.address,
+                          pubKey: acc02.pubKey, size: 32)
                       : AddressIcon(isStash ? controllerId : stashId, size: 32),
                 ),
                 Expanded(
@@ -438,31 +443,6 @@ class RowAccount02 extends StatelessWidget {
   }
 }
 
-class InfoItem extends StatelessWidget {
-  InfoItem({this.title, this.content, this.crossAxisAlignment});
-  final String title;
-  final String content;
-  final CrossAxisAlignment crossAxisAlignment;
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title,
-            style: TextStyle(fontSize: 13),
-          ),
-          Text(
-            content ?? '-',
-            style: Theme.of(context).textTheme.display4,
-          )
-        ],
-      ),
-    );
-  }
-}
-
 class StakingInfoPanel extends StatelessWidget {
   StakingInfoPanel({
     this.hasData,
@@ -473,18 +453,18 @@ class StakingInfoPanel extends StatelessWidget {
     this.redeemable,
     this.available,
     this.payee,
-    this.rewards,
+    this.networkLoading,
   });
 
   final bool hasData;
   final bool isStash;
   final bool controllerEqualStash;
-  final int bonded;
-  final int unlocking;
-  final int redeemable;
-  final int available;
+  final BigInt bonded;
+  final BigInt unlocking;
+  final BigInt redeemable;
+  final BigInt available;
   final String payee;
-  final int rewards;
+  final bool networkLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -512,15 +492,15 @@ class StakingInfoPanel extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Text(dic['bond.redeemable'],
-                        style: TextStyle(fontSize: 13)),
+                        style: TextStyle(fontSize: 12)),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
                           Fmt.token(redeemable),
-                          style: Theme.of(context).textTheme.display4,
+                          style: Theme.of(context).textTheme.headline4,
                         ),
-                        !isStash && redeemable > 0
+                        !isStash && redeemable > BigInt.zero
                             ? GestureDetector(
                                 child: Container(
                                   padding: EdgeInsets.only(left: 4),
@@ -562,36 +542,21 @@ class StakingInfoPanel extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Text(dic['payout'], style: TextStyle(fontSize: 13)),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        rewards != null
-                            ? Text(
-                                Fmt.token(rewards),
-                                style: Theme.of(context).textTheme.display4,
-                              )
-                            : CupertinoActivityIndicator(),
-                        // only controller account can request payout
-                        (!isStash || controllerEqualStash) &&
-                                rewards != null &&
-                                rewards > 0
-                            ? GestureDetector(
-                                child: Container(
-                                  padding: EdgeInsets.only(left: 4),
-                                  child: Icon(
-                                    Icons.file_download,
-                                    size: 16,
-                                    color: actionButtonColor,
-                                  ),
-                                ),
-                                onTap: () {
-                                  Navigator.of(context)
-                                      .pushNamed(PayoutPage.route);
-                                },
-                              )
-                            : Container()
-                      ],
+                    Text(dic['payout'], style: TextStyle(fontSize: 12)),
+                    GestureDetector(
+                      child: Container(
+                        padding: EdgeInsets.all(1),
+                        child: Icon(
+                          Icons.card_giftcard,
+                          size: 18,
+                          color: actionButtonColor,
+                        ),
+                      ),
+                      onTap: () {
+                        if (!networkLoading) {
+                          Navigator.of(context).pushNamed(PayoutPage.route);
+                        }
+                      },
                     )
                   ],
                 ),
@@ -614,29 +579,24 @@ class StakingActionsPanel extends StatelessWidget {
 
   final bool isStash;
   final bool controllerEqualStash;
-  final int bonded;
+  final BigInt bonded;
   final AccountData controller;
 
   @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).staking;
 
-    num actionButtonWidth = MediaQuery.of(context).size.width / 4;
+    num actionButtonWidth = (MediaQuery.of(context).size.width - 64) / 3;
     Color actionButtonColor = Theme.of(context).primaryColor;
     Color disabledColor = Theme.of(context).unselectedWidgetColor;
 
-    String bondButtonString;
-    bool unbondDisabled = false;
-    Function onBondTap = () => null;
+    String bondButtonString = dic['action.bondAdjust'];
     bool setPayeeDisabled = true;
     Function onSetPayeeTap = () => null;
     bool setControllerDisabled = true;
     Function onSetControllerTap = () => null;
     if (isStash) {
-      if (bonded > 0) {
-        bondButtonString = dic['action.bondExtra'];
-        onBondTap = () => Navigator.of(context).pushNamed(BondExtraPage.route);
-
+      if (bonded > BigInt.zero) {
         setControllerDisabled = false;
         onSetControllerTap = () => Navigator.of(context)
             .pushNamed(SetControllerPage.route, arguments: controller);
@@ -648,18 +608,12 @@ class StakingActionsPanel extends StatelessWidget {
         }
       } else {
         bondButtonString = dic['action.bond'];
-        onBondTap = () => Navigator.of(context).pushNamed(BondPage.route);
       }
     } else {
-      bondButtonString = dic['action.unbond'];
-      if (bonded > 0) {
-        onBondTap = () => Navigator.of(context).pushNamed(UnBondPage.route);
-
+      if (bonded > BigInt.zero) {
         setPayeeDisabled = false;
         onSetPayeeTap =
             () => Navigator.of(context).pushNamed(SetPayeePage.route);
-      } else {
-        unbondDisabled = true;
       }
     }
 
@@ -673,19 +627,51 @@ class StakingActionsPanel extends StatelessWidget {
               child: Column(
                 children: <Widget>[
                   OutlinedCircle(
-                    icon: isStash ? Icons.add : Icons.remove,
-                    color: unbondDisabled ? disabledColor : actionButtonColor,
+                    icon: Icons.add,
+                    color: actionButtonColor,
                   ),
                   Text(
                     bondButtonString,
                     style: TextStyle(
-                      color: unbondDisabled ? disabledColor : actionButtonColor,
-                      fontSize: 12,
+                      color: actionButtonColor,
+                      fontSize: 11,
                     ),
                   )
                 ],
               ),
-              onTap: onBondTap,
+              onTap: () {
+                if (isStash && bonded == BigInt.zero) {
+                  Navigator.of(context).pushNamed(BondPage.route);
+                  return;
+                }
+                showCupertinoModalPopup(
+                  context: context,
+                  builder: (BuildContext context) => CupertinoActionSheet(
+                    actions: <Widget>[
+                      CupertinoActionSheetAction(
+                        child: Text(dic['action.bondExtra']),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pushNamed(BondExtraPage.route);
+                        },
+                      ),
+                      CupertinoActionSheetAction(
+                        child: Text(dic['action.unbond']),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pushNamed(UnBondPage.route);
+                        },
+                      ),
+                    ],
+                    cancelButton: CupertinoActionSheetAction(
+                      child: Text(I18n.of(context).home['cancel']),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ),
@@ -705,7 +691,7 @@ class StakingActionsPanel extends StatelessWidget {
                         color: setPayeeDisabled
                             ? disabledColor
                             : actionButtonColor,
-                        fontSize: 12),
+                        fontSize: 11),
                   )
                 ],
               ),
@@ -731,7 +717,7 @@ class StakingActionsPanel extends StatelessWidget {
                         color: setControllerDisabled
                             ? disabledColor
                             : actionButtonColor,
-                        fontSize: 12),
+                        fontSize: 11),
                   )
                 ],
               ),

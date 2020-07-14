@@ -1,17 +1,23 @@
 import 'package:mobx/mobx.dart';
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:polka_wallet/page/profile/settings/remoteNodeListPage.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
-import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'settings.g.dart';
 
-class SettingsStore = _SettingsStore with _$SettingsStore;
+class SettingsStore extends _SettingsStore with _$SettingsStore {
+  SettingsStore(AppStore store) : super(store);
+}
 
 abstract class _SettingsStore with Store {
+  _SettingsStore(this.rootStore);
+
+  final AppStore rootStore;
+
   final String localStorageLocaleKey = 'locale';
   final String localStorageEndpointKey = 'endpoint';
   final String localStorageSS58Key = 'custom_ss58';
@@ -43,21 +49,41 @@ abstract class _SettingsStore with Store {
   ObservableList<AccountData> contactList = ObservableList<AccountData>();
 
   @computed
+  List<EndpointData> get endpointList {
+    List<EndpointData> ls = List<EndpointData>.of(networkEndpoints);
+    ls.retainWhere((i) => i.info == endpoint.info);
+    return ls;
+  }
+
+  @computed
+  List<AccountData> get contactListAll {
+    List<AccountData> ls = List<AccountData>.of(rootStore.account.accountList);
+    ls.addAll(contactList);
+    return ls;
+  }
+
+  @computed
   String get existentialDeposit {
-    return Fmt.token(networkConst['balances']['existentialDeposit'],
+    return Fmt.token(
+        BigInt.parse(networkConst['balances']['existentialDeposit'].toString()),
         decimals: networkState.tokenDecimals);
   }
 
   @computed
   String get transactionBaseFee {
-    return Fmt.token(networkConst['transactionPayment']['transactionBaseFee'],
+    return Fmt.token(
+        BigInt.parse(networkConst['transactionPayment']['transactionBaseFee']
+            .toString()),
         decimals: networkState.tokenDecimals);
   }
 
   @computed
   String get transactionByteFee {
-    return Fmt.token(networkConst['transactionPayment']['transactionByteFee'],
-        decimals: networkState.tokenDecimals, fullLength: true);
+    return Fmt.token(
+        BigInt.parse(networkConst['transactionPayment']['transactionByteFee']
+            .toString()),
+        decimals: networkState.tokenDecimals,
+        length: networkState.tokenDecimals);
   }
 
   @action
@@ -73,13 +99,14 @@ abstract class _SettingsStore with Store {
 
   @action
   Future<void> setLocalCode(String code) async {
-    await LocalStorage.setKV(localStorageLocaleKey, code);
-    loadLocalCode();
+    await rootStore.localStorage.setObject(localStorageLocaleKey, code);
+    localeCode = code;
   }
 
   @action
   Future<void> loadLocalCode() async {
-    String stored = await LocalStorage.getKV(localStorageLocaleKey);
+    String stored =
+        await rootStore.localStorage.getObject(localStorageLocaleKey);
     if (stored != null) {
       localeCode = stored;
     }
@@ -92,23 +119,26 @@ abstract class _SettingsStore with Store {
 
   @action
   void setNetworkName(String name) {
-    print('set netwwork name: $name');
     networkName = name;
     loading = false;
   }
 
   @action
   Future<void> setNetworkState(Map<String, dynamic> data) async {
-    LocalStorage.setKV(cacheNetworkStateKey, data);
+    rootStore.localStorage
+        .setObject('${cacheNetworkStateKey}_${endpoint.info}', data);
 
     networkState = NetworkState.fromJson(data);
   }
 
   @action
   Future<void> loadNetworkStateCache() async {
-    var data = await LocalStorage.getKV(cacheNetworkStateKey);
+    var data = await rootStore.localStorage
+        .getObject('${cacheNetworkStateKey}_${endpoint.info}');
     if (data != null) {
       networkState = NetworkState.fromJson(data);
+    } else {
+      networkState = NetworkState();
     }
   }
 
@@ -119,95 +149,88 @@ abstract class _SettingsStore with Store {
 
   @action
   Future<void> loadContacts() async {
-    List<Map<String, dynamic>> ls = await LocalStorage.getContractList();
+    List<Map<String, dynamic>> ls =
+        await rootStore.localStorage.getContactList();
     contactList = ObservableList.of(ls.map((i) => AccountData.fromJson(i)));
   }
 
   @action
   Future<void> addContact(Map<String, dynamic> con) async {
-    await LocalStorage.addContact(con);
-    loadContacts();
+    await rootStore.localStorage.addContact(con);
+    await loadContacts();
   }
 
   @action
   Future<void> removeContact(AccountData con) async {
-    await LocalStorage.removeContact(con.address);
+    await rootStore.localStorage.removeContact(con.address);
     loadContacts();
   }
 
   @action
   Future<void> updateContact(Map<String, dynamic> con) async {
-    await LocalStorage.updateContact(con);
+    await rootStore.localStorage.updateContact(con);
     loadContacts();
   }
 
   @action
-  void setEndpoint(Map<String, dynamic> value) {
-    endpoint = EndpointData.fromJson(value);
-    LocalStorage.setKV(localStorageEndpointKey, value);
+  void setEndpoint(EndpointData value) {
+    endpoint = value;
+    rootStore.localStorage
+        .setObject(localStorageEndpointKey, EndpointData.toJson(value));
   }
 
   @action
   Future<void> loadEndpoint(String sysLocaleCode) async {
     Map<String, dynamic> value =
-        await LocalStorage.getKV(localStorageEndpointKey);
+        await rootStore.localStorage.getObject(localStorageEndpointKey);
     if (value == null) {
-      value = sysLocaleCode.contains('zh') ? default_node_zh : default_node;
+      endpoint = networkEndpointKusama;
+    } else {
+      endpoint = EndpointData.fromJson(value);
     }
-    endpoint = EndpointData.fromJson(value);
   }
 
   @action
   void setCustomSS58Format(Map<String, dynamic> value) {
     customSS58Format = value;
-    LocalStorage.setKV(localStorageSS58Key, value);
+    rootStore.localStorage.setObject(localStorageSS58Key, value);
   }
 
   @action
   Future<void> loadCustomSS58Format() async {
-    Map<String, dynamic> ss58 = await LocalStorage.getKV(localStorageSS58Key);
+    Map<String, dynamic> ss58 =
+        await rootStore.localStorage.getObject(localStorageSS58Key);
 
     customSS58Format = ss58 ?? default_ss58_prefix;
   }
 }
 
 @JsonSerializable()
-class NetworkState extends _NetworkState with _$NetworkState {
+class NetworkState extends _NetworkState {
   static NetworkState fromJson(Map<String, dynamic> json) =>
       _$NetworkStateFromJson(json);
   static Map<String, dynamic> toJson(NetworkState net) =>
       _$NetworkStateToJson(net);
 }
 
-abstract class _NetworkState with Store {
-  @observable
+abstract class _NetworkState {
   String endpoint = '';
-
-  @observable
   int ss58Format = 0;
-
-  @observable
   int tokenDecimals = 0;
-
-  @observable
   String tokenSymbol = '';
 }
 
 @JsonSerializable()
-class EndpointData extends _EndpointData with _$EndpointData {
+class EndpointData extends _EndpointData {
   static EndpointData fromJson(Map<String, dynamic> json) =>
       _$EndpointDataFromJson(json);
   static Map<String, dynamic> toJson(EndpointData data) =>
       _$EndpointDataToJson(data);
 }
 
-abstract class _EndpointData with Store {
-  @observable
+abstract class _EndpointData {
   String info = '';
-
-  @observable
+  int ss58 = 42;
   String text = '';
-
-  @observable
   String value = '';
 }

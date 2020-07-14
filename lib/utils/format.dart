@@ -2,8 +2,12 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:convert/convert.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-import 'package:polka_wallet/store/staking.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
+import 'package:polka_wallet/store/staking/types/validatorData.dart';
+import 'package:polka_wallet/utils/i18n/index.dart';
 
 class Fmt {
   static String passwordToEncryptKey(String password) {
@@ -14,13 +18,13 @@ class Fmt {
     return passHex.padRight(32, '0');
   }
 
-  static String address(String addr, {int pad = 8}) {
+  static String address(String addr, {int pad = 6}) {
     if (addr == null || addr.length == 0) {
       return addr;
     }
     return addr.substring(0, pad) + '...' + addr.substring(addr.length - pad);
   }
-
+  
   static String balanceNoDecimals(String raw, {int decimals = 12}) {
     if (raw == null || raw.length == 0) {
       return raw;
@@ -30,26 +34,169 @@ class Fmt {
     return f.format(num / pow(10, decimals));
   }
 
-  static String balance(String raw, {int decimals = 12}) {
+  /// number transform 1:
+  /// from raw <String> of Api data to <BigInt>
+  static BigInt balanceInt(String raw) {
     if (raw == null || raw.length == 0) {
-      return raw;
+      return BigInt.zero;
     }
-    NumberFormat f = NumberFormat(",##0.000");
-    var num = f.parse(raw);
-    return f.format(num / pow(10, decimals));
+    if (raw.contains(',') || raw.contains('.')) {
+      return BigInt.from(NumberFormat(",##0.000").parse(raw));
+    } else {
+      return BigInt.parse(raw);
+    }
   }
 
-  static int balanceInt(String raw) {
-    if (raw == null || raw.length == 0) {
+  /// number transform 2:
+  /// from <BigInt> to <double>
+  static double bigIntToDouble(BigInt value, {int decimals = 12}) {
+    if (value == null) {
       return 0;
     }
-    return NumberFormat(",##0.000").parse(raw).toInt();
+    return value / BigInt.from(pow(10, decimals));
   }
 
-  static String token(int value, {int decimals = 12, bool fullLength = false}) {
+  /// number transform 3:
+  /// from <double> to <String> in token format of ",##0.000"
+  static String doubleFormat(
+    double value, {
+    int length = 3,
+    int round = 0,
+  }) {
+    if (value == null) {
+      return '~';
+    }
+    value.toStringAsFixed(3);
+    NumberFormat f =
+        NumberFormat(",##0${length > 0 ? '.' : ''}${'#' * length}", "en_US");
+    return f.format(value);
+  }
+
+  /// combined number transform 1-3:
+  /// from raw <String> to <String> in token format of ",##0.000"
+  static String balance(
+    String raw, {
+    int decimals = 12,
+    int length = 3,
+  }) {
+    if (raw == null || raw.length == 0) {
+      return '~';
+    }
+    return doubleFormat(bigIntToDouble(balanceInt(raw), decimals: decimals),
+        length: length);
+  }
+
+  /// combined number transform 1-2:
+  /// from raw <String> to <double>
+  static double balanceDouble(String raw, {int decimals = 12}) {
+    return bigIntToDouble(balanceInt(raw), decimals: decimals);
+  }
+
+  /// combined number transform 2-3:
+  /// from <BigInt> to <String> in token format of ",##0.000"
+  static String token(
+    BigInt value, {
+    int decimals = 12,
+    int length = 3,
+  }) {
+    if (value == null) {
+      return '~';
+    }
+    return doubleFormat(bigIntToDouble(value, decimals: decimals),
+        length: length);
+  }
+
+  /// number transform 4:
+  /// from <String of double> to <BigInt>
+  static BigInt tokenInt(String value, {int decimals = 12}) {
+    if (value == null) {
+      return BigInt.zero;
+    }
+    double v = 0;
+    if (value.contains(',') || value.contains('.')) {
+      v = NumberFormat(",##0.${"0" * decimals}").parse(value);
+    } else {
+      v = double.parse(value);
+    }
+    return BigInt.from(v * pow(10, decimals));
+  }
+
+  /// number transform 5:
+  /// from <BigInt> to <String> in price format of ",##0.00"
+  /// ceil number of last decimal
+  static String priceCeil(
+    double value, {
+    int decimals = acala_token_decimals,
+    int lengthFixed = 2,
+    int lengthMax,
+  }) {
+    if (value == null) {
+      return '~';
+    }
+    String tailDecimals =
+        lengthMax == null ? '' : "#" * (lengthMax - lengthFixed);
     NumberFormat f = NumberFormat(
-        ",##0.${fullLength == true ? '000#########' : '000'}", "en_US");
-    return f.format(value / pow(10, decimals));
+        ",##0${lengthFixed > 0 ? '.' : ''}${"0" * lengthFixed}$tailDecimals",
+        "en_US");
+    return f.format(value);
+  }
+
+  /// number transform 6:
+  /// from <BigInt> to <String> in price format of ",##0.00"
+  /// floor number of last decimal
+  static String priceFloor(
+    double value, {
+    int lengthFixed = 2,
+    int lengthMax,
+  }) {
+    if (value == null) {
+      return '~';
+    }
+    String tailDecimals =
+        lengthMax == null ? '' : "#" * (lengthMax - lengthFixed);
+    NumberFormat f = NumberFormat(
+        ",##0${lengthFixed > 0 ? '.' : ''}${"0" * lengthFixed}$tailDecimals",
+        "en_US");
+    return f.format(value);
+  }
+
+  /// number transform 7:
+  /// from number to <String> in price format of ",##0.###%"
+  static String ratio(dynamic number, {bool needSymbol = true}) {
+    NumberFormat f = NumberFormat(",##0.###${needSymbol ? '%' : ''}");
+    return f.format(number ?? 0);
+  }
+
+  static String priceCeilBigInt(
+    BigInt value, {
+    int decimals = acala_token_decimals,
+    int lengthFixed = 2,
+    int lengthMax,
+  }) {
+    if (value == null) {
+      return '~';
+    }
+    double price =
+        (value / BigInt.from(pow(10, decimals - (lengthMax ?? lengthFixed))))
+                .ceil() /
+            pow(10, lengthMax ?? lengthFixed);
+    return priceCeil(price, lengthFixed: lengthFixed, lengthMax: lengthMax);
+  }
+
+  static String priceFloorBigInt(
+    BigInt value, {
+    int decimals = acala_token_decimals,
+    int lengthFixed = 2,
+    int lengthMax,
+  }) {
+    if (value == null) {
+      return '~';
+    }
+    double price =
+        (value / BigInt.from(pow(10, decimals - (lengthMax ?? lengthFixed))))
+                .floor() /
+            pow(10, lengthMax ?? lengthFixed);
+    return priceFloor(price, lengthFixed: lengthFixed, lengthMax: lengthMax);
   }
 
   static bool isAddress(String txt) {
@@ -57,14 +204,22 @@ class Fmt {
     return reg.hasMatch(txt);
   }
 
+  static bool isHexString(String hex) {
+    var reg = RegExp(r'^[a-f0-9]+$');
+    return reg.hasMatch(hex);
+  }
+
   static bool checkPassword(String pass) {
-    var reg = RegExp(r'^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$');
+    var reg = RegExp(r'^(?![0-9]+$)(?![a-zA-Z]+$)[\S]{6,20}$');
     return reg.hasMatch(pass);
   }
 
   static int sortValidatorList(ValidatorData a, ValidatorData b, int sortType) {
     if (a.commission == null || a.commission.isEmpty) {
       return 1;
+    }
+    if (b.commission == null || b.commission.isEmpty) {
+      return -1;
     }
     double comA = double.parse(a.commission.split('%')[0]);
     double comB = double.parse(b.commission.split('%')[0]);
@@ -77,29 +232,25 @@ class Fmt {
       case 2:
         return comA == comB ? cmpStake : comA > comB ? 1 : -1;
       default:
-        return 1;
+        return -1;
     }
   }
 
   static List<ValidatorData> filterValidatorList(
       List<ValidatorData> ls, String filter, Map accIndexMap) {
     ls.retainWhere((i) {
-      String value = filter.toLowerCase();
-      String accName = '';
       Map accInfo = accIndexMap[i.accountId];
-      if (accInfo != null) {
-        accName = accInfo['identity']['display'] ?? '';
-      }
-      return i.accountId.toLowerCase().contains(value) ||
-          accName.toLowerCase().contains(value);
+      return Fmt.validatorDisplayName(i, accInfo)
+          .toLowerCase()
+          .contains(filter.trim().toLowerCase());
     });
     return ls;
   }
 
-  static List<List<String>> filterCandidateList(
-      List<List<String>> ls, String filter, Map accIndexMap) {
+  static List<List> filterCandidateList(
+      List<List> ls, String filter, Map accIndexMap) {
     ls.retainWhere((i) {
-      String value = filter.toLowerCase();
+      String value = filter.trim().toLowerCase();
       String accName = '';
       Map accInfo = accIndexMap[i[0]];
       if (accInfo != null) {
@@ -112,48 +263,79 @@ class Fmt {
   }
 
   static Map formatRewardsChartData(Map chartData) {
-    List<List<num>> rewardsList = [];
-    List<String> rewardsLabels = [];
-    List.of(chartData['rewardsChart']).asMap().forEach((index, ls) {
-      if (index == 2) {
-        List<num> average = [];
-        List<num>.from(ls).asMap().forEach((i, v) {
-          average.add((v - chartData['rewardsChart'][1][i]));
-        });
-        rewardsList.add(average);
-      } else {
-        rewardsList.add(List<num>.from(ls));
-      }
-    });
-    List<String>.from(chartData['rewardsLabels']).asMap().forEach((k, v) {
-      if ((k + 2) % 3 == 0) {
-        rewardsLabels.add(v);
-      } else {
-        rewardsLabels.add('');
-      }
-    });
+    List<List> formatChart(String chartName, Map data) {
+      List<List> values = [];
+      List<String> labels = [];
+      List chartValues = data[chartName]['chart'];
 
-    List<List<num>> blocksList = [
-      List<num>.from(chartData['idxSet']).sublist(7),
-      <num>[]
-    ];
-    List<String> blocksLabels = [];
-    List<num>.from(chartData['avgSet']).sublist(7).asMap().forEach((i, v) {
-      blocksList[1].add(v - blocksList[0][i]);
-    });
-    List<String>.from(chartData['blocksLabels']).asMap().forEach((k, v) {
-      if ((k + 2) % 3 == 0) {
-        blocksLabels.add(v);
-      } else {
-        blocksLabels.add('');
-      }
-    });
+      chartValues.asMap().forEach((index, ls) {
+        if (index == chartValues.length - 1) {
+          List average = [];
+          List.of(ls).asMap().forEach((i, v) {
+            num avg = v - chartValues[chartValues.length - 2][i];
+            average.add(avg);
+          });
+          values.add(average);
+        } else {
+          values.add(ls);
+        }
+      });
+
+      List<String>.from(data[chartName]['labels']).asMap().forEach((k, v) {
+        if ((k - 2) % 10 == 0) {
+          labels.add(v);
+        } else {
+          labels.add('');
+        }
+      });
+      return [values, labels];
+    }
+
+    List<List> rewards = formatChart('rewards', chartData);
+    List<List> points = formatChart('points', chartData);
+    List<List> stakes = formatChart('stakes', chartData);
 
     return {
-      'rewards': rewardsList,
-      'rewardsLabels': rewardsLabels,
-      'blocksList': blocksList,
-      'blocksLabels': blocksLabels,
+      'rewards': rewards,
+      'stakes': stakes,
+      'points': points,
     };
+  }
+
+  static String blockToTime(int blocks, int blockDuration) {
+    if (blocks == null) return '~';
+
+    int blocksOfMin = 60000 ~/ blockDuration;
+    int blocksOfHour = 60 * blocksOfMin;
+    int blocksOfDay = 24 * blocksOfHour;
+
+    int day = (blocks / blocksOfDay).floor();
+    int hour = (blocks % blocksOfDay / blocksOfHour).floor();
+    int min = (blocks % blocksOfHour / blocksOfMin).floor();
+
+    String res = '$min mins';
+
+    if (day > 0) {
+      res = '$day days $hour hrs';
+    } else if (hour > 0) {
+      res = '$hour hrs $res';
+    }
+    return res;
+  }
+
+  static String accountName(BuildContext context, AccountData acc) {
+    return '${acc.name ?? ''}${(acc.observation ?? false) ? ' (${I18n.of(context).account['observe']})' : ''}';
+  }
+
+  static String validatorDisplayName(ValidatorData validator, Map accInfo) {
+    String display = Fmt.address(validator.accountId, pad: 6);
+    if (accInfo != null && accInfo['identity']['display'] != null) {
+      display = accInfo['identity']['display'];
+      if (accInfo['identity']['displayParent'] != null) {
+        display = '${accInfo['identity']['displayParent']}/$display';
+      }
+      display = display.toUpperCase();
+    }
+    return display;
   }
 }

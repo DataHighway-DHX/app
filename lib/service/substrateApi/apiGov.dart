@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 
 class ApiGovernance {
@@ -9,19 +6,6 @@ class ApiGovernance {
 
   final Api apiRoot;
   final store = globalAppStore;
-
-  Future<List> updateDemocracyVotes(String address) async {
-    String data = await PolkaScanApi.fetchTxs(address,
-        module: PolkaScanApi.module_democracy);
-    List ls = jsonDecode(data)['data'];
-    var details = await Future.wait(ls
-        .map((i) => PolkaScanApi.fetchTx(i['attributes']['extrinsic_hash']))
-        .toList());
-    ls.asMap().forEach(
-        (k, v) => v['detail'] = jsonDecode(details[k])['data']['attributes']);
-    store.gov.setUserReferendumVotes(address, ls);
-    return ls;
-  }
 
   Future<Map> fetchCouncilInfo() async {
     Map info = await apiRoot.evalJavascript('api.derive.elections.info()');
@@ -37,17 +21,32 @@ class ApiGovernance {
     return info;
   }
 
+  Future<Map> fetchCouncilVotes() async {
+    Map votes = await apiRoot.evalJavascript('gov.fetchCouncilVotes()');
+    if (votes != null) {
+      store.gov.setCouncilVotes(votes);
+    }
+    return votes;
+  }
+
+  Future<Map> fetchUserCouncilVote() async {
+    Map votes = await apiRoot.evalJavascript(
+        'api.derive.council.votesOf("${store.account.currentAddress}")');
+    if (votes != null) {
+      store.gov.setUserCouncilVotes(votes);
+    }
+    return votes;
+  }
+
   Future<Map> fetchReferendums() async {
-    Map data = await apiRoot.evalJavascript('gov.fetchReferendums()');
+    Map data = await apiRoot.evalJavascript(
+        'gov.fetchReferendums("${store.account.currentAddress}")');
     if (data != null) {
       List list = data['referendums'];
-      if (list.length > 0) {
-        list.asMap().forEach((k, v) {
-          v['detail'] = data['details'][k];
-          v['votes'] = data['votes'][k];
-        });
-        store.gov.setReferendums(List<Map<String, dynamic>>.from(list));
-      }
+      list.asMap().forEach((k, v) {
+        v['detail'] = data['details'][k];
+      });
+      store.gov.setReferendums(List<Map<String, dynamic>>.from(list));
     }
     return data;
   }

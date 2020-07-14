@@ -30,13 +30,15 @@ class _CouncilVote extends State<CouncilVotePage> {
 
   final TextEditingController _amountCtrl = new TextEditingController();
 
-  List<List<String>> _selected = List<List<String>>();
+  List<List> _selected = List<List>();
 
   Future<void> _handleCandidateSelect() async {
     var res = await Navigator.of(context)
         .pushNamed(CandidateListPage.route, arguments: _selected);
     if (res != null) {
-      _selected = List<List<String>>.of(res);
+      setState(() {
+        _selected = List<List>.of(res);
+      });
     }
   }
 
@@ -62,49 +64,13 @@ class _CouncilVote extends State<CouncilVotePage> {
           // "voteValue"
           (double.parse(amt) * pow(10, decimals)).toInt(),
         ],
-        'onFinish': (BuildContext txPageContext) {
+        'onFinish': (BuildContext txPageContext, Map res) {
           Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
           globalCouncilRefreshKey.currentState.show();
         }
       };
       Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
     }
-  }
-
-  Widget _buildSelectedList() {
-    return Column(
-      children: List<Widget>.from(_selected.map((i) {
-        var accInfo = store.account.accountIndexMap[i[0]];
-        return Container(
-          margin: EdgeInsets.fromLTRB(16, 0, 16, 8),
-          child: Row(
-            children: <Widget>[
-              Container(
-                width: 32,
-                margin: EdgeInsets.only(right: 8),
-                child: AddressIcon(i[0], size: 32),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  accInfo != null
-                      ? accInfo['identity']['display'] != null
-                          ? Text(accInfo['identity']['display']
-                              .toString()
-                              .toUpperCase())
-                          : Container()
-                      : Container(),
-                  Text(
-                    Fmt.address(i[0]),
-                    style: TextStyle(color: Colors.black54),
-                  ),
-                ],
-              )
-            ],
-          ),
-        );
-      })),
-    );
   }
 
   @override
@@ -119,8 +85,9 @@ class _CouncilVote extends State<CouncilVotePage> {
         builder: (_) {
           final Map<String, String> dic = I18n.of(context).assets;
           int decimals = store.settings.networkState.tokenDecimals;
+          String symbol = store.settings.networkState.tokenSymbol;
 
-          int balance = Fmt.balanceInt(store.assets.balance);
+          BigInt balance = store.assets.balances[symbol].freeBalance;
 
           return SafeArea(
             child: Column(
@@ -151,7 +118,8 @@ class _CouncilVote extends State<CouncilVotePage> {
                                 return dic['amount.error'];
                               }
                               if (double.parse(v.trim()) >=
-                                  balance / pow(10, decimals) - 0.02) {
+                                  balance / BigInt.from(pow(10, decimals)) -
+                                      0.001) {
                                 return dic['amount.low'];
                               }
                               return null;
@@ -165,7 +133,42 @@ class _CouncilVote extends State<CouncilVotePage> {
                             _handleCandidateSelect();
                           },
                         ),
-                        _buildSelectedList()
+                        Column(
+                          children: _selected.map((i) {
+                            var accInfo = store.account.accountIndexMap[i[0]];
+                            return Container(
+                              margin: EdgeInsets.fromLTRB(16, 0, 16, 8),
+                              child: Row(
+                                children: <Widget>[
+                                  Container(
+                                    width: 32,
+                                    margin: EdgeInsets.only(right: 8),
+                                    child: AddressIcon(i[0], size: 32),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      accInfo != null
+                                          ? accInfo['identity']['display'] !=
+                                                  null
+                                              ? Text(accInfo['identity']
+                                                      ['display']
+                                                  .toString()
+                                                  .toUpperCase())
+                                              : Container()
+                                          : Container(),
+                                      Text(
+                                        Fmt.address(i[0]),
+                                        style: TextStyle(color: Colors.black54),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        )
                       ],
                     ),
                   ),

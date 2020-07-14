@@ -8,7 +8,7 @@ import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/staking/actions/accountSelectPage.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -43,7 +43,8 @@ class _BondPageState extends State<BondPage> {
     if (_formKey.currentState.validate()) {
       String controllerId = store.account.currentAddress;
       if (_controller != null) {
-        controllerId = store.account.pubKeyAddressMap[_controller.pubKey];
+        controllerId = store.account
+            .pubKeyAddressMap[store.settings.endpoint.info][_controller.pubKey];
       }
 
       var args = {
@@ -64,7 +65,7 @@ class _BondPageState extends State<BondPage> {
           // "to"
           _rewardTo,
         ],
-        'onFinish': (BuildContext txPageContext) {
+        'onFinish': (BuildContext txPageContext, Map res) {
           Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
           globalBondingRefreshKey.currentState.show();
         }
@@ -89,8 +90,10 @@ class _BondPageState extends State<BondPage> {
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
 
-    String balance = Fmt.balance(store.assets.balance);
-    String address = store.account.currentAddress;
+    double balance = 0;
+    if (store.assets.balances[symbol] != null) {
+      balance = Fmt.bigIntToDouble(store.assets.balances[symbol].freeBalance);
+    }
 
     var rewardToOptions =
         _rewardToOptions.map((i) => dic['reward.$i']).toList();
@@ -112,15 +115,15 @@ class _BondPageState extends State<BondPage> {
                       Padding(
                         padding: EdgeInsets.only(left: 16, right: 16, top: 8),
                         child: AddressFormItem(
-                          dic['stash'],
                           store.account.currentAccount,
+                          label: dic['stash'],
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.only(left: 16, right: 16),
                         child: AddressFormItem(
-                          dic['controller'],
                           _controller ?? store.account.currentAccount,
+                          label: dic['controller'],
                           onTap: () => _changeControllerId(context),
                         ),
                       ),
@@ -130,7 +133,7 @@ class _BondPageState extends State<BondPage> {
                           decoration: InputDecoration(
                             hintText: assetDic['amount'],
                             labelText:
-                                '${assetDic['amount']} (${dic['balance']}: $balance $symbol)',
+                                '${assetDic['amount']} (${dic['balance']}: ${Fmt.doubleFormat(balance)} $symbol)',
                           ),
                           inputFormatters: [
                             RegExInputFormatter.withRegex(
@@ -143,8 +146,7 @@ class _BondPageState extends State<BondPage> {
                             if (v.isEmpty) {
                               return assetDic['amount.error'];
                             }
-                            if (double.parse(v.trim()) >=
-                                double.parse(balance) - 0.02) {
+                            if (double.parse(v.trim()) >= balance) {
                               return assetDic['amount.low'];
                             }
                             return null;
@@ -172,7 +174,10 @@ class _BondPageState extends State<BondPage> {
                                 children: rewardToOptions
                                     .map((i) => Padding(
                                         padding: EdgeInsets.all(12),
-                                        child: Text(i)))
+                                        child: Text(
+                                          i,
+                                          style: TextStyle(fontSize: 16),
+                                        )))
                                     .toList(),
                                 onSelectedItemChanged: (v) {
                                   setState(() {

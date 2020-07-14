@@ -1,14 +1,35 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
+import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/service/walletApi.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-class AboutPage extends StatelessWidget {
+class AboutPage extends StatefulWidget {
   static final String route = '/profile/about';
 
   @override
+  _AboutPage createState() => _AboutPage();
+}
+
+class _AboutPage extends State<AboutPage> {
+  bool _loading = false;
+
+  Future<void> _checkUpdate() async {
+    setState(() {
+      _loading = true;
+    });
+    Map versions = await WalletApi.getLatestVersion();
+    setState(() {
+      _loading = false;
+    });
+    UI.checkUpdate(context, versions);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    var dic = I18n.of(context).profile;
+    final Map dic = I18n.of(context).profile;
     return Scaffold(
       appBar: AppBar(
         title: Text(dic['about']),
@@ -71,13 +92,23 @@ class AboutPage extends StatelessWidget {
                   (BuildContext context, AsyncSnapshot<PackageInfo> snapshot) {
                 return snapshot.hasData
                     ? Padding(
-                        padding: EdgeInsets.all(24),
+                        padding: EdgeInsets.all(8),
                         child: Text(
                             '${dic['about.version']}: v${snapshot.data.version}'),
                       )
                     : Container();
               },
             ),
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: RoundedButton(
+                text: I18n.of(context).home['update'],
+                onPressed: () {
+                  _checkUpdate();
+                },
+                submitting: _loading,
+              ),
+            )
           ],
         ),
       ),

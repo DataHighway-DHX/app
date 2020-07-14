@@ -4,6 +4,8 @@ import 'package:polka_wallet/page/account/create/createAccountForm.dart';
 import 'package:polka_wallet/page/account/import/importAccountForm.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
+import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class ImportAccountPage extends StatefulWidget {
@@ -25,15 +27,43 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
   String _keyType = '';
   String _cryptoType = '';
   String _derivePath = '';
+  bool _submitting = false;
 
   Future<void> _importAccount() async {
+    setState(() {
+      _submitting = true;
+    });
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(I18n.of(context).home['loading']),
+          content: Container(height: 64, child: CupertinoActivityIndicator()),
+        );
+      },
+    );
+
     var acc = await webApi.account.importAccount(
       keyType: _keyType,
       cryptoType: _cryptoType,
       derivePath: _derivePath,
     );
+    setState(() {
+      _submitting = false;
+    });
+    Navigator.of(context).pop();
+
+    /// check if account duplicate
     if (acc != null) {
-      Navigator.popUntil(context, ModalRoute.withName('/'));
+      if (acc['error'] != null) {
+        UI.alertWASM(context, () {
+          setState(() {
+            _step = 0;
+          });
+        });
+        return;
+      }
+      _checkAccountDuplicate(acc);
       return;
     }
 
@@ -56,6 +86,60 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
     );
   }
 
+  Future<void> _checkAccountDuplicate(Map<String, dynamic> acc) async {
+    int index =
+        store.account.accountList.indexWhere((i) => i.pubKey == acc['pubKey']);
+    if (index > -1) {
+      Map<String, String> pubKeyMap =
+          store.account.pubKeyAddressMap[store.settings.endpoint.ss58];
+      String address = pubKeyMap[acc['pubKey']];
+      if (address != null) {
+        showCupertinoDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CupertinoAlertDialog(
+              title: Text(Fmt.address(address)),
+              content: Text(I18n.of(context).account['import.duplicate']),
+              actions: <Widget>[
+                CupertinoButton(
+                  child: Text(I18n.of(context).home['cancel']),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                CupertinoButton(
+                  child: Text(I18n.of(context).home['ok']),
+                  onPressed: () {
+                    _saveAccount(acc);
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } else {
+      _saveAccount(acc);
+    }
+  }
+
+  Future<void> _saveAccount(Map<String, dynamic> acc) async {
+    await store.account.addAccount(acc, store.account.newAccount.password);
+    webApi.account.encodeAddress([acc['pubKey']]);
+
+    store.assets.loadAccountCache();
+    store.staking.loadAccountCache();
+
+    // fetch info for the imported account
+    String pubKey = acc['pubKey'];
+    webApi.assets.fetchBalance();
+    webApi.staking.fetchAccountStaking();
+    webApi.account.fetchAccountsBonded([pubKey]);
+    webApi.account.getPubKeyIcons([pubKey]);
+
+    // go to home page
+    Navigator.popUntil(context, ModalRoute.withName('/'));
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_step == 1) {
@@ -72,14 +156,18 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
           ),
         ),
         body: SafeArea(
-          child: CreateAccountForm(store.account.setNewAccount, _importAccount),
+          child: CreateAccountForm(
+            setNewAccount: store.account.setNewAccount,
+            submitting: _submitting,
+            onSubmit: _importAccount,
+          ),
         ),
       );
     }
     return Scaffold(
       appBar: AppBar(title: Text(I18n.of(context).home['import'])),
       body: SafeArea(
-        child: ImportAccountForm(store.account, (Map<String, dynamic> data) {
+        child: ImportAccountForm(store, (Map<String, dynamic> data) {
           if (data['finish'] == null) {
             setState(() {
               _keyType = data['keyType'];

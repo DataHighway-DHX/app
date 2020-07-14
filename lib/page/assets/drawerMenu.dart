@@ -16,7 +16,8 @@ class DrawerMenu extends StatelessWidget {
 
   List<Widget> _buildAccList(BuildContext context) {
     return store.account.optionalAccounts.map((i) {
-      String address = store.account.pubKeyAddressMap[i.pubKey];
+      String address = store
+          .account.pubKeyAddressMap[store.settings.endpoint.info][i.pubKey];
       return ListTile(
         leading: AddressIcon(i.address, pubKey: i.pubKey, size: 36),
         title: Text(i.name ?? 'name',
@@ -27,14 +28,13 @@ class DrawerMenu extends StatelessWidget {
         ),
         onTap: () {
           Navigator.pop(context);
-          store.account.setCurrentAccount(i);
+          store.account.setCurrentAccount(i.pubKey);
           // refresh balance
           store.assets.loadAccountCache();
           globalBalanceRefreshKey.currentState.show();
-          // refresh user's staking & gov info
-          store.gov.clearSate();
+          // refresh user's staking info
           store.staking.loadAccountCache();
-          webApi.staking.fetchAccountStaking(i.pubKey);
+          webApi.staking.fetchAccountStaking();
         },
       );
     }).toList();
@@ -96,7 +96,7 @@ class DrawerMenu extends StatelessWidget {
               leading: Container(
                 width: 40,
                 height: 40,
-                child: Image.asset('assets/images/assets/Menu_create.png'),
+                child: Image.asset('assets/images/assets/Menu_wallet.png'),
               ),
               title: Text(I18n.of(context).home['create'],
                   style: TextStyle(fontSize: 16, color: Colors.white)),

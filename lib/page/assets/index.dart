@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -8,15 +10,25 @@ import 'package:polka_wallet/page/assets/lock/lockPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
 import 'package:polka_wallet/page/assets/signal/signalPage.dart';
 import 'package:polka_wallet/service/ethereumApi/api.dart';
+import 'package:polka_wallet/common/components/passwordInputDialog.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page/account/scanPage.dart';
+import 'package:polka_wallet/page/account/uos/qrSignerPage.dart';
+import 'package:polka_wallet/page/assets/asset/assetPage.dart';
+import 'package:polka_wallet/page/assets/claim/attestPage.dart';
+import 'package:polka_wallet/page/assets/claim/claimPage.dart';
+import 'package:polka_wallet/page/assets/receive/receivePage.dart';
+import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/assets/types/balancesInfo.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 
-import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 import '../../service/ethereumApi/apiAssetsMXC.dart';
@@ -38,6 +50,9 @@ class _AssetsState extends State<Assets> {
 
   final AppStore store;
 
+  bool _faucetSubmitting = false;
+  bool _preclaimChecking = false;
+
   Future<void> _fetchBalance() async {
     await Future.wait([
       webApi.assets.fetchBalance(store.account.currentAccount.pubKey),
@@ -53,17 +68,105 @@ class _AssetsState extends State<Assets> {
 
     AccountData acc = store.account.currentAccount;
 
+    bool isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
+    bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
+    bool isPolkadot =
+        store.settings.endpoint.info == networkEndpointPolkadot.info;
+
     return RoundedCard(
+      margin: EdgeInsets.fromLTRB(16, 4, 16, 0),
       padding: EdgeInsets.all(8),
       child: Column(
         children: <Widget>[
           ListTile(
             leading: AddressIcon('', pubKey: acc.pubKey),
-            title: Text(acc.name ?? ''),
+            title: Text(Fmt.accountName(context, acc)),
             subtitle: Text(network),
+            trailing: isAcala
+                ? GestureDetector(
+                    child: Padding(
+                      padding: EdgeInsets.all(4),
+                      child: Column(
+                        children: <Widget>[
+                          _faucetSubmitting
+                              ? CupertinoActivityIndicator()
+                              : Icon(
+                                  Icons.card_giftcard,
+                                  color: Theme.of(context).primaryColor,
+                                  size: 20,
+                                ),
+                          Text(
+                            I18n.of(context).acala['faucet.title'],
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    onTap: () {
+                      if (acc.address != '') {
+                        _getTokensFromFaucet();
+                      }
+                    },
+                  )
+                : isPolkadot
+                    ? !store.settings.loading
+                        ? GestureDetector(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 8),
+                              child: Column(
+                                children: <Widget>[
+                                  _faucetSubmitting
+                                      ? CupertinoActivityIndicator()
+                                      : Icon(
+                                          Icons.card_giftcard,
+                                          color: Theme.of(context).primaryColor,
+                                          size: 20,
+                                        ),
+                                  Text(
+                                    dic['claim'],
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            onTap: _preclaimChecking
+                                ? null
+                                : () {
+                                    _checkPreclaim();
+                                  },
+                          )
+                        : Container(width: 8)
+                    : Container(width: 8),
           ),
           ListTile(
-            title: Text(Fmt.address(store.account.currentAddress)),
+            title: Row(
+              children: [
+                GestureDetector(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 4),
+                    child: Image.asset(
+                      'assets/images/assets/qrcode_${isAcala ? 'indigo' : isKusama ? 'black' : 'pink'}.png',
+                      width: 18,
+                    ),
+                  ),
+                  onTap: () {
+                    if (acc.address != '') {
+                      Navigator.pushNamed(context, ReceivePage.route);
+                    }
+                  },
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 8),
+                  child: Text(Fmt.address(store.account.currentAddress)),
+                )
+              ],
+            ),
             trailing: IconButton(
               icon: Image.asset(
                 'assets/images/assets/Assets_nav_code.png',
@@ -71,7 +174,7 @@ class _AssetsState extends State<Assets> {
               ),
               onPressed: () {
                 if (acc.address != '') {
-                  Navigator.pushNamed(context, ReceivePage.route);
+                  _handleScan();
                 }
               },
             ),
@@ -86,8 +189,13 @@ class _AssetsState extends State<Assets> {
     // if network connected failed, reconnect
     if (!store.settings.loading && store.settings.networkName == null) {
       store.settings.setNetworkLoading(true);
-      webApi.connectNode();
+      webApi.connectNodeAll();
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!store.settings.loading) {
+        globalBalanceRefreshKey.currentState?.show();
+      }
+    });
     super.initState();
   }
 
@@ -103,8 +211,7 @@ class _AssetsState extends State<Assets> {
         return RefreshIndicator(
           key: globalBalanceRefreshKey,
           onRefresh: _fetchBalance,
-          child: ListView(
-            padding: EdgeInsets.only(left: 16, right: 16),
+          child: Column(
             children: <Widget>[
               _buildTopCard(context),
               Padding(

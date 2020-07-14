@@ -4,14 +4,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/page/profile/account/exportResultPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/account/account.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class ExportAccountPage extends StatelessWidget {
   ExportAccountPage(this.store);
   static final String route = '/profile/export';
-  static final String exportTypeKeystore = 'keystore';
   final AccountStore store;
 
   final TextEditingController _passCtrl = new TextEditingController();
@@ -21,7 +21,8 @@ class ExportAccountPage extends StatelessWidget {
     final Map<String, String> accDic = I18n.of(context).account;
 
     Future<void> onOk() async {
-      var res = await webApi.account.checkAccountPassword(_passCtrl.text);
+      var res = await webApi.account
+          .checkAccountPassword(store.currentAccount, _passCtrl.text);
       if (res == null) {
         showCupertinoDialog(
           context: context,
@@ -88,7 +89,8 @@ class ExportAccountPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var dic = I18n.of(context).profile;
+    final dic = I18n.of(context).profile;
+    final dicAcc = I18n.of(context).account;
     return Scaffold(
       appBar: AppBar(
         title: Text(dic['export']),
@@ -96,28 +98,29 @@ class ExportAccountPage extends StatelessWidget {
       body: ListView(
         children: <Widget>[
           ListTile(
-            title: Text('Keystore'),
+            title: Text(dicAcc[AccountStore.seedTypeKeystore]),
             trailing: Icon(Icons.arrow_forward_ios, size: 18),
             onTap: () {
               Map json = AccountData.toJson(store.currentAccount);
               json.remove('name');
+              json['meta']['name'] = store.currentAccount.name;
               Navigator.of(context)
                   .pushNamed(ExportResultPage.route, arguments: {
                 'key': jsonEncode(json),
-                'type': exportTypeKeystore,
+                'type': AccountStore.seedTypeKeystore,
               });
             },
           ),
           FutureBuilder(
             future: store.checkSeedExist(
-                store.seedTypeMnemonic, store.currentAccount.pubKey),
+                AccountStore.seedTypeMnemonic, store.currentAccount.pubKey),
             builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
               if (snapshot.hasData && snapshot.data == true) {
                 return ListTile(
-                  title: Text('Mnemonic'),
+                  title: Text(dicAcc[AccountStore.seedTypeMnemonic]),
                   trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                  onTap: () =>
-                      _showPasswordDialog(context, store.seedTypeMnemonic),
+                  onTap: () => _showPasswordDialog(
+                      context, AccountStore.seedTypeMnemonic),
                 );
               } else {
                 return Container();
@@ -126,13 +129,14 @@ class ExportAccountPage extends StatelessWidget {
           ),
           FutureBuilder(
             future: store.checkSeedExist(
-                store.seedTypeRaw, store.currentAccount.pubKey),
+                AccountStore.seedTypeRawSeed, store.currentAccount.pubKey),
             builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
               if (snapshot.hasData && snapshot.data == true) {
                 return ListTile(
-                  title: Text('Raw Seed'),
+                  title: Text(dicAcc[AccountStore.seedTypeRawSeed]),
                   trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                  onTap: () => _showPasswordDialog(context, store.seedTypeRaw),
+                  onTap: () => _showPasswordDialog(
+                      context, AccountStore.seedTypeRawSeed),
                 );
               } else {
                 return Container();
