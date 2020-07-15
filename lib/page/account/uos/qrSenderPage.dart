@@ -63,9 +63,8 @@ class _QrSenderPageState extends State<QrSenderPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     snapshot.hasData
-                        ? QrImage(
-                            data: '',
-                            rawBytes: snapshot.data,
+                        ? QrImage.withQr(
+                            qr: QrCode.fromUint8List(data: snapshot.data, errorCorrectLevel: 1),
                             size: screenWidth - 24,
                           )
                         : CupertinoActivityIndicator(),
