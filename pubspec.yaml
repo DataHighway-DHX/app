@@ -196,11 +196,15 @@ flutter:
     - assets/images/profile/about.png
     - assets/images/profile/address.png
     - assets/images/profile/setting.png
+    - assets/images/public/Assets.png
+    - assets/images/public/Governance.png
+    - assets/images/public/Profile.png
+    - assets/images/public/Staking.png
+    # DHX
+    - assets/images/assets/Assets_nav_code.png
     # JS
     - lib/js_service_acala/dist/main.js
     - lib/js_service_kusama/dist/main.js
-    # DHX
-    - assets/images/assets/Assets_nav_code.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
