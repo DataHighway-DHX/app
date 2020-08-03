@@ -6,6 +6,7 @@ import 'package:polka_wallet/app.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/services.dart';
 
 Future<void> main() async {
   await DotEnv().load('.env');
@@ -32,6 +33,9 @@ Future<void> main() async {
     }
     selectNotificationSubject.add(payload);
   });
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.white
+  ));
   print('notification_plugin initialised: $initialised');
 
   runApp(

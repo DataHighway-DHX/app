@@ -14,7 +14,7 @@ description: PolkaWallet made with Flutter.
 version: 0.6.2
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.8.0 <3.0.0"
 
 dependencies:
   flutter_dotenv: ^2.1.0
@@ -142,6 +142,8 @@ flutter:
     - assets/images/profile/about.png
     - assets/images/profile/address.png
     - assets/images/profile/setting.png
+    # dhx
+    - assets/images/account/background.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

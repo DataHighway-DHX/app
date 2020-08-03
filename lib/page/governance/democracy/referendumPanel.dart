@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page/governance/democracy/referendumVotePage.dart';
 import 'package:polka_wallet/store/governance.dart';
@@ -138,8 +138,8 @@ class ReferendumPanel extends StatelessWidget {
             margin: EdgeInsets.only(bottom: 4),
             width: widthYes > widthMin ? widthYes : widthMin,
             decoration: BoxDecoration(
-                border:
-                    Border(bottom: BorderSide(width: 6, color: Colors.deepPurple))),
+                border: Border(
+                    bottom: BorderSide(width: 6, color: Colors.deepPurple))),
           )
         ],
       ));

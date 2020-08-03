@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/page/account/create/backupAccountPage.dart';
 import 'package:polka_wallet/page/account/create/createAccountForm.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -67,6 +67,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(I18n.of(context).home['create']),
+        centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
           onPressed: () {
@@ -129,13 +130,19 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       return _buildStep2(context);
     }
     return Scaffold(
-      appBar: AppBar(title: Text(I18n.of(context).home['create'])),
+      appBar: AppBar(
+        title: Text(I18n.of(context).home['create']),
+        centerTitle: true,
+      ),
       body: SafeArea(
-        child: CreateAccountForm(setNewAccount, () {
-          setState(() {
-            _step = 2;
-          });
-        }),
+        child: CreateAccountForm(
+          setNewAccount: setNewAccount,
+          onSubmit: () {
+            setState(() {
+              _step = 2;
+            });
+          },
+        ),
       ),
     );
   }

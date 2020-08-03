@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/mnemonic_list.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -59,19 +60,8 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
                         i18n['create.warn4'],
                       ),
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.black12,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(4))),
-                      padding: EdgeInsets.all(16),
-                      child: Text(
-                        store.account.newAccount.key ?? '',
-                        style: Theme.of(context).textTheme.display3,
-                      ),
+                    MnemonicList(
+                      words: store.account.newAccount.key.split(' '),
                     ),
                   ],
                 ),
@@ -137,7 +127,8 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
                           padding: EdgeInsets.all(8),
                           child: Text(
                             i18n['backup.reset'],
-                            style: TextStyle(fontSize: 14, color: Colors.deepPurple),
+                            style: TextStyle(
+                                fontSize: 14, color: Colors.deepPurple),
                           ),
                         ),
                         onTap: () {
@@ -150,19 +141,8 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
                       )
                     ],
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(
-                          color: Colors.black12,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.all(Radius.circular(4))),
-                    padding: EdgeInsets.all(16),
-                    child: Text(
-                      _wordsSelected.join(' ') ?? '',
-                      style: Theme.of(context).textTheme.display3,
-                    ),
+                  MnemonicList(
+                    words: _wordsSelected,
                   ),
                   _buildWordsButtons(),
                 ],
@@ -171,7 +151,7 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
             Container(
               padding: EdgeInsets.all(16),
               child: RoundedButton(
-                text: I18n.of(context).home['next'],
+                text: I18n.of(context).home['confirm'],
                 onPressed: _wordsSelected.join(' ') ==
                         store.account.newAccount.key
                     ? () async {
@@ -192,40 +172,51 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
       _wordsLeft.sort();
     }
 
-    List<Widget> rows = <Widget>[];
-    for (var r = 0; r * 3 < _wordsLeft.length; r++) {
-      if (_wordsLeft.length > r * 3) {
-        rows.add(Row(
-          children: _wordsLeft
-              .getRange(
-                  r * 3,
-                  _wordsLeft.length > (r + 1) * 3
-                      ? (r + 1) * 3
-                      : _wordsLeft.length)
-              .map(
-                (i) => Container(
-                  padding: EdgeInsets.only(left: 4, right: 4),
-                  child: RaisedButton(
-                    child: Text(
-                      i,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _wordsLeft.remove(i);
-                        _wordsSelected.add(i);
-                      });
-                    },
-                  ),
+    var perRow = 3;
+    var rowsCount = (_wordsLeft.length / perRow).ceil();
+
+    var el = (String i) => Expanded(
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 5,
+            ),
+            child: SizedBox(
+              height: 30,
+              child: RoundedButton.custom(
+                child: Text(
+                  i,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText2
+                      .copyWith(color: Colors.white),
                 ),
-              )
-              .toList(),
-        ));
-      }
-    }
+                padding: EdgeInsets.all(0),
+                onPressed: () {
+                  setState(() {
+                    _wordsLeft.remove(i);
+                    _wordsSelected.add(i);
+                  });
+                },
+              ),
+            ),
+          ),
+        );
+
     return Container(
       padding: EdgeInsets.only(top: 16),
       child: Column(
-        children: rows,
+        children: [
+          for (var i = 0; i < rowsCount; i++)
+            Row(
+              children: [
+                for (var j = 0; j < perRow; j++)
+                  i * perRow + j < _wordsLeft.length
+                      ? el(_wordsLeft[i * perRow + j])
+                      : Spacer(),
+              ],
+            ),
+        ],
       ),
     );
   }

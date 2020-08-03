@@ -2,10 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:polka_wallet/common/widgets/picker_card.dart';
 
 class ImportAccountForm extends StatefulWidget {
   const ImportAccountForm(this.accountStore, this.onSubmit);
@@ -92,36 +93,21 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
             },
           ),
         ),
-        _expanded
-            ? ListTile(
-                title: Text(I18n.of(context).account['import.encrypt']),
-                subtitle: Text(_typeOptions[_typeSelection]),
-                trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                onTap: () {
-                  showCupertinoModalPopup(
-                    context: context,
-                    builder: (_) => Container(
-                      height: MediaQuery.of(context).copyWith().size.height / 3,
-                      child: CupertinoPicker(
-                        backgroundColor: Colors.white,
-                        itemExtent: 56,
-                        scrollController: FixedExtentScrollController(
-                            initialItem: _typeSelection),
-                        children: _typeOptions
-                            .map((i) => Padding(
-                                padding: EdgeInsets.all(16), child: Text(i)))
-                            .toList(),
-                        onSelectedItemChanged: (v) {
-                          setState(() {
-                            _typeSelection = v;
-                          });
-                        },
-                      ),
-                    ),
-                  );
-                },
-              )
-            : Container(),
+        if (_expanded)
+          PickerCard(
+            margin: EdgeInsets.symmetric(
+              vertical: 10,
+              horizontal: 16,
+            ),
+            label: I18n.of(context).account['import.encrypt'],
+            onValueSelected: (val, i) {
+              setState(() {
+                _typeSelection = i;
+              });
+            },
+            values: _typeOptions,
+            defaultValue: _typeOptions[_typeSelection],
+          ),
         _expanded
             ? Padding(
                 padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
@@ -144,7 +130,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
     return Column(
       children: <Widget>[
         Padding(
-          padding: EdgeInsets.only(left: 16, right: 16),
+          padding: EdgeInsets.symmetric(horizontal: 16),
           child: TextFormField(
             decoration: InputDecoration(
               hintText: dic['create.name'],
@@ -230,35 +216,22 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
             autovalidate: true,
             child: ListView(
               children: <Widget>[
-                ListTile(
-                  title: Text(I18n.of(context).account['import.type']),
-                  subtitle: Text(_keyOptions[_keySelection]),
-                  trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                  onTap: () {
-                    showCupertinoModalPopup(
-                      context: context,
-                      builder: (_) => Container(
-                        height:
-                            MediaQuery.of(context).copyWith().size.height / 3,
-                        child: CupertinoPicker(
-                          backgroundColor: Colors.white,
-                          itemExtent: 56,
-                          scrollController: FixedExtentScrollController(
-                              initialItem: _keySelection),
-                          children: _keyOptions
-                              .map((i) => Padding(
-                                  padding: EdgeInsets.all(16), child: Text(i)))
-                              .toList(),
-                          onSelectedItemChanged: (v) {
-                            setState(() {
-                              _keyCtrl.value = TextEditingValue(text: '');
-                              _keySelection = v;
-                            });
-                          },
-                        ),
-                      ),
-                    );
+                SizedBox(
+                  height: 20,
+                ),
+                PickerCard(
+                  margin: EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 16,
+                  ),
+                  label: I18n.of(context).account['import.type'],
+                  onValueSelected: (val, i) {
+                    setState(() {
+                      _keySelection = i;
+                    });
                   },
+                  values: _keyOptions,
+                  defaultValue: _keyOptions[_keySelection],
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: 16, right: 16),
