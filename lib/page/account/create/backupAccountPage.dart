@@ -181,24 +181,14 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
               horizontal: 10,
               vertical: 5,
             ),
-            child: SizedBox(
-              height: 30,
-              child: RoundedButton.custom(
-                child: Text(
-                  i,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText2
-                      .copyWith(color: Colors.white),
-                ),
-                padding: EdgeInsets.all(0),
-                onPressed: () {
-                  setState(() {
-                    _wordsLeft.remove(i);
-                    _wordsSelected.add(i);
-                  });
-                },
-              ),
+            child: RoundedButton.dense(
+              text: i,
+              onPressed: () {
+                setState(() {
+                  _wordsLeft.remove(i);
+                  _wordsSelected.add(i);
+                });
+              },
             ),
           ),
         );

@@ -7,6 +7,8 @@ class RoundedButton extends StatelessWidget {
     this.onPressed,
     Widget icon,
     this.color,
+    this.height,
+    this.width,
     this.padding = const EdgeInsets.fromLTRB(24, 12, 24, 12),
   })  : child = Builder(
           builder: (context) => Row(
@@ -29,23 +31,52 @@ class RoundedButton extends StatelessWidget {
   RoundedButton.custom({
     this.onPressed,
     this.color,
+    this.height,
+    this.width,
     this.padding = const EdgeInsets.fromLTRB(24, 12, 24, 12),
     @required this.child,
   }) : assert(child != null);
+
+  RoundedButton.dense({
+    Function onPressed,
+    @required String text,
+    double height = 30,
+    double width,
+  }) : this.custom(
+          height: height,
+          width: width,
+          onPressed: onPressed,
+          padding: const EdgeInsets.all(0),
+          child: Builder(
+            builder: (context) => Text(
+              text,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText2
+                  .copyWith(color: Colors.white),
+            ),
+          ),
+        );
 
   final Function onPressed;
   final Color color;
   final EdgeInsets padding;
   final Widget child;
+  final double height;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-      padding: padding,
-      color: color ?? Color(0xFF4665EA),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-      child: child,
-      onPressed: onPressed,
+    return SizedBox(
+      height: height,
+      width: width,
+      child: RaisedButton(
+        padding: padding,
+        color: color ?? Theme.of(context).primaryColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+        child: child,
+        onPressed: onPressed,
+      ),
     );
   }
 }

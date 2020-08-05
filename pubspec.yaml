@@ -113,7 +113,6 @@ flutter:
     - assets/images/public/substrate.png
     - assets/images/public/default.png
     - assets/images/assets/logo.png
-    - assets/images/assets/Assets_bg.png
     - assets/images/assets/Assets_nav_0.png
     - assets/images/assets/Assets_nav_1.png
     - assets/images/assets/Assets_nav_code.png
@@ -132,7 +131,6 @@ flutter:
     - assets/images/assets/DOT.png
     - assets/images/assets/KSM.png
     - assets/images/assets/FIR.png
-    - assets/images/staking/top_bg.png
     - assets/images/staking/set.png
     - assets/images/staking/ok.png
     - assets/images/staking/error.png
@@ -144,6 +142,10 @@ flutter:
     - assets/images/profile/setting.png
     # dhx
     - assets/images/account/background.png
+    - assets/images/assets/logo_dark.png
+    - assets/images/assets/currencies/ETH.png
+    - assets/images/assets/currencies/DOT.png
+    - assets/images/assets/currencies/IOTA.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

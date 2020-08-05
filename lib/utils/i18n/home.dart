@@ -1,5 +1,5 @@
 const Map<String, String> enHome = {
-  'mining': 'Mining',
+  'mining': 'HODL',
   'assets': 'Assets',
   'staking': 'Staking',
   'governance': 'Governance',
@@ -36,7 +36,7 @@ const Map<String, String> enHome = {
 };
 
 const Map<String, String> zhHome = {
-  'mining': '挖矿',
+  'mining': 'HODL',
   'assets': '资产',
   'staking': '抵押',
   'governance': '治理',

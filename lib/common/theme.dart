@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 final appTheme = ThemeData(
-  primarySwatch: Colors.deepPurple,
+  primaryColor: Color(0xFF4665EA),
   scaffoldBackgroundColor: Colors.white,
   appBarTheme: AppBarTheme(
     color: Colors.white,
@@ -26,7 +26,9 @@ final appTheme = ThemeData(
       fontSize: 22,
     ),
     display3: TextStyle(
+      fontWeight: FontWeight.bold,
       fontSize: 20,
+      color: Colors.black,
     ),
     display4: TextStyle(
       fontSize: 16,
@@ -38,10 +40,20 @@ final appTheme = ThemeData(
       fontSize: 18,
     ),
   ).copyWith(
+    bodyText1: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.normal,
+      color: Color(0xFF939393),
+    ),
     subtitle1: TextStyle(
       fontSize: 16,
       fontFamily: 'Roboto',
       fontWeight: FontWeight.w500,
+    ),
+    subtitle2: TextStyle(
+      fontSize: 16,
+      fontFamily: 'Roboto',
+      fontWeight: FontWeight.w400,
     ),
   ),
 );

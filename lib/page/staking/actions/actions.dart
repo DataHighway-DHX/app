@@ -209,7 +209,7 @@ class _StakingActions extends State<StakingActions>
                   children: <Widget>[
                     Text(
                       store.account.currentAccount.name,
-                      style: Theme.of(context).textTheme.display4,
+                      style: Theme.of(context).textTheme.subtitle1,
                     ),
                     Text(Fmt.address(store.account.currentAddress))
                   ],
@@ -222,7 +222,10 @@ class _StakingActions extends State<StakingActions>
                   children: <Widget>[
                     Text(
                       '${Fmt.balance(balance.toString())}',
-                      style: Theme.of(context).textTheme.display4,
+                      style: Theme.of(context).textTheme.subtitle1.copyWith(
+                            color: Color(0xFF939393),
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     Text(
                       dic['balance'],
@@ -241,15 +244,16 @@ class _StakingActions extends State<StakingActions>
           ),
           Divider(),
           StakingInfoPanel(
-              hasData: hasData,
-              isStash: isStash,
-              controllerEqualStash: controllerEqualStash,
-              bonded: bonded,
-              unlocking: unlocking,
-              redeemable: redeemable,
-              available: available,
-              payee: payee,
-              rewards: rewards),
+            hasData: hasData,
+            isStash: isStash,
+            controllerEqualStash: controllerEqualStash,
+            bonded: bonded,
+            unlocking: unlocking,
+            redeemable: redeemable,
+            available: available,
+            payee: payee,
+            rewards: rewards,
+          ),
           Divider(),
           StakingActionsPanel(
             isStash: isStash,
@@ -455,7 +459,10 @@ class InfoItem extends StatelessWidget {
           ),
           Text(
             content ?? '-',
-            style: Theme.of(context).textTheme.display4,
+            style: Theme.of(context).textTheme.subtitle1.copyWith(
+                  color: Color(0xFF939393),
+                  fontWeight: FontWeight.bold,
+                ),
           )
         ],
       ),
@@ -498,48 +505,14 @@ class StakingInfoPanel extends StatelessWidget {
           Row(
             children: <Widget>[
               InfoItem(
-                title: dic['bonded'],
-                content: Fmt.token(bonded),
+                title: dic['available'],
+                content: Fmt.token(available),
                 crossAxisAlignment: CrossAxisAlignment.center,
               ),
               InfoItem(
-                title: dic['bond.unlocking'],
-                content: Fmt.token(unlocking),
+                title: dic['bonded'],
+                content: Fmt.token(bonded),
                 crossAxisAlignment: CrossAxisAlignment.center,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text(dic['bond.redeemable'],
-                        style: TextStyle(fontSize: 13)),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          Fmt.token(redeemable),
-                          style: Theme.of(context).textTheme.display4,
-                        ),
-                        !isStash && redeemable > 0
-                            ? GestureDetector(
-                                child: Container(
-                                  padding: EdgeInsets.only(left: 4),
-                                  child: Icon(
-                                    Icons.lock_open,
-                                    size: 16,
-                                    color: actionButtonColor,
-                                  ),
-                                ),
-                                onTap: () {
-                                  Navigator.of(context)
-                                      .pushNamed(RedeemPage.route);
-                                },
-                              )
-                            : Container()
-                      ],
-                    )
-                  ],
-                ),
               ),
             ],
           ),
@@ -549,52 +522,14 @@ class StakingInfoPanel extends StatelessWidget {
           Row(
             children: <Widget>[
               InfoItem(
-                title: dic['available'],
-                content: Fmt.token(available),
+                title: dic['bond.unlocking'],
+                content: Fmt.token(unlocking),
                 crossAxisAlignment: CrossAxisAlignment.center,
               ),
               InfoItem(
                 title: dic['bond.reward'],
                 content: payee,
                 crossAxisAlignment: CrossAxisAlignment.center,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text(dic['payout'], style: TextStyle(fontSize: 13)),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        rewards != null
-                            ? Text(
-                                Fmt.token(rewards),
-                                style: Theme.of(context).textTheme.display4,
-                              )
-                            : CupertinoActivityIndicator(),
-                        // only controller account can request payout
-                        (!isStash || controllerEqualStash) &&
-                                rewards != null &&
-                                rewards > 0
-                            ? GestureDetector(
-                                child: Container(
-                                  padding: EdgeInsets.only(left: 4),
-                                  child: Icon(
-                                    Icons.file_download,
-                                    size: 16,
-                                    color: actionButtonColor,
-                                  ),
-                                ),
-                                onTap: () {
-                                  Navigator.of(context)
-                                      .pushNamed(PayoutPage.route);
-                                },
-                              )
-                            : Container()
-                      ],
-                    )
-                  ],
-                ),
               ),
             ],
           ),

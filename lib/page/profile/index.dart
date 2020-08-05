@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
+import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/page/profile/aboutPage.dart';
 import 'package:polka_wallet/page/profile/account/accountManagePage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactsPage.dart';
@@ -28,69 +29,90 @@ class Profile extends StatelessWidget {
         ),
         body: ListView(
           children: <Widget>[
-            Container(
-              color: Colors.deepPurple,
-              padding: EdgeInsets.only(bottom: 16),
-              child: ListTile(
-                leading: AddressIcon('', pubKey: store.currentAccount.pubKey),
-                title: Text(acc.name ?? 'name',
-                    style: TextStyle(fontSize: 16, color: Colors.white)),
-                subtitle: Text(
-                  Fmt.address(store.currentAddress) ?? '',
-                  style: TextStyle(fontSize: 16, color: Colors.white70),
+            Card(
+              margin: EdgeInsets.symmetric(
+                vertical: 10,
+                horizontal: 15,
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(15),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        AddressIcon('', pubKey: store.currentAccount.pubKey),
+                        SizedBox(width: 16),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              acc.name ?? 'name',
+                              style: Theme.of(context).textTheme.subtitle1,
+                            ),
+                            Text(
+                              Fmt.address(store.currentAddress) ?? '',
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 40),
+                    RoundedButton.dense(
+                      width: 150,
+                      text: dic['account'],
+                      onPressed: () =>
+                          Navigator.pushNamed(context, AccountManagePage.route),
+                    )
+                  ],
                 ),
               ),
             ),
-            Container(
-              padding: EdgeInsets.all(24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  RaisedButton(
-                    padding: EdgeInsets.fromLTRB(24, 8, 24, 8),
-                    color: Colors.deepPurpleAccent,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24)),
-                    child: Text(
-                      dic['account'],
-                      style: Theme.of(context).textTheme.button,
-                    ),
-                    onPressed: () =>
-                        Navigator.pushNamed(context, AccountManagePage.route),
-                  )
-                ],
-              ),
+            SizedBox(
+              height: 24,
             ),
             ListTile(
-              leading: Image.asset('assets/images/profile/setting.png'),
-              title: Text(dic['setting']),
-              trailing: Icon(Icons.arrow_forward_ios, size: 18),
-              onTap: () => Navigator.of(context).pushNamed(SettingsPage.route),
-            ),
-            ListTile(
-              leading: Image.asset('assets/images/profile/address.png'),
               title: Text(dic['contact']),
-              trailing: Icon(Icons.arrow_forward_ios, size: 18),
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                size: 18,
+                color: Colors.black,
+              ),
               onTap: () => Navigator.of(context).pushNamed(ContactsPage.route),
             ),
             ListTile(
-              leading: Image.asset('assets/images/profile/about.png'),
+              title: Text(dic['setting']),
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                size: 18,
+                color: Colors.black,
+              ),
+              onTap: () => Navigator.of(context).pushNamed(SettingsPage.route),
+            ),
+            ListTile(
               title: Text(dic['about']),
-              trailing: Icon(Icons.arrow_forward_ios, size: 18),
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                size: 18,
+                color: Colors.black,
+              ),
               onTap: () => Navigator.of(context).pushNamed(AboutPage.route),
             ),
             ListTile(
-              leading: Icon(Icons.lock_open),//Image.asset('assets/images/profile/about.png'),
               title: Text(dic['password']),
-              trailing: Icon(Icons.arrow_forward_ios, size: 18),
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                size: 18,
+                color: Colors.black,
+              ),
               onTap: () {},
             ),
-             ListTile(
-              leading: Icon(Icons.fingerprint),//Image.asset('assets/images/profile/about.png'),
+            ListTile(
               title: Text(dic['faceId']),
               trailing: CupertinoSwitch(
                 value: true,
-                onChanged: (_){}
+                onChanged: (_) {},
+                activeColor: Theme.of(context).primaryColor,
               ),
               onTap: () {},
             ),
