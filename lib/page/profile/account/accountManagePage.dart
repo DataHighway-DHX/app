@@ -110,20 +110,24 @@ class AccountManagePage extends StatelessWidget {
               Expanded(
                 child: ListView(
                   children: <Widget>[
-                    Container(
-                      color: Colors.deepPurple,
-                      padding: EdgeInsets.only(bottom: 16),
-                      child: ListTile(
-                        leading: AddressIcon(
-                          '',
-                          pubKey: store.account.currentAccount.pubKey,
-                        ),
-                        title: Text(store.account.currentAccount.name ?? 'name',
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.white)),
-                        subtitle: Text(
-                          Fmt.address(store.account.currentAddress) ?? '',
-                          style: TextStyle(fontSize: 16, color: Colors.white70),
+                    Card(
+                      margin:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      child: Padding(
+                        padding: EdgeInsets.only(),
+                        child: ListTile(
+                          leading: AddressIcon(
+                            '',
+                            pubKey: store.account.currentAccount.pubKey,
+                          ),
+                          title: Text(
+                            store.account.currentAccount.name ?? 'name',
+                            style: Theme.of(context).textTheme.subtitle1,
+                          ),
+                          subtitle: Text(
+                            Fmt.address(store.account.currentAddress) ?? '',
+                            style: Theme.of(context).textTheme.subtitle2,
+                          ),
                         ),
                       ),
                     ),
@@ -155,7 +159,7 @@ class AccountManagePage extends StatelessWidget {
                     child: FlatButton(
                       padding: EdgeInsets.all(16),
                       color: Colors.white,
-                      textColor: Colors.deepPurple,
+                      textColor: Theme.of(context).primaryColor,
                       child: Text(dic['delete']),
                       onPressed: () => _onDeleteAccount(context),
                     ),

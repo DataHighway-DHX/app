@@ -116,91 +116,97 @@ class _WalletAppState extends State<WalletApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'DataHighway',
-      localizationsDelegates: [
-        AppLocalizationsDelegate(_locale),
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-      supportedLocales: [
-        const Locale('en', ''),
-        const Locale('zh', ''),
-      ],
-      initialRoute: HomePage.route,
-      theme: appTheme,
-//      darkTheme: darkTheme,
-      routes: {
-        HomePage.route: (context) => Observer(
-              builder: (_) {
-                return FutureBuilder<int>(
-                  future: _initStore(context),
-                  builder: (_, AsyncSnapshot<int> snapshot) {
-                    if (snapshot.hasData) {
-                      return snapshot.data > 0
-                          ? HomePage(_appStore)
-                          : CreateAccountEntryPage();
-                    } else {
-                      return Container();
-                    }
-                  },
-                );
-              },
-            ),
-        // account
-        CreateAccountEntryPage.route: (_) => CreateAccountEntryPage(),
-        CreateAccountPage.route: (_) =>
-            CreateAccountPage(_appStore.account.setNewAccount),
-        BackupAccountPage.route: (_) => BackupAccountPage(_appStore),
-        ImportAccountPage.route: (_) => ImportAccountPage(_appStore),
-        ScanPage.route: (_) => ScanPage(),
-        TxConfirmPage.route: (_) => TxConfirmPage(_appStore),
-         // mining
-        SignalPage.route: (_) => SignalPage(_appStore),
-        SignalDetailPage.route: (_) => SignalDetailPage(_appStore),
-        SignalResultPage.route: (_) => SignalResultPage(_appStore),
-        LockPage.route: (_) => LockPage(_appStore),
-        LockDetailPage.route: (_) => LockDetailPage(_appStore),
-        LockResultPage.route: (_) => LockResultPage(_appStore),
-        ClaimPage.route: (_) => ClaimPage(_appStore),
-        // assets
-        AssetPage.route: (_) => AssetPage(_appStore),
-        TransferPage.route: (_) => TransferPage(_appStore),
-        ReceivePage.route: (_) => ReceivePage(_appStore.account),
-        TransferDetailPage.route: (_) => TransferDetailPage(_appStore),
-        // staking
-        StakingDetailPage.route: (_) => StakingDetailPage(_appStore),
-        ValidatorDetailPage.route: (_) => ValidatorDetailPage(_appStore),
-        BondPage.route: (_) => BondPage(_appStore),
-        BondExtraPage.route: (_) => BondExtraPage(_appStore),
-        UnBondPage.route: (_) => UnBondPage(_appStore),
-        NominatePage.route: (_) => NominatePage(_appStore),
-        SetPayeePage.route: (_) => SetPayeePage(_appStore),
-        RedeemPage.route: (_) => RedeemPage(_appStore),
-        PayoutPage.route: (_) => PayoutPage(_appStore),
-        SetControllerPage.route: (_) => SetControllerPage(_appStore),
-        AccountSelectPage.route: (_) => AccountSelectPage(_appStore.account),
-        // governance
-        CandidateDetailPage.route: (_) => CandidateDetailPage(_appStore),
-        CouncilVotePage.route: (_) => CouncilVotePage(_appStore),
-        CandidateListPage.route: (_) => CandidateListPage(_appStore),
-        ReferendumVotePage.route: (_) => ReferendumVotePage(_appStore),
-        // profile
-        AccountManagePage.route: (_) => AccountManagePage(_appStore),
-        ContactsPage.route: (_) => ContactsPage(_appStore.settings),
-        ContactListPage.route: (_) => ContactListPage(_appStore.settings),
-        ContactPage.route: (_) => ContactPage(_appStore.settings),
-        ChangeNamePage.route: (_) => ChangeNamePage(_appStore.account),
-        ChangePasswordPage.route: (_) => ChangePasswordPage(_appStore.account),
-        SettingsPage.route: (_) =>
-            SettingsPage(_appStore.settings, _changeLang),
-        ExportAccountPage.route: (_) => ExportAccountPage(_appStore.account),
-        ExportResultPage.route: (_) => ExportResultPage(),
-        RemoteNodeListPage.route: (_) => RemoteNodeListPage(_appStore.settings),
-        SS58PrefixListPage.route: (_) => SS58PrefixListPage(_appStore.settings),
-        AboutPage.route: (_) => AboutPage(),
-      },
+    return ListTileTheme(
+      iconColor: Colors.black,
+      child: MaterialApp(
+        title: 'DataHighway',
+        localizationsDelegates: [
+          AppLocalizationsDelegate(_locale),
+          GlobalMaterialLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        supportedLocales: [
+          const Locale('en', ''),
+          const Locale('zh', ''),
+        ],
+        initialRoute: HomePage.route,
+        theme: appTheme,
+        //      darkTheme: darkTheme,
+        routes: {
+          HomePage.route: (context) => Observer(
+                builder: (_) {
+                  return FutureBuilder<int>(
+                    future: _initStore(context),
+                    builder: (_, AsyncSnapshot<int> snapshot) {
+                      if (snapshot.hasData) {
+                        return snapshot.data > 0
+                            ? HomePage(_appStore)
+                            : CreateAccountEntryPage();
+                      } else {
+                        return Container();
+                      }
+                    },
+                  );
+                },
+              ),
+          // account
+          CreateAccountEntryPage.route: (_) => CreateAccountEntryPage(),
+          CreateAccountPage.route: (_) =>
+              CreateAccountPage(_appStore.account.setNewAccount),
+          BackupAccountPage.route: (_) => BackupAccountPage(_appStore),
+          ImportAccountPage.route: (_) => ImportAccountPage(_appStore),
+          ScanPage.route: (_) => ScanPage(),
+          TxConfirmPage.route: (_) => TxConfirmPage(_appStore),
+          // mining
+          SignalPage.route: (_) => SignalPage(_appStore),
+          SignalDetailPage.route: (_) => SignalDetailPage(_appStore),
+          SignalResultPage.route: (_) => SignalResultPage(_appStore),
+          LockPage.route: (_) => LockPage(_appStore),
+          LockDetailPage.route: (_) => LockDetailPage(_appStore),
+          LockResultPage.route: (_) => LockResultPage(_appStore),
+          ClaimPage.route: (_) => ClaimPage(_appStore),
+          // assets
+          AssetPage.route: (_) => AssetPage(_appStore),
+          TransferPage.route: (_) => TransferPage(_appStore),
+          ReceivePage.route: (_) => ReceivePage(_appStore.account),
+          TransferDetailPage.route: (_) => TransferDetailPage(_appStore),
+          // staking
+          StakingDetailPage.route: (_) => StakingDetailPage(_appStore),
+          ValidatorDetailPage.route: (_) => ValidatorDetailPage(_appStore),
+          BondPage.route: (_) => BondPage(_appStore),
+          BondExtraPage.route: (_) => BondExtraPage(_appStore),
+          UnBondPage.route: (_) => UnBondPage(_appStore),
+          NominatePage.route: (_) => NominatePage(_appStore),
+          SetPayeePage.route: (_) => SetPayeePage(_appStore),
+          RedeemPage.route: (_) => RedeemPage(_appStore),
+          PayoutPage.route: (_) => PayoutPage(_appStore),
+          SetControllerPage.route: (_) => SetControllerPage(_appStore),
+          AccountSelectPage.route: (_) => AccountSelectPage(_appStore.account),
+          // governance
+          CandidateDetailPage.route: (_) => CandidateDetailPage(_appStore),
+          CouncilVotePage.route: (_) => CouncilVotePage(_appStore),
+          CandidateListPage.route: (_) => CandidateListPage(_appStore),
+          ReferendumVotePage.route: (_) => ReferendumVotePage(_appStore),
+          // profile
+          AccountManagePage.route: (_) => AccountManagePage(_appStore),
+          ContactsPage.route: (_) => ContactsPage(_appStore.settings),
+          ContactListPage.route: (_) => ContactListPage(_appStore.settings),
+          ContactPage.route: (_) => ContactPage(_appStore.settings),
+          ChangeNamePage.route: (_) => ChangeNamePage(_appStore.account),
+          ChangePasswordPage.route: (_) =>
+              ChangePasswordPage(_appStore.account),
+          SettingsPage.route: (_) =>
+              SettingsPage(_appStore.settings, _changeLang),
+          ExportAccountPage.route: (_) => ExportAccountPage(_appStore.account),
+          ExportResultPage.route: (_) => ExportResultPage(),
+          RemoteNodeListPage.route: (_) =>
+              RemoteNodeListPage(_appStore.settings),
+          SS58PrefixListPage.route: (_) =>
+              SS58PrefixListPage(_appStore.settings),
+          AboutPage.route: (_) => AboutPage(),
+        },
+      ),
     );
   }
 }
