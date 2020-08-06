@@ -9,6 +9,8 @@ import 'package:polka_wallet/store/app.dart';
 
 import 'package:polka_wallet/utils/i18n/index.dart';
 
+import 'menu_page.dart';
+
 class HomePage extends StatefulWidget {
   HomePage(this.store);
 
@@ -94,9 +96,14 @@ class _HomePageState extends State<HomePage> {
                 centerTitle: false,
                 backgroundColor: Colors.transparent,
                 elevation: 0.0,
-              ),
-              endDrawer: Drawer(
-                child: DrawerMenu(store),
+                actions: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.menu),
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(MenuPage.route);
+                    },
+                  )
+                ],
               ),
               bottomNavigationBar: BottomNavigationBar(
                   currentIndex: i,

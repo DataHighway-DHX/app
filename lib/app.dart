@@ -48,6 +48,7 @@ import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/store/app.dart';
 
+import 'page/menu_page.dart';
 import 'utils/i18n/index.dart';
 import 'common/theme.dart';
 
@@ -205,6 +206,7 @@ class _WalletAppState extends State<WalletApp> {
           SS58PrefixListPage.route: (_) =>
               SS58PrefixListPage(_appStore.settings),
           AboutPage.route: (_) => AboutPage(),
+          MenuPage.route: (_) => MenuPage(_appStore),
         },
       ),
     );

@@ -148,6 +148,11 @@ flutter:
     - assets/images/assets/currencies/DOT.png
     - assets/images/assets/currencies/IOTA.png
     - assets/images/public/polkawallet.png
+    - assets/images/public/wallet_types/datahighway.png
+    - assets/images/public/wallet_types/kusama.png
+    - assets/images/public/wallet_types/kusama_sel.png
+    - assets/images/public/wallet_types/polkadot.png
+    - assets/images/public/wallet_types/polkadot_sel.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

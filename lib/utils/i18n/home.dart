@@ -33,6 +33,7 @@ const Map<String, String> enHome = {
   'copy': 'Copy to clipboard',
   'scan.helper': 'Please put the QR code in the box',
   'confirm': 'Confirm',
+  'wallet.select': 'Select Wallet',
 };
 
 const Map<String, String> zhHome = {
@@ -67,4 +68,5 @@ const Map<String, String> zhHome = {
   'copy': '复制到剪贴板',
   'scan.helper': '请将二维码置于方框中',
   'confirm': '确认',
+  'wallet.select': '选择钱包',
 };
