@@ -69,7 +69,7 @@ class AccountCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'xoi',
+                      i.name,
                       style: Theme.of(context).textTheme.subtitle1,
                     ),
                     Spacer(),
