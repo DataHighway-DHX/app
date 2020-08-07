@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/page/assets/drawerMenu.dart';
 import 'package:polka_wallet/page/assets/index.dart';
 import 'package:polka_wallet/page/staking/index.dart';
 import 'package:polka_wallet/page/governance/index.dart';
