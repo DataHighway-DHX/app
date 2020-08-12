@@ -94,7 +94,10 @@ class ApiAccount {
     String pass = store.account.newAccount.password;
     String code =
         'account.recover("$keyType", "$cryptoType", \'$key$derivePath\', "$pass")';
-    Map<String, dynamic> acc = await apiRoot.evalJavascript(code);
+    Map<String, dynamic> acc = await Future.any<dynamic>([
+      apiRoot.evalJavascript(code),
+      Future<dynamic>.delayed(Duration(seconds: 2), null)
+    ]);
     if (acc != null) {
       await store.account.addAccount(acc, pass);
 

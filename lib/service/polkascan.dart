@@ -20,8 +20,9 @@ class PolkaScanApi {
     String module,
     int page = 1,
   }) async {
-    Response res = await get(
-        '$endpoint/extrinsic?filter[module_id]=$module&filter[address]=$address&page[number]=$page&page[size]=$tx_list_page_size');
+    final url =
+        '$endpoint/extrinsic?filter[module_id]=$module&filter[address]=$address&page[number]=$page&page[size]=$tx_list_page_size';
+    Response res = await get(url);
     return res.body;
   }
 
