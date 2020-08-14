@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -36,11 +36,10 @@ class ReceivePage extends StatelessWidget {
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(top: 32),
-                  child:
-                      Image.asset(
-                        'assets/images/assets/sweep_code_line.png',
-                        color: Colors.deepPurpleAccent,
-                      ),
+                  child: Image.asset(
+                    'assets/images/assets/sweep_code_line.png',
+                    color: Colors.deepPurpleAccent,
+                  ),
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 40),
@@ -64,8 +63,8 @@ class ReceivePage extends StatelessWidget {
                       ),
                       Container(
                         decoration: BoxDecoration(
-                          border:
-                              Border.all(width: 4, color: Colors.deepPurpleAccent),
+                          border: Border.all(
+                              width: 4, color: Colors.deepPurpleAccent),
                           borderRadius:
                               BorderRadius.all(const Radius.circular(8)),
                         ),

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/topTaps.dart';
 import 'package:polka_wallet/page/staking/actions/actions.dart';
@@ -12,6 +13,32 @@ class Staking extends StatefulWidget {
 
   @override
   _StakingState createState() => _StakingState(store);
+}
+
+class TopTabs extends StatelessWidget {
+  final List<String> names;
+  final int activeTab;
+  final void Function(int) onTab;
+
+  const TopTabs({
+    Key key,
+    this.names,
+    this.activeTab,
+    this.onTab,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      child: CupertinoSegmentedControl(
+        children: names.asMap().map((key, value) => MapEntry(key, Text(value))),
+        onValueChanged: (value) => onTab(value),
+        groupValue: activeTab,
+        selectedColor: Theme.of(context).primaryColor,
+      ),
+    );
+  }
 }
 
 class _StakingState extends State<Staking> {
@@ -44,6 +71,9 @@ class _StakingState extends State<Staking> {
                     });
                   }
                 },
+              ),
+              SizedBox(
+                height: 20,
               ),
               Expanded(
                 child: _tab == 1

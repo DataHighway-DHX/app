@@ -3,10 +3,9 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressFormItem.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
-import 'package:polka_wallet/page/profile/recovery/recoverySettingPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -160,8 +159,7 @@ class _InitiateRecoveryPage extends State<InitiateRecoveryPage> {
                 padding: EdgeInsets.all(16),
                 child: RoundedButton(
                   text: I18n.of(context).home['next'],
-                  onPressed: () => _onValidateSubmit(),
-                  submitting: _loading,
+                  onPressed: _loading ? null : () => _onValidateSubmit(),
                 ),
               )
             ],

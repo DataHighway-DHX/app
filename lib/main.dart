@@ -9,6 +9,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:polka_wallet/service/subscan.dart';
+import 'package:flutter/services.dart';
 
 Future<void> main() async {
   await DotEnv().load('.env');
@@ -35,6 +36,8 @@ Future<void> main() async {
     }
     selectNotificationSubject.add(payload);
   });
+  SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(statusBarColor: Colors.white));
   print('notification_plugin initialised: $initialised');
 
   HttpOverrides.global = MyHttpOverrides();
@@ -44,7 +47,6 @@ Future<void> main() async {
   );
 
   FlutterAppCenter.init(
-    androidAppId: 'f37bf978-7d80-4798-ae45-ea13ad0ff077',
-    iOSAppId: '590a0334-84e0-4e44-9e8b-4f8611ba2e3b'
-  );
+      androidAppId: 'f37bf978-7d80-4798-ae45-ea13ad0ff077',
+      iOSAppId: '590a0334-84e0-4e44-9e8b-4f8611ba2e3b');
 }

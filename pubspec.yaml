@@ -14,7 +14,7 @@ description: PolkaWallet made with Flutter.
 version: 0.8.3+833
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.8.0 <3.0.0"
 
 dependencies:
   flutter_dotenv: ^2.1.0
@@ -42,6 +42,7 @@ dependencies:
   flutter_downloader: ^1.4.4
   device_info: ^0.4.2
 
+  font_awesome_flutter: ^8.8.1
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
@@ -205,6 +206,18 @@ flutter:
     # JS
     - lib/js_service_acala/dist/main.js
     - lib/js_service_kusama/dist/main.js
+    # dhx
+    - assets/images/account/background.png
+    - assets/images/assets/logo_dark.png
+    - assets/images/assets/currencies/ETH.png
+    - assets/images/assets/currencies/DOT.png
+    - assets/images/assets/currencies/IOTA.png
+    - assets/images/public/polkawallet.png
+    - assets/images/public/wallet_types/datahighway.png
+    - assets/images/public/wallet_types/kusama.png
+    - assets/images/public/wallet_types/kusama_sel.png
+    - assets/images/public/wallet_types/polkadot.png
+    - assets/images/public/wallet_types/polkadot_sel.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

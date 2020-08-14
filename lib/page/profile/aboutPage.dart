@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:package_info/package_info.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AboutPage extends StatefulWidget {
   static final String route = '/profile/about';
@@ -39,53 +41,56 @@ class _AboutPage extends State<AboutPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(top: 100,left: 48,right: 48, bottom: 48),
-              child: Column(
-                children: <Widget>[
-                  Image.asset(
-                    'assets/images/public/About_app.png',
-                    width: 160,
-                  ),
-                ]
-              )
-            ),
+            Container(width: double.infinity),
+            Spacer(),
             Expanded(
-              flex: 3,
-              child: Container()
+              flex: 5,
+              child: Image.asset(
+                'assets/images/public/About_app.png',
+                fit: BoxFit.contain,
+              ),
             ),
+            GestureDetector(
+              child: Text(
+                'https://datahighway.com/',
+                style: Theme.of(context).textTheme.subtitle1,
+              ),
+              onTap: () => launch('https://datahighway.com/'),
+            ),
+            IconButton(
+              icon: FaIcon(FontAwesomeIcons.github),
+              onPressed: () => launch('https://github.com/DataHighway-DHX/app'),
+            ),
+            Spacer(),
             Text(
               dic['about.power'],
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
             ),
+            SizedBox(height: 14),
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.all(20),
-                  child: Image.asset(
-                    'assets/images/public/About_logo.png',
-                  ),
-                )
-              ]
+                Image.asset('assets/images/public/polkawallet.png'),
+              ],
             ),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: <Widget>[
-            //     Text(
-            //       dic['about.brif'],
-            //       style: Theme.of(context).textTheme.display1,
-            //     ),
-            //   ],
-            // ),
-            Expanded(
+            SizedBox(height: 7),
+            Text(
+              'Polkawallet',
+              style: Theme.of(context)
+                  .textTheme
+                  .subtitle1
+                  .copyWith(fontWeight: FontWeight.bold),
+            ),
+            GestureDetector(
               child: Text(
                 'https://polkawallet.io',
+                style: Theme.of(context).textTheme.subtitle1,
               ),
+              onTap: () => launch('https://polkawallet.io'),
             ),
+            Spacer(),
             FutureBuilder<PackageInfo>(
               future: PackageInfo.fromPlatform(),
               builder:
@@ -103,10 +108,11 @@ class _AboutPage extends State<AboutPage> {
               padding: EdgeInsets.all(16),
               child: RoundedButton(
                 text: I18n.of(context).home['update'],
-                onPressed: () {
-                  _checkUpdate();
-                },
-                submitting: _loading,
+                onPressed: _loading
+                    ? null
+                    : () {
+                        _checkUpdate();
+                      },
               ),
             )
           ],

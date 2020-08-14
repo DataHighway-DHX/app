@@ -145,6 +145,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
     if (_step == 1) {
       return Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: Text(I18n.of(context).home['import']),
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios),
@@ -160,12 +161,16 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
             setNewAccount: store.account.setNewAccount,
             submitting: _submitting,
             onSubmit: _importAccount,
+            last: true,
           ),
         ),
       );
     }
     return Scaffold(
-      appBar: AppBar(title: Text(I18n.of(context).home['import'])),
+      appBar: AppBar(
+        title: Text(I18n.of(context).home['import']),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: ImportAccountForm(store, (Map<String, dynamic> data) {
           if (data['finish'] == null) {

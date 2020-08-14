@@ -1,5 +1,5 @@
 const Map<String, String> enHome = {
-  'mining': 'Mining',
+  'mining': 'HODL',
   'assets': 'Assets',
   'exchange': 'Exchange',
   'loan': 'Loan',
@@ -49,10 +49,12 @@ const Map<String, String> enHome = {
   'exit.confirm': 'Do you want to exit the App?',
   'input.invalid': 'Invalid input',
   'loading': 'Loading...',
+  'confirm': 'Confirm',
+  'wallet.select': 'Select Wallet',
 };
 
 const Map<String, String> zhHome = {
-  'mining': '挖矿',
+  'mining': 'HODL',
   'assets': '资产',
   'exchange': '交易',
   'loan': '借贷',
@@ -99,4 +101,6 @@ const Map<String, String> zhHome = {
   'exit.confirm': '确定要退出 App 吗？',
   'input.invalid': '输入格式错误',
   'loading': '载入中。。。',
+  'confirm': '确认',
+  'wallet.select': '选择钱包',
 };

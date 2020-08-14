@@ -10,6 +10,8 @@ import 'package:polka_wallet/store/app.dart';
 
 import 'package:polka_wallet/utils/i18n/index.dart';
 
+import 'menu_page.dart';
+
 class HomePage extends StatefulWidget {
   HomePage(this.store);
 
@@ -41,16 +43,20 @@ class _HomePageState extends State<HomePage> {
     bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
     return _tabList
         .map((i) => BottomNavigationBarItem(
-              icon: Image.asset(_tabList[activeItem] == i
-                  ? 'assets/images/public/$i.png'
-                  : 'assets/images/public/${i}_dark.png',
-                  color: _tabList[activeItem] == i ? Colors.deepPurple : Colors.grey),
+              icon: Image.asset(
+                'assets/images/public/${i}_dark.png',
+                color: _tabList[activeItem] == i
+                    ? Theme.of(context).primaryColor
+                    : Colors.grey,
+              ),
               title: Text(
                 tabs[i.toLowerCase()],
                 style: TextStyle(
-                    fontSize: 14,
-                    color:
-                        _tabList[activeItem] == i ? Colors.deepPurple : Colors.grey),
+                  fontSize: 14,
+                  color: _tabList[activeItem] == i
+                      ? Theme.of(context).primaryColor
+                      : Colors.grey,
+                ),
               ),
             ))
         .toList();
@@ -83,33 +89,24 @@ class _HomePageState extends State<HomePage> {
               height: double.infinity,
               color: Theme.of(context).canvasColor,
             ),
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  alignment: Alignment.topLeft,
-                  image:
-                      AssetImage("assets/images/assets/top_bg_$imageColor.png"),
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
             Scaffold(
               backgroundColor: Colors.transparent,
               appBar: AppBar(
                 title: Image.asset(
-                  'assets/images/assets/logo.png',
-                  height: 50,
+                  'assets/images/assets/logo_dark.png',
+                  height: 34,
                 ),
+                automaticallyImplyLeading: false,
                 centerTitle: false,
                 backgroundColor: Colors.transparent,
                 elevation: 0.0,
                 actions: <Widget>[
                   IconButton(
                     icon: Icon(Icons.menu),
-                    onPressed: () =>
-                        Navigator.of(context).pushNamed('/network'),
-                  ),
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(MenuPage.route);
+                    },
+                  )
                 ],
               ),
               bottomNavigationBar: BottomNavigationBar(
@@ -133,17 +130,6 @@ class _HomePageState extends State<HomePage> {
             width: double.infinity,
             height: double.infinity,
             color: Theme.of(context).canvasColor,
-          ),
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                alignment: Alignment.topLeft,
-                image:
-                    AssetImage("assets/images/staking/top_bg_$imageColor.png"),
-                fit: BoxFit.contain,
-              ),
-            ),
           ),
           Scaffold(
             backgroundColor: Colors.transparent,

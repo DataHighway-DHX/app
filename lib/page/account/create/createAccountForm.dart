@@ -1,14 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class CreateAccountForm extends StatelessWidget {
-  CreateAccountForm({this.setNewAccount, this.submitting, this.onSubmit});
+  CreateAccountForm({
+    this.setNewAccount,
+    this.onSubmit,
+    this.submitting,
+    this.last = false,
+  });
 
   final Function setNewAccount;
   final Function onSubmit;
+  final bool last;
   final bool submitting;
 
   final _formKey = GlobalKey<FormState>();
@@ -29,9 +35,10 @@ class CreateAccountForm extends StatelessWidget {
             child: ListView(
               padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
               children: <Widget>[
+                SizedBox(height: 10),
                 TextFormField(
                   decoration: InputDecoration(
-                    icon: Icon(Icons.person),
+                    icon: Icon(Icons.person_outline),
                     hintText: dic['create.name'],
                     labelText: dic['create.name'],
                   ),
@@ -42,9 +49,10 @@ class CreateAccountForm extends StatelessWidget {
                         : dic['create.name.error'];
                   },
                 ),
+                SizedBox(height: 10),
                 TextFormField(
                   decoration: InputDecoration(
-                    icon: Icon(Icons.lock),
+                    icon: Icon(Icons.lock_outline),
                     hintText: dic['create.password'],
                     labelText: dic['create.password'],
                   ),
@@ -56,9 +64,10 @@ class CreateAccountForm extends StatelessWidget {
                   },
                   obscureText: true,
                 ),
+                SizedBox(height: 10),
                 TextFormField(
                   decoration: InputDecoration(
-                    icon: Icon(Icons.lock),
+                    icon: Icon(Icons.lock_outline),
                     hintText: dic['create.password2'],
                     labelText: dic['create.password2'],
                   ),
@@ -76,7 +85,9 @@ class CreateAccountForm extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(16),
             child: RoundedButton(
-              text: I18n.of(context).home['next'],
+              text: last
+                  ? I18n.of(context).home['confirm']
+                  : I18n.of(context).home['next'],
               onPressed: submitting
                   ? null
                   : () {

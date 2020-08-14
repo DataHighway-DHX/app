@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
@@ -190,8 +190,7 @@ class _VouchRecoveryPage extends State<VouchRecoveryPage> {
                 padding: EdgeInsets.all(16),
                 child: RoundedButton(
                   text: I18n.of(context).home['next'],
-                  onPressed: () => _onValidateSubmit(),
-                  submitting: _loading,
+                  onPressed: _loading ? null : () => _onValidateSubmit(),
                 ),
               )
             ],

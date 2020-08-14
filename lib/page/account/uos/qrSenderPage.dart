@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -64,7 +64,8 @@ class _QrSenderPageState extends State<QrSenderPage> {
                   children: [
                     snapshot.hasData
                         ? QrImage.withQr(
-                            qr: QrCode.fromUint8List(data: snapshot.data, errorCorrectLevel: 1),
+                            qr: QrCode.fromUint8List(
+                                data: snapshot.data, errorCorrectLevel: 1),
                             size: screenWidth - 24,
                           )
                         : CupertinoActivityIndicator(),

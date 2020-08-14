@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/common/widgets/roundedButton.dart';
+import 'package:polka_wallet/common/widgets/text_clear_button.dart';
 import 'package:polka_wallet/page/profile/account/accountManagePage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account/account.dart';
@@ -28,6 +29,11 @@ class _ChangePassword extends State<ChangePasswordPage> {
   final TextEditingController _passOldCtrl = new TextEditingController();
   final TextEditingController _passCtrl = new TextEditingController();
   final TextEditingController _pass2Ctrl = new TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   Future<void> _onSave() async {
     if (_formKey.currentState.validate()) {
@@ -99,20 +105,9 @@ class _ChangePassword extends State<ChangePasswordPage> {
                   children: <Widget>[
                     TextFormField(
                       decoration: InputDecoration(
-                        icon: Icon(Icons.lock),
                         hintText: dic['pass.old'],
                         labelText: dic['pass.old'],
-                        suffixIcon: IconButton(
-                          iconSize: 18,
-                          icon: Icon(
-                            CupertinoIcons.clear_thick_circled,
-                            color: Theme.of(context).unselectedWidgetColor,
-                          ),
-                          onPressed: () {
-                            WidgetsBinding.instance.addPostFrameCallback(
-                                (_) => _passOldCtrl.clear());
-                          },
-                        ),
+                        suffixIcon: TextClearButton(_passOldCtrl),
                       ),
                       controller: _passOldCtrl,
                       validator: (v) {
@@ -124,9 +119,9 @@ class _ChangePassword extends State<ChangePasswordPage> {
                     ),
                     TextFormField(
                       decoration: InputDecoration(
-                        icon: Icon(Icons.lock),
                         hintText: dic['pass.new'],
                         labelText: dic['pass.new'],
+                        suffixIcon: TextClearButton(_passCtrl),
                       ),
                       controller: _passCtrl,
                       validator: (v) {
@@ -138,9 +133,9 @@ class _ChangePassword extends State<ChangePasswordPage> {
                     ),
                     TextFormField(
                       decoration: InputDecoration(
-                        icon: Icon(Icons.lock),
                         hintText: dic['pass.new2'],
                         labelText: dic['pass.new2'],
+                        suffixIcon: TextClearButton(_pass2Ctrl),
                       ),
                       controller: _pass2Ctrl,
                       validator: (v) {

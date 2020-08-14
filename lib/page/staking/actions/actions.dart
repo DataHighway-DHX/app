@@ -92,7 +92,8 @@ class _StakingActions extends State<StakingActions>
                 : Image.asset('assets/images/staking/error.png'),
           ),
           title: Text(i.call),
-          subtitle: Text(DateTime.fromMillisecondsSinceEpoch(i.blockTimestamp).toString()),
+          subtitle: Text(
+              DateTime.fromMillisecondsSinceEpoch(i.blockTimestamp).toString()),
           trailing: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -199,7 +200,7 @@ class _StakingActions extends State<StakingActions>
                   children: <Widget>[
                     Text(
                       Fmt.accountName(context, store.account.currentAccount),
-                      style: Theme.of(context).textTheme.headline4,
+                      style: Theme.of(context).textTheme.subtitle1,
                     ),
                     Text(Fmt.address(store.account.currentAddress))
                   ],
@@ -212,7 +213,10 @@ class _StakingActions extends State<StakingActions>
                   children: <Widget>[
                     Text(
                       '${Fmt.balance(balance.toString())}',
-                      style: Theme.of(context).textTheme.headline4,
+                      style: Theme.of(context).textTheme.subtitle1.copyWith(
+                            color: Color(0xFF939393),
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     Text(
                       dic['balance'],
@@ -443,6 +447,34 @@ class RowAccount02 extends StatelessWidget {
   }
 }
 
+class InfoItem extends StatelessWidget {
+  InfoItem({this.title, this.content, this.crossAxisAlignment});
+  final String title;
+  final String content;
+  final CrossAxisAlignment crossAxisAlignment;
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            title,
+            style: TextStyle(fontSize: 13),
+          ),
+          Text(
+            content ?? '-',
+            style: Theme.of(context).textTheme.subtitle1.copyWith(
+                  color: Color(0xFF939393),
+                  fontWeight: FontWeight.bold,
+                ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
 class StakingInfoPanel extends StatelessWidget {
   StakingInfoPanel({
     this.hasData,
@@ -478,13 +510,13 @@ class StakingInfoPanel extends StatelessWidget {
           Row(
             children: <Widget>[
               InfoItem(
-                title: dic['bonded'],
-                content: Fmt.token(bonded),
+                title: dic['available'],
+                content: Fmt.token(available),
                 crossAxisAlignment: CrossAxisAlignment.center,
               ),
               InfoItem(
-                title: dic['bond.unlocking'],
-                content: Fmt.token(unlocking),
+                title: dic['bonded'],
+                content: Fmt.token(bonded),
                 crossAxisAlignment: CrossAxisAlignment.center,
               ),
               Expanded(
@@ -529,8 +561,8 @@ class StakingInfoPanel extends StatelessWidget {
           Row(
             children: <Widget>[
               InfoItem(
-                title: dic['available'],
-                content: Fmt.token(available),
+                title: dic['bond.unlocking'],
+                content: Fmt.token(unlocking),
                 crossAxisAlignment: CrossAxisAlignment.center,
               ),
               InfoItem(
