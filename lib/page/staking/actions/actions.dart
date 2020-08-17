@@ -152,7 +152,7 @@ class _StakingActions extends State<StakingActions>
     String account02 = isStash ? controllerId : stashId;
     String account02PubKey;
     store.account.pubKeyAddressMap[store.settings.endpoint.ss58]
-        .forEach((k, v) {
+        ?.forEach((k, v) {
       if (v == account02) {
         account02PubKey = k;
       }
@@ -226,13 +226,6 @@ class _StakingActions extends State<StakingActions>
                 ),
               )
             ],
-          ),
-          RowAccount02(
-            acc02: acc02,
-            isStash: isStash,
-            controllerId: controllerId,
-            stashId: stashId,
-            onChangeAccount: _changeCurrentAccount,
           ),
           Divider(),
           StakingInfoPanel(

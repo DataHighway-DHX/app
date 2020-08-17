@@ -11,6 +11,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:polka_wallet/service/subscan.dart';
 import 'package:flutter/services.dart';
 
+import 'package:polka_wallet/service/substrateApi/api.dart';
+
+void pendingTasks() {
+  print(webApi.debugCompleters);
+}
+
 Future<void> main() async {
   await DotEnv().load('.env');
   WidgetsFlutterBinding.ensureInitialized();

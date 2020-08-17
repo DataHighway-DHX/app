@@ -34,6 +34,8 @@ class Api {
 
   Map<String, Function> _msgHandlers = {};
   Map<String, Completer> _msgCompleters = {};
+  Map<String, Completer> get debugCompleters => _msgCompleters;
+
   FlutterWebviewPlugin _web;
   int _evalJavascriptUID = 0;
 
@@ -98,14 +100,11 @@ class Api {
               compute(jsonDecode, message.message).then((msg) {
                 final String path = msg['path'];
                 if (_msgCompleters[path] != null) {
-                  Completer handler = _msgCompleters[path];
+                  Completer handler = _msgCompleters.remove(path);
                   if (msg['status'] == 'success') {
                     handler.complete(msg['data']);
                   } else {
                     handler.completeError(msg['data']);
-                  }
-                  if (path.contains('uid=')) {
-                    _msgCompleters.remove(path);
                   }
                 }
                 if (_msgHandlers[path] != null) {
@@ -149,14 +148,27 @@ class Api {
 
     Completer c = new Completer();
 
-    String method = 'uid=${_getEvalJavascriptUID()};${code.split('(')[0]}';
+    final uid = _getEvalJavascriptUID();
+    String method = 'uid=$uid;${code.split('(')[0]}';
     _msgCompleters[method] = c;
 
-    String script = '$code.then(function(res) {'
-        '  PolkaWallet.postMessage(JSON.stringify({ path: "$method", status: "success", data: res }));'
-        '}).catch(function(err) {'
-        '  PolkaWallet.postMessage(JSON.stringify({ path: "$method", status: "error", data: err.message }));'
-        '})';
+    String script = '''
+    try {
+      $code.then(function(res) {
+          PolkaWallet.postMessage(JSON.stringify({ 
+            path: "$method", status: "success", data: res, uid: "$uid"
+          }));
+        }).catch(function(err) {
+          PolkaWallet.postMessage(JSON.stringify({ 
+            path: "$method", status: "error", data: err.message, uid: "$uid"
+          }));
+        })
+    } catch (e) {
+      PolkaWallet.postMessage(JSON.stringify({ 
+        path: "$method", status: "error", data: e, uid: "$uid"
+      }));
+    }
+    ''';
     _web.evalJavascript(script);
 
     return c.future;
