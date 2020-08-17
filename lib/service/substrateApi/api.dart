@@ -99,7 +99,11 @@ class Api {
                 final String path = msg['path'];
                 if (_msgCompleters[path] != null) {
                   Completer handler = _msgCompleters[path];
-                  handler.complete(msg['data']);
+                  if (msg['status'] == 'success') {
+                    handler.complete(msg['data']);
+                  } else {
+                    handler.completeError(msg['data']);
+                  }
                   if (path.contains('uid=')) {
                     _msgCompleters.remove(path);
                   }
@@ -149,9 +153,9 @@ class Api {
     _msgCompleters[method] = c;
 
     String script = '$code.then(function(res) {'
-        '  PolkaWallet.postMessage(JSON.stringify({ path: "$method", data: res }));'
+        '  PolkaWallet.postMessage(JSON.stringify({ path: "$method", status: "success", data: res }));'
         '}).catch(function(err) {'
-        '  PolkaWallet.postMessage(JSON.stringify({ path: "log", data: err.message }));'
+        '  PolkaWallet.postMessage(JSON.stringify({ path: "$method", status: "error", data: err.message }));'
         '})';
     _web.evalJavascript(script);
 
@@ -184,7 +188,7 @@ class Api {
     EndpointData connected =
         store.settings.endpointList.firstWhere((i) => i.value == res);
     store.settings.setEndpoint(connected);
-    fetchNetworkProps();
+    await fetchNetworkProps();
   }
 
   Future<void> fetchNetworkProps() async {
@@ -194,6 +198,7 @@ class Api {
       evalJavascript('api.rpc.system.properties()'),
       evalJavascript('api.rpc.system.chain()'),
     ]);
+    print('trio done');
     store.settings.setNetworkConst(info[0]);
     store.settings.setNetworkState(info[1]);
     store.settings.setNetworkName(info[2]);
