@@ -95,9 +95,11 @@ class Api {
       javascriptChannels: [
         JavascriptChannel(
             name: 'PolkaWallet',
-            onMessageReceived: (JavascriptMessage message) {
+            onMessageReceived: (JavascriptMessage message) async {
               print('received msg: ${message.message}');
-              compute(jsonDecode, message.message).then((msg) {
+              try {
+                final msg = jsonDecode(message.message);
+                print('deserialized ${msg['uid']}');
                 final String path = msg['path'];
                 if (_msgCompleters[path] != null) {
                   Completer handler = _msgCompleters.remove(path);
@@ -111,7 +113,9 @@ class Api {
                   Function handler = _msgHandlers[path];
                   handler(msg['data']);
                 }
-              });
+              } catch (e) {
+                print('bad json: $e');
+              }
             }),
       ].toSet(),
       ignoreSSLErrors: true,
