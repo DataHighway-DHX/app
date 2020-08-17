@@ -350,114 +350,11 @@ class _AssetsState extends State<Assets> {
         return RefreshIndicator(
           key: globalBalanceRefreshKey,
           onRefresh: _fetchBalance,
-          child: Column(
+          child: ListView(
+            padding: EdgeInsets.symmetric(horizontal: 10),
             children: <Widget>[
               SizedBox(height: 24),
               _buildTopCard(context),
-              Expanded(
-                child: ListView(
-                  padding: EdgeInsets.only(left: 16, right: 16),
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top: 24),
-                      child: BorderedTitle(
-                        title: I18n.of(context).home['assets'],
-                      ),
-                    ),
-                    RoundedCard(
-                      margin: EdgeInsets.only(top: 16),
-                      child: ListTile(
-                        leading: Container(
-                          width: 36,
-                          child: Image.asset(
-                              'assets/images/assets/${symbol.isNotEmpty ? symbol : 'DOT'}.png'),
-                        ),
-                        title: Text(symbol ?? ''),
-                        trailing: Text(
-                          Fmt.token(
-                              balancesInfo != null
-                                  ? balancesInfo.total
-                                  : BigInt.zero,
-                              decimals: decimals),
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: Colors.black54),
-                        ),
-                        onTap: () {
-                          Navigator.pushNamed(context, AssetPage.route,
-                              arguments: symbol);
-                        },
-                      ),
-                    ),
-                    Column(
-                      children: currencyIds.map((i) {
-//                  print(store.assets.balances[i]);
-                        String token =
-                            i == acala_stable_coin ? acala_stable_coin_view : i;
-                        return RoundedCard(
-                          margin: EdgeInsets.only(top: 16),
-                          child: ListTile(
-                            leading: Container(
-                              width: 36,
-                              child: Image.asset('assets/images/assets/$i.png'),
-                            ),
-                            title: Text(token),
-                            trailing: Text(
-                              Fmt.balance(store.assets.tokenBalances[i],
-                                  decimals: decimals),
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: Colors.black54),
-                            ),
-                            onTap: () {
-                              Navigator.pushNamed(context, AssetPage.route,
-                                  arguments: token);
-                            },
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    isAcala && store.acala.airdrops.keys.length > 0
-                        ? Padding(
-                            padding: EdgeInsets.only(top: 24),
-                            child: BorderedTitle(
-                              title: I18n.of(context).acala['airdrop'],
-                            ),
-                          )
-                        : Container(),
-                    isAcala && store.acala.airdrops.keys.length > 0
-                        ? Column(
-                            children: store.acala.airdrops.keys.map((i) {
-                              return RoundedCard(
-                                margin: EdgeInsets.only(top: 16),
-                                child: ListTile(
-                                  leading: Container(
-                                    width: 36,
-                                    child: Image.asset(
-                                        'assets/images/assets/$i.png'),
-                                  ),
-                                  title: Text(i),
-                                  trailing: Text(
-                                    Fmt.token(store.acala.airdrops[i],
-                                        decimals: decimals),
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20,
-                                        color: Colors.black54),
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          )
-                        : Container(),
-                    Container(
-                      padding: EdgeInsets.only(bottom: 32),
-                    ),
-                  ],
-                ),
-              ),
               SizedBox(height: 20),
               AssetCard(
                 image: AssetImage('assets/images/assets/DHX.png'),

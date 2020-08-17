@@ -134,13 +134,14 @@ class _HomePageState extends State<HomePage> {
           Scaffold(
             backgroundColor: Colors.transparent,
             bottomNavigationBar: BottomNavigationBar(
-                currentIndex: i,
-                iconSize: 22.0,
-                onTap: (index) {
-                  _pageController.jumpToPage(index);
-                },
-                type: BottomNavigationBarType.fixed,
-                items: _navBarItems(i)),
+              currentIndex: i,
+              iconSize: 22.0,
+              onTap: (index) {
+                _pageController.jumpToPage(index);
+              },
+              type: BottomNavigationBarType.fixed,
+              items: _navBarItems(i),
+            ),
             body: _getPage(i),
           )
         ],

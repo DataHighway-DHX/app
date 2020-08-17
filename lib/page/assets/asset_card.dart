@@ -26,18 +26,18 @@ class AssetCard extends StatefulWidget {
   final bool claim;
   final Widget expandedContent;
 
-  const AssetCard(
-      {Key key,
-      this.image,
-      this.label,
-      this.balance,
-      this.subtitle,
-      this.usdBalance,
-      this.lock = true,
-      this.signal = true,
-      this.claim = true,
-      this.expandedContent})
-      : super(key: key);
+  const AssetCard({
+    Key key,
+    this.image,
+    this.label,
+    this.balance,
+    this.subtitle,
+    this.usdBalance,
+    this.lock = true,
+    this.signal = true,
+    this.claim = true,
+    this.expandedContent,
+  }) : super(key: key);
 
   @override
   _AssetCardState createState() => _AssetCardState();

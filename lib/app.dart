@@ -157,8 +157,13 @@ class _WalletAppState extends State<WalletApp> {
       _changeLang(context, _appStore.settings.localeCode);
 
       //init Ethereum
-      ethereum = Ethereum();
-      ethereum.init();
+      try {
+        ethereum = Ethereum();
+        ethereum.init();
+      } catch (e) {
+        print('Ethereum init problems');
+        print(e);
+      }
 
       _checkUpdate(context);
     }

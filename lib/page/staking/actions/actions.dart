@@ -720,10 +720,10 @@ class StakingActionsPanel extends StatelessWidget {
                   Text(
                     dic['action.reward'],
                     style: TextStyle(
-                        color: setPayeeDisabled
-                            ? disabledColor
-                            : actionButtonColor,
-                        fontSize: 11),
+                      color:
+                          setPayeeDisabled ? disabledColor : actionButtonColor,
+                      fontSize: 11,
+                    ),
                   )
                 ],
               ),
@@ -746,10 +746,11 @@ class StakingActionsPanel extends StatelessWidget {
                   Text(
                     dic['action.control'],
                     style: TextStyle(
-                        color: setControllerDisabled
-                            ? disabledColor
-                            : actionButtonColor,
-                        fontSize: 11),
+                      color: setControllerDisabled
+                          ? disabledColor
+                          : actionButtonColor,
+                      fontSize: 11,
+                    ),
                   )
                 ],
               ),
