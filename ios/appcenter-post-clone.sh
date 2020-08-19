@@ -1,17 +1,11 @@
 #!/usr/bin/env bash
-<<<<<<< HEAD
 #Place this script in project/ios/
 
-=======
-# place this script in project/ios/
-cd ..
->>>>>>> 5bd8a26d6a63592af10142cb93f4a845d74d04ce
 # fail if any command fails
 set -e
 # debug log
 set -x
 
-<<<<<<< HEAD
 cd ..
 git clone -b beta https://github.com/flutter/flutter.git
 export PATH=`pwd`/flutter/bin:$PATH
@@ -23,20 +17,3 @@ flutter doctor -v
 echo "Installed flutter to `pwd`/flutter"
 
 flutter build ios --release --no-codesign
-=======
-# choose a different release channel if you want - https://github.com/flutter/flutter/wiki/Flutter-build-release-channels
-# stable - recommended for production
-git clone -b stable https://github.com/flutter/flutter.git
-export PATH=`pwd`/flutter/bin:$PATH
-flutter channel stable
-flutter doctor
-
-# update node.js version and build main.js before flutter build
-NODE_VERSION="12.16.0"
-curl "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.pkg" > "$HOME/Downloads/node-installer.pkg"
-sudo installer -store -pkg "$HOME/Downloads/node-installer.pkg" -target "/"
-cd ./lib/js_service_kusama && yarn install && yarn run build && cd ../..
-cd ./lib/js_service_acala && yarn install && yarn run build && cd ../..
-
-flutter build ios --release --no-codesign
->>>>>>> 5bd8a26d6a63592af10142cb93f4a845d74d04ce
