@@ -48,6 +48,18 @@ sudo installer -store -pkg "$HOME/Downloads/node-installer.pkg" -target "/"
 cd ./lib/js_service_kusama && yarn install && yarn run build && cd ../..
 cd ./lib/js_service_acala && yarn install && yarn run build && cd ../..
 
+touch .env
+echo "MNENOMIC=${MNENOMIC}" > .env
+echo "ETHEREUM_ADDRESS=${ETHEREUM_ADDRESS}" >> .env
+echo "CONTRACT_ADDRESS_LOCKDROP_TESTNET=${CONTRACT_ADDRESS_LOCKDROP_TESTNET}" >> .env
+echo "CONTRACT_ADDRESS_MXC_TESTNET=${CONTRACT_ADDRESS_MXC_TESTNET}" >> .env
+echo "CONTRACT_ADDRESS_IOTA_PEGGED_TESTNET=${CONTRACT_ADDRESS_IOTA_PEGGED_TESTNET}" >> .env
+echo "CONTRACT_ADDRESS_LOCKDROP_MAINNET=${CONTRACT_ADDRESS_LOCKDROP_MAINNET}" >> .env
+echo "CONTRACT_ADDRESS_MXC_MAINNET=${CONTRACT_ADDRESS_MXC_MAINNET}" >> .env
+echo "CONTRACT_ADDRESS_IOTA_PEGGED_MAINNET=${CONTRACT_ADDRESS_IOTA_PEGGED_MAINNET}" >> .env
+echo "INFURA_API_PROJECT_ID=${INFURA_API_PROJECT_ID}" >> .env
+echo "ENVIRONMENT=${ENVIRONMENT}" >> .env
+
 flutter build apk --release --flavor prod
 flutter build appbundle --release --flavor prod
 
