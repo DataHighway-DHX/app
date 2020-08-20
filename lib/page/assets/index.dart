@@ -351,7 +351,7 @@ class _AssetsState extends State<Assets> {
           key: globalBalanceRefreshKey,
           onRefresh: _fetchBalance,
           child: ListView(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: EdgeInsets.symmetric(horizontal: 10).copyWith(bottom: 20),
             children: <Widget>[
               SizedBox(height: 24),
               _buildTopCard(context),

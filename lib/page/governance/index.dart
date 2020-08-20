@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/components/topTaps.dart';
+import 'package:polka_wallet/common/widgets/top_tabs.dart';
 import 'package:polka_wallet/page/governance/council/council.dart';
 import 'package:polka_wallet/page/governance/democracy/democracy.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -26,7 +26,6 @@ class _GovernanceState extends State<Governance> {
     var dic = I18n.of(context).gov;
     var tabs = [dic['council'], dic['democracy']];
     return Scaffold(
-      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: Container(
           padding: EdgeInsets.only(top: 20),

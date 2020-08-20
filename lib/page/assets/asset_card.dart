@@ -103,6 +103,7 @@ class _AssetCardState extends State<AssetCard>
   @override
   Widget build(BuildContext context) {
     return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: InkWell(
         onTap: () => Navigator.pushNamed(context, AssetPage.route),
         child: Column(
@@ -175,7 +176,11 @@ class _AssetCardState extends State<AssetCard>
             if (widget.signal || widget.claim || widget.lock)
               SizedBox(height: 10),
             itemButtonsRow(context),
-            if (widget.expandedContent != null) ...[
+            if (widget.expandedContent == null)
+              SizedBox(
+                height: 5,
+              )
+            else ...[
               SizedBox(
                 height: 5,
               ),

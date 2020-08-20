@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 final appTheme = ThemeData(
   primaryColor: Color(0xFF4665EA),
   scaffoldBackgroundColor: Colors.white,
+  cardTheme: CardTheme(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+  ),
+  bottomAppBarTheme: BottomAppBarTheme(color: Colors.white),
+  bottomAppBarColor: Colors.white,
   appBarTheme: AppBarTheme(
     color: Colors.white,
     brightness: Brightness.light,
@@ -44,6 +49,11 @@ final appTheme = ThemeData(
       fontSize: 14,
       fontWeight: FontWeight.normal,
       color: Color(0xFF939393),
+    ),
+    bodyText2: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.normal,
+      color: Colors.black,
     ),
     subtitle1: TextStyle(
       fontSize: 16,

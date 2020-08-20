@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/infoItem.dart';
-import 'package:polka_wallet/common/components/outlinedButtonSmall.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/governance/council/candidateDetailPage.dart';
 import 'package:polka_wallet/page/governance/council/councilVotePage.dart';
@@ -15,6 +14,7 @@ import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Council extends StatefulWidget {
   Council(this.store);
@@ -110,8 +110,8 @@ class _CouncilState extends State<Council> {
       }
     }
     return RoundedCard(
-      margin: EdgeInsets.fromLTRB(16, 12, 16, 24),
-      padding: EdgeInsets.all(24),
+      margin: EdgeInsets.fromLTRB(16, 32, 16, 24),
+      padding: EdgeInsets.all(24).copyWith(bottom: 12),
       child: Column(
         children: <Widget>[
           Row(
@@ -158,52 +158,61 @@ class _CouncilState extends State<Council> {
                         '${Fmt.token(voteAmount, decimals: decimals)} $symbol',
                     title: dic['vote.my'],
                   ),
-                  OutlinedButtonSmall(
-                    content: dic['vote.remove'],
-                    active: false,
-                    onPressed: listHeight > 48
-                        ? () {
-                            _onCancelVotes();
-                          }
-                        : null,
+                  SizedBox(
+                    child: FlatButton(
+                      child: Column(
+                        children: <Widget>[
+                          FaIcon(
+                            FontAwesomeIcons.timesCircle,
+                            size: 22,
+                          ),
+                          SizedBox(height: 3),
+                          Text(
+                            dic['vote.remove'],
+                            style: Theme.of(context).textTheme.bodyText1,
+                          )
+                        ],
+                      ),
+                      onPressed: listHeight > 48
+                          ? () {
+                              _onCancelVotes();
+                            }
+                          : null,
+                    ),
                   ),
                 ],
               ),
               AnimatedContainer(
                 height: _votesExpanded ? listHeight : 0,
-                duration: Duration(seconds: 1),
+                duration: Duration(milliseconds: 200),
                 curve: Curves.fastOutSlowIn,
-                child: AnimatedOpacity(
-                  opacity: _votesExpanded ? 1.0 : 0.0,
-                  duration: Duration(seconds: 1),
-                  curve: Curves.fastLinearToSlowEaseIn,
-                  child: listHeight > 48
-                      ? ListView(
-                          children: List.of(userVotes['votes']).map((i) {
-                            Map accInfo = store.account.accountIndexMap[i];
-                            return CandidateItem(
-                              iconSize: 32,
-                              accInfo: accInfo,
-                              balance: [i],
-                              tokenSymbol:
-                                  store.settings.networkState.tokenSymbol,
-                              noTap: true,
-                            );
-                          }).toList(),
-                        )
-                      : Padding(
-                          padding: EdgeInsets.only(top: 16),
-                          child: Text(
-                            I18n.of(context).home['data.empty'],
-                            style: TextStyle(color: Colors.black54),
-                          ),
+                child: listHeight > 48
+                    ? ListView(
+                        children: List.of(userVotes['votes']).map((i) {
+                          Map accInfo = store.account.accountIndexMap[i];
+                          return CandidateItem(
+                            iconSize: 32,
+                            accInfo: accInfo,
+                            balance: [i],
+                            tokenSymbol:
+                                store.settings.networkState.tokenSymbol,
+                            noTap: true,
+                          );
+                        }).toList(),
+                      )
+                    : Padding(
+                        padding: EdgeInsets.only(top: 16),
+                        child: Text(
+                          I18n.of(context).home['data.empty'],
+                          style: TextStyle(color: Colors.black54),
                         ),
-                ),
+                      ),
               )
             ],
           ),
           Divider(height: 24),
-          RoundedButton(
+          RoundedButton.dense(
+            width: 150,
             text: dic['vote'],
             onPressed: () =>
                 Navigator.of(context).pushNamed(CouncilVotePage.route),

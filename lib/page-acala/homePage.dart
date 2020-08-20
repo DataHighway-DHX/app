@@ -88,11 +88,9 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
               ),
             ),
             Scaffold(
-              backgroundColor: Colors.transparent,
               appBar: AppBar(
                 title: Image.asset('assets/images/assets/logo.png'),
                 centerTitle: false,
-                backgroundColor: Colors.transparent,
                 elevation: 0.0,
                 actions: <Widget>[
                   IconButton(
@@ -103,13 +101,15 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
                 ],
               ),
               bottomNavigationBar: BottomNavigationBar(
-                  currentIndex: i,
-                  iconSize: 22.0,
-                  onTap: (index) {
-                    _pageController.jumpToPage(index);
-                  },
-                  type: BottomNavigationBarType.fixed,
-                  items: _navBarItems(i)),
+                currentIndex: i,
+                iconSize: 22.0,
+                onTap: (index) {
+                  _pageController.jumpToPage(index);
+                },
+                type: BottomNavigationBarType.fixed,
+                items: _navBarItems(i),
+                backgroundColor: Colors.white,
+              ),
               body: _getPage(i),
             )
           ],
@@ -136,15 +136,16 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
             ),
           ),
           Scaffold(
-            backgroundColor: Colors.transparent,
             bottomNavigationBar: BottomNavigationBar(
-                currentIndex: i,
-                iconSize: 22.0,
-                onTap: (index) {
-                  _pageController.jumpToPage(index);
-                },
-                type: BottomNavigationBarType.fixed,
-                items: _navBarItems(i)),
+              currentIndex: i,
+              iconSize: 22.0,
+              onTap: (index) {
+                _pageController.jumpToPage(index);
+              },
+              type: BottomNavigationBarType.fixed,
+              items: _navBarItems(i),
+              backgroundColor: Colors.white,
+            ),
             body: _getPage(i),
           )
         ],

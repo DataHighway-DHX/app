@@ -87,12 +87,12 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 children: <Widget>[
                   Container(
                     padding: EdgeInsets.only(bottom: 16),
-                    child: Text(i18n['create.warn1'], style: theme.headline4),
+                    child: Text(i18n['create.warn1'], style: theme.headline1),
                   ),
                   Text(i18n['create.warn2']),
                   Container(
                     padding: EdgeInsets.only(bottom: 16, top: 32),
-                    child: Text(i18n['create.warn3'], style: theme.headline4),
+                    child: Text(i18n['create.warn3'], style: theme.headline1),
                   ),
                   Container(
                     padding: EdgeInsets.only(bottom: 8),
@@ -101,7 +101,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   Text(i18n['create.warn5']),
                   Container(
                     padding: EdgeInsets.only(bottom: 16, top: 32),
-                    child: Text(i18n['create.warn6'], style: theme.headline4),
+                    child: Text(i18n['create.warn6'], style: theme.headline1),
                   ),
                   Container(
                     padding: EdgeInsets.only(bottom: 8),

@@ -29,9 +29,10 @@ class _PickerCardState<T> extends State<PickerCard<T>> {
 
   void initState() {
     super.initState();
-    selectedValue = widget.defaultValue;
-    if (widget.defaultValue != null) {
-      selectionIndex = widget.values.indexOf(widget.defaultValue);
+    final defaultValue = widget.defaultValue ?? widget.values.first;
+    selectedValue = defaultValue;
+    if (defaultValue != null) {
+      selectionIndex = widget.values.indexOf(defaultValue);
     }
   }
 

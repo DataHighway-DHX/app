@@ -84,13 +84,13 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
             children: <Widget>[
               Expanded(
                 child: ListView(
-                  padding: EdgeInsets.only(top: 16),
+                  padding: EdgeInsets.all(16),
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(left: 16, right: 16),
                       child: Text(
                         i18n['create.warn3'],
-                        style: Theme.of(context).textTheme.headline4,
+                        style: Theme.of(context).textTheme.headline1,
                       ),
                     ),
                     Container(
@@ -155,42 +155,38 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
           children: <Widget>[
             Expanded(
               child: ListView(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 20,
+                ),
                 children: <Widget>[
-                  Text(
-                    i18n['backup'],
-                    style: Theme.of(context).textTheme.headline4,
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      i18n['backup'],
+                      style: Theme.of(context).textTheme.headline1,
+                    ),
                   ),
-                  Container(
-                    padding: EdgeInsets.only(top: 16),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
                       i18n['backup.confirm'],
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      GestureDetector(
-                        child: Container(
-                          padding: EdgeInsets.all(8),
-                          child: Text(
-                            i18n['backup.reset'],
-                            style: TextStyle(
-                                fontSize: 14, color: Colors.deepPurple),
-                          ),
-                        ),
-                        onTap: () {
-                          setState(() {
-                            _wordsLeft =
-                                store.account.newAccount.key.split(' ');
-                            _wordsSelected = [];
-                          });
-                        },
-                      )
-                    ],
+                  SizedBox(
+                    height: 12,
                   ),
                   MnemonicList(
                     words: _wordsSelected,
+                    onClear: () {
+                      setState(() {
+                        _wordsLeft = store.account.newAccount.key.split(' ');
+                        _wordsSelected = [];
+                      });
+                    },
                   ),
                   _buildWordsButtons(),
                 ],

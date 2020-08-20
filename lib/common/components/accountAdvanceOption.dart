@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:polka_wallet/common/widgets/picker_card.dart';
 
 class AccountAdvanceOption extends StatefulWidget {
   AccountAdvanceOption({this.seed, this.onChange});
@@ -92,57 +93,36 @@ class _AccountAdvanceOption extends State<AccountAdvanceOption> {
             },
           ),
         ),
-        _expanded
-            ? ListTile(
-                title: Text(I18n.of(context).account['import.encrypt']),
-                subtitle: Text(_typeOptions[_typeSelection]),
-                trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                onTap: () {
-                  showCupertinoModalPopup(
-                    context: context,
-                    builder: (_) => Container(
-                      height: MediaQuery.of(context).copyWith().size.height / 3,
-                      child: CupertinoPicker(
-                        backgroundColor: Colors.white,
-                        itemExtent: 56,
-                        scrollController: FixedExtentScrollController(
-                            initialItem: _typeSelection),
-                        children: _typeOptions
-                            .map((i) => Padding(
-                                padding: EdgeInsets.all(16), child: Text(i)))
-                            .toList(),
-                        onSelectedItemChanged: (v) {
-                          setState(() {
-                            _typeSelection = v;
-                          });
-                          widget.onChange(AccountAdvanceOptionParams(
-                            type: _typeOptions[v],
-                            path: _derivePath,
-                          ));
-                        },
-                      ),
-                    ),
-                  );
-                },
-              )
-            : Container(),
-        _expanded
-            ? Padding(
-                padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-                child: Form(
-                  key: _formKey,
-                  autovalidate: true,
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      hintText: '//hard/soft///password',
-                      labelText: dic['path'],
-                    ),
-                    controller: _pathCtrl,
-                    validator: _checkDerivePath,
-                  ),
+        if (_expanded) ...[
+          PickerCard(
+            label: I18n.of(context).account['import.encrypt'],
+            onValueSelected: (v, i) {
+              setState(() {
+                _typeSelection = i;
+              });
+              widget.onChange(AccountAdvanceOptionParams(
+                type: _typeOptions[i],
+                path: _derivePath,
+              ));
+            },
+            values: _typeOptions.toList(),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+            child: Form(
+              key: _formKey,
+              autovalidate: true,
+              child: TextFormField(
+                decoration: InputDecoration(
+                  hintText: '//hard/soft///password',
+                  labelText: dic['path'],
                 ),
-              )
-            : Container(),
+                controller: _pathCtrl,
+                validator: _checkDerivePath,
+              ),
+            ),
+          )
+        ],
       ],
     );
   }

@@ -130,6 +130,8 @@ class _MenuPageState extends State<MenuPage> {
                 MenuButton(
                   image: AssetImage(
                       'assets/images/public/wallet_types/datahighway.png'),
+                  selectedImage: AssetImage(
+                      'assets/images/public/wallet_types/datahighway_sel.png'),
                   onTap: () => setState(() => selectedWallet = 0),
                   selected: selectedWallet == 0,
                 ),

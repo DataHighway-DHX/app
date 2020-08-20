@@ -78,12 +78,16 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
     Color actionButtonColor = Theme.of(context).primaryColor;
     Color disabledColor = Theme.of(context).disabledColor;
 
-    return RoundedCard(
-      margin: EdgeInsets.fromLTRB(16, 12, 16, 24),
-      padding: EdgeInsets.only(top: 8, bottom: 8),
+    return Card(
+      margin: EdgeInsets.fromLTRB(16, 12, 16, 16),
+      elevation: 2,
       child: Column(
         children: <Widget>[
           ListTile(
+            contentPadding: EdgeInsets.only(
+              left: 10,
+              right: 10,
+            ),
             leading: Container(
               width: 32,
               child: IconButton(
@@ -91,7 +95,8 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
                   _expanded
                       ? Icons.keyboard_arrow_up
                       : Icons.keyboard_arrow_down,
-                  size: 32,
+                  size: 28,
+                  color: Colors.grey.shade600,
                 ),
                 onPressed: () {
                   setState(() {
@@ -104,7 +109,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
               store.staking.ledger['nominators'] != null
                   ? store.staking.ledger['nominators'].length.toString()
                   : '0',
-              style: Theme.of(context).textTheme.headline4,
+              style: Theme.of(context).textTheme.subtitle1,
             ),
             subtitle: Text(dic['nominating']),
             trailing: Container(
@@ -299,7 +304,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
     final Map dic = I18n.of(context).staking;
     return Observer(
       builder: (_) {
-        final List<Tab> _listTabs = <Tab>[
+        final List<Widget> _listTabs = <Widget>[
           Tab(
             text: '${dic['elected']} (${store.staking.validatorsInfo.length})',
           ),
@@ -313,16 +318,23 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
           // index_1: the 'Validators' label
           Container(
             color: Theme.of(context).cardColor,
-            child: TabBar(
-              labelColor: Colors.black87,
-              labelStyle: TextStyle(fontSize: 18),
-              controller: _tabController,
-              tabs: _listTabs,
-              onTap: (i) {
-                setState(() {
-                  _tab = i;
-                });
-              },
+            height: 36,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20).copyWith(top: 10),
+              child: TabBar(
+                labelColor: Theme.of(context).textTheme.headline1.color,
+                unselectedLabelColor: Colors.grey,
+                labelStyle: Theme.of(context).textTheme.headline1,
+                controller: _tabController,
+                indicator: BoxDecoration(),
+                indicatorPadding: EdgeInsets.all(0),
+                tabs: _listTabs,
+                onTap: (i) {
+                  setState(() {
+                    _tab = i;
+                  });
+                },
+              ),
             ),
           ),
         ];
@@ -363,7 +375,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
                     children: [
                       TextTag(
                         dic['recommend'],
-                        color: Colors.green,
+                        color: Theme.of(context).primaryColor,
                         fontSize: 12,
                         margin: EdgeInsets.only(left: 16, top: 8),
                       ),

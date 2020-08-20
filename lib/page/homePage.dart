@@ -90,7 +90,6 @@ class _HomePageState extends State<HomePage> {
               color: Theme.of(context).canvasColor,
             ),
             Scaffold(
-              backgroundColor: Colors.transparent,
               appBar: AppBar(
                 title: Image.asset(
                   'assets/images/assets/logo_dark.png',
@@ -98,7 +97,6 @@ class _HomePageState extends State<HomePage> {
                 ),
                 automaticallyImplyLeading: false,
                 centerTitle: false,
-                backgroundColor: Colors.transparent,
                 elevation: 0.0,
                 actions: <Widget>[
                   IconButton(
@@ -110,13 +108,15 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               bottomNavigationBar: BottomNavigationBar(
-                  currentIndex: i,
-                  iconSize: 22.0,
-                  onTap: (index) {
-                    _pageController.jumpToPage(index);
-                  },
-                  type: BottomNavigationBarType.fixed,
-                  items: _navBarItems(i)),
+                currentIndex: i,
+                iconSize: 22.0,
+                onTap: (index) {
+                  _pageController.jumpToPage(index);
+                },
+                type: BottomNavigationBarType.fixed,
+                items: _navBarItems(i),
+                backgroundColor: Colors.white,
+              ),
               body: _getPage(i),
             )
           ],
@@ -132,7 +132,6 @@ class _HomePageState extends State<HomePage> {
             color: Theme.of(context).canvasColor,
           ),
           Scaffold(
-            backgroundColor: Colors.transparent,
             bottomNavigationBar: BottomNavigationBar(
               currentIndex: i,
               iconSize: 22.0,
@@ -141,6 +140,7 @@ class _HomePageState extends State<HomePage> {
               },
               type: BottomNavigationBarType.fixed,
               items: _navBarItems(i),
+              backgroundColor: Colors.white,
             ),
             body: _getPage(i),
           )

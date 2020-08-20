@@ -73,14 +73,18 @@ class _ValidatorListFilterState extends State<ValidatorListFilter> {
           ),
           Row(
             children: <Widget>[
-              Text(dic['sort']),
+              Text(
+                dic['sort'],
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
               GestureDetector(
                 child: Container(
                   margin: EdgeInsets.only(left: 8),
-                  padding: EdgeInsets.fromLTRB(16, 6, 16, 6),
+                  padding: EdgeInsets.fromLTRB(16, 5, 16, 5),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(24)),
                     border: Border.all(width: 0.5, color: theme.dividerColor),
+                    color: Color(0x334665EA),
                   ),
                   child: Text(dic[ValidatorSortOptions.values[_sort]
                       .toString()

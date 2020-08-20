@@ -14,11 +14,15 @@ class InfoItem extends StatelessWidget {
         children: <Widget>[
           Text(
             title,
-            style: TextStyle(fontSize: 12),
+            style: Theme.of(context).textTheme.bodyText2,
+            //style: TextStyle(fontSize: 12),
+          ),
+          SizedBox(
+            height: 5,
           ),
           Text(
             content ?? '-',
-            style: Theme.of(context).textTheme.headline4,
+            style: Theme.of(context).textTheme.subtitle1,
           )
         ],
       ),
