@@ -13,8 +13,14 @@ export PATH=`pwd`/flutter/bin:$PATH
 flutter clean
 flutter channel stable
 flutter doctor -v
-
 echo "Installed flutter to `pwd`/flutter"
+
+brew uninstall node@6
+NODE_VERSION="12.16.0"
+curl "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.pkg" > "$HOME/Downloads/node-installer.pkg"
+sudo installer -store -pkg "$HOME/Downloads/node-installer.pkg" -target "/"
+cd ./lib/js_service_kusama && yarn install && yarn run build && cd ../..
+cd ./lib/js_service_acala && yarn install && yarn run build && cd ../..
 
 touch .env
 echo "MNENOMIC=${MNENOMIC}" > .env
