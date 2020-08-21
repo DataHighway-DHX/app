@@ -9,7 +9,7 @@ set -e
 set -x
 
 cd ..
-git clone -b beta https://github.com/flutter/flutter.git
+git clone -b stable https://github.com/flutter/flutter.git
 export PATH=`pwd`/flutter/bin:$PATH
 
 flutter clean
@@ -26,8 +26,7 @@ echo "Installed flutter to `pwd`/flutter"
 NODE_VERSION="12.16.0"
 curl "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.pkg" > "$HOME/Downloads/node-installer.pkg"
 sudo installer -store -pkg "$HOME/Downloads/node-installer.pkg" -target "/"
-cd ./lib/js_service_kusama && yarn install && yarn run build && cd ../..
-cd ./lib/js_service_acala && yarn install && yarn run build && cd ../..
+cd ./lib/polkadot_js_service && yarn install && yarn run build && cd ../..
 
 touch .env
 echo "MNENOMIC=${MNENOMIC}" > .env
