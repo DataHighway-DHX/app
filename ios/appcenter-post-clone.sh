@@ -10,6 +10,7 @@ cd ..
 git clone -b stable https://github.com/flutter/flutter.git
 export PATH=`pwd`/flutter/bin:$PATH
 
+flutter clean
 flutter channel stable
 flutter doctor -v
 echo "Installed flutter to `pwd`/flutter"
