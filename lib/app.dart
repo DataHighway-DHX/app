@@ -222,7 +222,7 @@ class _WalletAppState extends State<WalletApp> {
                               ? network.info == networkEndpointAcala.info
                                   ? AcalaHomePage(_appStore)
                                   : HomePage(_appStore)
-                              : CreateAccountEntryPage();
+                              : CreateAccountEntryPage(_appStore);
                         } else {
                           return Container();
                         }
@@ -234,7 +234,8 @@ class _WalletAppState extends State<WalletApp> {
           NetworkSelectPage.route: (_) =>
               NetworkSelectPage(_appStore, _changeTheme),
           // account
-          CreateAccountEntryPage.route: (_) => CreateAccountEntryPage(),
+          CreateAccountEntryPage.route: (_) =>
+              CreateAccountEntryPage(_appStore),
           CreateAccountPage.route: (_) =>
               CreateAccountPage(_appStore.account.setNewAccount),
           BackupAccountPage.route: (_) => BackupAccountPage(_appStore),
