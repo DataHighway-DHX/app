@@ -18,7 +18,7 @@ void pendingTasks() {
 }
 
 Future<void> main() async {
-  await DotEnv().load('.env');
+  await DotEnv().load('assets/.env');
   WidgetsFlutterBinding.ensureInitialized();
   // var notificationAppLaunchDetails =
   //     await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
