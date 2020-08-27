@@ -196,13 +196,10 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
               padding: EdgeInsets.all(16),
               child: RoundedButton(
                 text: I18n.of(context).home['confirm'],
-                onPressed: _wordsSelected.join(' ') ==
-                        store.account.newAccount.key
-                    ? () async {
-                        webApi.account.importAccount();
-                        Navigator.popUntil(context, ModalRoute.withName('/'));
-                      }
-                    : null,
+                onPressed:
+                    _wordsSelected.join(' ') == store.account.newAccount.key
+                        ? () => _importAccount()
+                        : null,
               ),
             ),
           ],
