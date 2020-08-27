@@ -22,12 +22,17 @@ final EthereumAddress kContractAddrDataHighwayLockdropTestnet =
 final EthereumAddress kContractAddrMXCTestnet =
     EthereumAddress.fromHex(DotEnv().env['CONTRACT_ADDRESS_MXC_TESTNET']);
 // TODO - add address of IOTA Pegged ERC20 contract to .env file
-final EthereumAddress kContractAddrIOTAPeggedTestnet =
-    EthereumAddress.fromHex(DotEnv().env['CONTRACT_ADDRESS_IOTA_PEGGED_TESTNET']);
+final EthereumAddress kContractAddrIOTAPeggedTestnet = EthereumAddress.fromHex(
+    DotEnv().env['CONTRACT_ADDRESS_IOTA_PEGGED_TESTNET']);
 var kAbiCodeFileMXC = "abi_mxc.json";
-var kAbiCodeFileDataHighwayLockdropTestnet = "abi_datahighway_lockdrop_testnet.json";
+var kAbiCodeFileDataHighwayLockdropTestnet =
+    "abi_datahighway_lockdrop_testnet.json";
 // TODO - deploy IOTA Pegged ERC20 contract and copy ABI into JSON file
-var kAbiCodeFileDataHighwayIOTAPeggedTestnet = "abi_datahighway_iota_pegged_testnet.json";
+var kAbiCodeFileDataHighwayIOTAPeggedTestnet =
+    "abi_datahighway_iota_pegged_testnet.json";
+
+const demoUsername = 'aaaaaqwer1234';
+const demoPassword = 'aaaaaqwer1234';
 
 // // Mainnet
 // var kRpcUrlInfuraMainnet =
