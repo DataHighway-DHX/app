@@ -21,8 +21,6 @@ curl "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.pkg" > "$HO
 sudo installer -store -pkg "$HOME/Downloads/node-installer.pkg" -target "/"
 cd ./lib/js_service_kusama && yarn install && yarn run build && cd ../..
 cd ./lib/js_service_acala && yarn install && yarn run build && cd ../..
-cd ./lib/js_service_laminar && yarn install && yarn run build && cd ../..
-cd ./lib/js_as_extension && yarn install && yarn run build && cd ../..
 
 touch assets/.env
 echo "MNENOMIC=${MNENOMIC}" > assets/.env
