@@ -8,6 +8,7 @@ import 'package:polka_wallet/utils/i18n/gov.dart';
 
 import 'home.dart';
 import 'account.dart';
+import 'instructions.dart';
 import 'profile.dart';
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<I18n> {
@@ -45,6 +46,7 @@ class I18n {
       'profile': enProfile,
       'gov': enGov,
       'acala': enDex,
+      'instructions': enInstructions,
     },
     'zh': {
       'home': zhHome,
@@ -54,6 +56,7 @@ class I18n {
       'profile': zhProfile,
       'gov': zhGov,
       'acala': zhDex,
+      'instructions': zhInstructions,
     },
   };
 
@@ -67,6 +70,10 @@ class I18n {
 
   Map<String, String> get assets {
     return _localizedValues[locale.languageCode]['assets'];
+  }
+
+  Map<String, String> get instructions {
+    return _localizedValues[locale.languageCode]['instructions'];
   }
 
   Map<String, String> get staking {

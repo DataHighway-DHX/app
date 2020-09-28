@@ -1,15 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/components/checkRule.dart';
-import 'package:polka_wallet/common/components/formulaComma.dart';
-import 'package:polka_wallet/common/components/formulaInput.dart';
-import 'package:polka_wallet/common/components/formulaLabel.dart';
-import 'package:polka_wallet/common/components/goPageBtn.dart';
-import 'package:polka_wallet/common/components/linkTap.dart';
-import 'package:polka_wallet/common/components/lockAppBtn.dart';
-import 'package:polka_wallet/common/components/selectPicker.dart';
-import 'package:polka_wallet/common/components/subTitle.dart';
-import 'package:polka_wallet/page/assets/signal/signalResultPage.dart';
+import 'package:polka_wallet/common/widgets/picker_card.dart';
+import 'package:polka_wallet/common/widgets/roundedButton.dart';
+import 'package:polka_wallet/common/components/transaction_message.dart';
+import 'signalResultPage.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -30,183 +24,119 @@ class _DetailPageState extends State<SignalDetailPage> {
 
   final AppStore store;
 
-  int _selectedTokenIndex = 0;
   String _selectedTokenValue = 'MXC';
-  List _durationData = [3, 6, 9, 12, 24, 36];
-  int _durationIndex = -1;
   int _durationValue = 3;
-  TextEditingController _durationCtl = TextEditingController(text: '');
-  TextEditingController _amountCtl = TextEditingController(text: '');
-  TextEditingController _publicKeyCtl = TextEditingController(text: '');
+  String _amountValue = '0';
+
+  TextEditingController _amountCtl = TextEditingController(text: '0');
+
   bool _qrcodeValue = false;
   bool _doubleCheckValue = false;
 
   @override
   Widget build(BuildContext context) {
     var dic = I18n.of(context).assets;
-    
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(dic['signal.tokens'])
+        title: Text(dic['signal.tokens']),
+        centerTitle: true,
       ),
       body: SafeArea(
         child: Builder(
           builder: (BuildContext context) {
-          return Scrollbar(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: <Widget>[
-                  Text(
-                    dic['transaction.message'],
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text(
-                      dic['signal.instruction'],
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  subTitle(dic['formula']),
-                  Row(
-                    children: <Widget>[
-                      formulaInput(
-                        type: 'picker',
-                        lable: dic['lock.duration'],
-                        controller: _durationCtl,
-                        onSelected: () => selectPicker(
-                        context,
-                        data: _durationData, 
-                        value: _durationIndex, 
-                        onSelected: (index){
-                          setState(() {
-                            _durationIndex = index;
-                            _durationCtl.text = _durationData[index].toString();
-                          });
-                        })
-                      ),
-                      formulaComma(),
-                      formulaLabel(dic['signal']),
-                      formulaComma(),
-                      formulaInput(
-                        controller: _amountCtl,
-                        lable: dic['amount.tokens'],
-                        onChanged: (value){
-                          setState(() {});
-                        }
-                      ),
-                    ]
-                  ),
-                  Row(
-                    children: <Widget>[
-                      formulaInput(
-                        controller: _publicKeyCtl,
-                        lable: dic['public.key'],
-                        onChanged: (value){
-                          setState(() {});
-                        }
-                      )
-                    ],
-                  ),
-                  linkTap(
-                    dic['guide.public.key'],
-                    onTap: (){}
-                  ),
-                  subTitle(
-                    dic['your.transaction'],
-                  ),
-                  ListTile(
-                    contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                    title: Container(
-                      padding: const EdgeInsets.all(5),
-                      color: Colors.grey[200],
+            return Scrollbar(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
                       child: Text(
-                        '${_durationCtl.text.isEmpty ? '??' : _durationCtl.text},Signal,${_amountCtl.text.isEmpty ? '??' : _amountCtl.text},${_publicKeyCtl.text.isEmpty ? '??' : _publicKeyCtl.text},${kContractAddrMXCTestnet}',
-                        style: TextStyle(
-                          fontSize: 12
+                        dic['transaction.instruction'],
+                      ),
+                    ),
+                    PickerCard<String>(
+                      label: dic['token.currency'],
+                      values: ['MXC', 'DHX', 'DOT', 'IOTA'],
+                      onValueSelected: (s, v) =>
+                          setState(() => _selectedTokenValue = s),
+                      margin: const EdgeInsets.symmetric(vertical: 10),
+                    ),
+                    PickerCard<int>(
+                      label: dic['signal.duration'],
+                      values: [3, 6, 9, 12, 24, 36],
+                      stringifier: (i) => '$i ${dic['lock.months']}',
+                      onValueSelected: (s, v) =>
+                          setState(() => _durationValue = s),
+                      margin: const EdgeInsets.symmetric(vertical: 10),
+                    ),
+                    SizedBox(height: 15),
+                    TextField(
+                      controller: _amountCtl,
+                      onChanged: (s) => setState(() => _amountValue = s),
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.only(top: 0),
+                        hintText: dic['amount'],
+                        errorText: double.tryParse(_amountValue) == null
+                            ? dic['amount.error']
+                            : null,
+                        labelText: dic['amount.balance'].replaceAll(
+                          '{0}',
+                          (store.assets.balances['DHX']?.transferable ??
+                                  BigInt.zero)
+                              .toString(),
                         ),
+                      ),
+                      keyboardType: TextInputType.number,
+                    ),
+                    SizedBox(height: 10),
+                    Center(
+                      child: Text(
+                        'MSB: ?',
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    trailing: Icon(Icons.content_copy),
-                  ),
-                  Text(
-                    '${dic["expected"]} MSB: MSB',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 12
-                    )
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text(
-                      dic['signal.important'],
-                      textAlign: TextAlign.center,
+                    SizedBox(height: 25),
+                    Text(
+                      dic['your.transaction'],
+                      style: Theme.of(context).textTheme.headline1,
                     ),
-                  ),
-                  subTitle(
-                    dic['your.convenience'],
-                    alignment: Alignment.centerLeft
-                  ),
-                  checkRule(
-                    dic['message.qrcode'],
-                    value: _qrcodeValue,
-                    onChanged: (newValue){
-                      setState(() {
-                        _qrcodeValue = newValue;
-                      });
-                    }
-                  ),
-                  checkRule(
-                    dic['check.message'],
-                    value: _doubleCheckValue,
-                    onChanged: (newValue){
-                      setState(() {
-                        _doubleCheckValue = newValue;
-                      });
-                    }
-                  ),
-                  lockAppBtn(
-                    context,
-                    dic['signal.app'],
-                    selectedValue: _selectedTokenIndex,
-                    onSelected: (index,value){
-                      setState(() {
-                        _selectedTokenIndex = index;
-                        _selectedTokenValue = value;
-                      });
-                    }
-                  ),
-                ]
-              )
-            )
-          );
-        }
-      )),
+                    SizedBox(height: 10),
+                    TransactionMessage(
+                      message:
+                          '$_durationValue,lock,$_amountValue(amount),${_selectedTokenValue}PublicKey#,$kContractAddrMXCTestnet',
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      dic['transaction.double_check'],
+                      style: Theme.of(context).textTheme.bodyText1,
+                    )
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
       bottomNavigationBar: Container(
         color: Theme.of(context).bottomAppBarColor,
-          child: ListTile(
-          contentPadding: const EdgeInsets.only(left: 10,right: 10,bottom: 30),
-          title: Row(children: <Widget>[
-            Icon(Icons.chevron_left),
-            goPageBtn(
-              dic['back'],
-              textAlign: TextAlign.left,
-              onTap: () => Navigator.pop(context),
+        child: Padding(
+          padding:
+              const EdgeInsets.only(left: 10, right: 10, bottom: 30, top: 5),
+          child: Container(
+            child: RoundedButton(
+              text: I18n.of(context).home['next'],
+              onPressed: double.tryParse(_amountValue) != null
+                  ? () => Navigator.pushNamed(context, SignalResultPage.route,
+                      arguments:
+                          '$_durationValue,lock,$_amountValue(amount),${_selectedTokenValue}PublicKey#,$kContractAddrMXCTestnet')
+                  : null,
             ),
-            goPageBtn(
-              dic['agree'],
-              onTap: () => Navigator.pushNamed(context, SignalResultPage.route),
-            ),
-            Icon(Icons.chevron_right)
-          ]),
+          ),
         ),
-      )
+      ),
     );
   }
 }

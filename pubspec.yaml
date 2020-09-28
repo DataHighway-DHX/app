@@ -186,6 +186,7 @@ flutter:
     - assets/images/assets/DOT.png
     - assets/images/assets/KSM.png
     - assets/images/assets/FIR.png
+    - assets/images/assets/lock.png
     - assets/images/staking/top_bg_pink.png
     - assets/images/staking/set.png
     - assets/images/staking/ok.png
@@ -207,7 +208,9 @@ flutter:
     - lib/js_service_kusama/dist/main.js
     # dhx
     - assets/images/account/background.png
+    - assets/images/assets/signal_instr.png
     - assets/images/assets/logo_dark.png
+    - assets/images/assets/instruction_background.png
     - assets/images/assets/currencies/ETH.png
     - assets/images/assets/currencies/DOT.png
     - assets/images/assets/currencies/IOTA.png

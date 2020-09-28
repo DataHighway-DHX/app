@@ -2,9 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/goPageBtn.dart';
 import 'package:polka_wallet/common/components/linkTap.dart';
-import 'package:polka_wallet/page/assets/signal/signalDetailPage.dart';
+import 'package:polka_wallet/common/widgets/picker_button.dart';
+import 'package:polka_wallet/common/widgets/roundedButton.dart';
+import 'package:polka_wallet/page/assets/signal/instruction/instruction_page.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
+
+import 'signalDetailPage.dart';
 
 class SignalPage extends StatefulWidget {
   SignalPage(this.store);
@@ -19,6 +23,7 @@ class SignalPage extends StatefulWidget {
 class _SignalPageState extends State<SignalPage> {
   _SignalPageState(this.store);
 
+  bool rulesAccepted = false;
   final AppStore store;
 
   @override
@@ -27,113 +32,72 @@ class _SignalPageState extends State<SignalPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(dic['signal.tokens'])
+        title: Text(dic['signal.tokens']),
+        centerTitle: true,
       ),
       body: SafeArea(
-        child: Builder(
-          builder: (BuildContext context) {
-            return Scrollbar(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.only(top:30,bottom: 20,left: 20,right: 20),
+        child: Container(
+          padding:
+              const EdgeInsets.only(top: 30, bottom: 20, right: 20, left: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(height: 15),
+              Text(
+                dic['signal.welcome'],
+                style: Theme.of(context).textTheme.headline1,
+              ),
+              SizedBox(height: 10),
+              Text(
+                dic['signal.instruction'],
+                style:
+                    Theme.of(context).textTheme.bodyText2.copyWith(height: 1.4),
+              ),
+              Expanded(
                 child: Column(
-                  children: <Widget>[
-                    Center(
-                      child: Text(
-                        dic['signal.welcome'],
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 26 
-                        ),
-                      )
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: Icon(
-                        Icons.thumb_up,
-                        size: 100
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    PickerButton(
+                      title: dic['signal.signalling'],
+                      subtitle: dic['signal.more'],
+                      margin: EdgeInsets.zero,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 30,
                       ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            flex: 2,
-                            child: Container(),
-                          ),
-                          Expanded(
-                            child: Image.asset(
-                              'assets/images/assets/DOT.png',
-                              width: 40,
-                              height: 40,
-                            )
-                          ),
-                          Expanded(
-                            child: Image.asset(
-                              'assets/images/assets/FIR.png',
-                              width: 40,
-                              height: 40,
-                            )
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Container(),
-                          ),
-                        ]
-                      )
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Text(
-                        dic['signal.instruction'],
-                        textAlign: TextAlign.center,
+                      leading: Container(
+                        child: Image.asset('assets/images/assets/lock.png'),
+                        margin: EdgeInsets.only(left: 5, right: 15),
                       ),
+                      onTap: () => Navigator.pushNamed(
+                          context, SignalInstructionPage.route),
                     ),
-                    linkTap(
-                      dic['signal.what'],
-                      onTap: (){}
-                    ),
-                    linkTap(
-                      dic['signal.how'],
-                      onTap: (){}
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Text(
-                        dic['signal.warning'],
-                        textAlign: TextAlign.center,
+                    SizedBox(height: 20),
+                    CheckboxListTile(
+                      value: rulesAccepted,
+                      onChanged: (v) => setState(() => rulesAccepted = v),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      title: Text(
+                        dic['signal.agree'],
+                        style: Theme.of(context).textTheme.bodyText2,
                       ),
+                      contentPadding: EdgeInsets.zero,
                     ),
-                    linkTap(
-                      dic['signal.how.iota'],
-                      onTap: (){}
-                    ),
-                  ]
-                )
-              )
-            );
-          }
-        )
+                  ],
+                ),
+              ),
+              RoundedButton(
+                text: I18n.of(context).home['next'],
+                onPressed: rulesAccepted
+                    ? () => Navigator.pushNamed(context, SignalDetailPage.route)
+                    : null,
+              ),
+              SizedBox(height: 15),
+            ],
+          ),
+        ),
       ),
-      bottomNavigationBar: Container(
-        color: Theme.of(context).bottomAppBarColor,
-          child: ListTile(
-          contentPadding: const EdgeInsets.only(left: 10,right: 10,bottom: 30),
-          title: Row(children: <Widget>[
-            Icon(Icons.chevron_left),
-            goPageBtn(
-              dic['back'],
-              textAlign: TextAlign.left,
-              onTap: () => Navigator.pop(context),
-            ),
-            goPageBtn(
-              dic['understand'],
-              onTap: () => Navigator.pushNamed(context, SignalDetailPage.route),
-            ),
-            Icon(Icons.chevron_right)
-          ])
-        )
-      )
     );
   }
 }

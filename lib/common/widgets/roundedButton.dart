@@ -9,6 +9,7 @@ class RoundedButton extends StatelessWidget {
     this.color,
     this.height,
     this.width,
+    TextStyle style,
     this.padding = const EdgeInsets.fromLTRB(24, 12, 24, 12),
   })  : child = Builder(
           builder: (context) => Row(
@@ -21,7 +22,7 @@ class RoundedButton extends StatelessWidget {
                 ),
               Text(
                 text,
-                style: Theme.of(context).textTheme.button,
+                style: style ?? Theme.of(context).textTheme.button,
               )
             ],
           ),

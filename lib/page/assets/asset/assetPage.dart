@@ -4,7 +4,9 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/TapTooltip.dart';
 import 'package:polka_wallet/common/components/listTail.dart';
+import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
 import 'package:polka_wallet/page/assets/transfer/detailPage.dart';
 import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
@@ -37,10 +39,18 @@ class _AssetPageState extends State<AssetPage>
 
   bool _loading = false;
 
-  TabController _tabController;
   int _txsPage = 0;
   bool _isLastPage = false;
   ScrollController _scrollController;
+
+  @override
+  void setState(VoidCallback calback) {
+    if (mounted) {
+      super.setState(calback);
+    } else {
+      print('State is not mounted $_AssetPageState');
+    }
+  }
 
   Future<void> _updateData() async {
     if (store.settings.loading || _loading) return;
@@ -78,20 +88,8 @@ class _AssetPageState extends State<AssetPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 3);
 
     _scrollController = ScrollController();
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent) {
-        setState(() {
-          if (_tabController.index == 0 && !_isLastPage) {
-            _txsPage += 1;
-            _updateData();
-          }
-        });
-      }
-    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (LocalStorage.checkCacheTimeout(store.assets.cacheTxsTimestamp)) {
@@ -102,7 +100,6 @@ class _AssetPageState extends State<AssetPage>
 
   @override
   void dispose() {
-    _tabController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -134,141 +131,154 @@ class _AssetPageState extends State<AssetPage>
     return res;
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget columnText(String title, String content) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          title,
+          style: Theme.of(context)
+              .textTheme
+              .bodyText2
+              .copyWith(color: Colors.white),
+        ),
+        SizedBox(height: 8),
+        Text(
+          content,
+          style: Theme.of(context)
+              .textTheme
+              .subtitle1
+              .copyWith(color: Colors.white),
+        )
+      ],
+    );
+  }
+
+  Widget topCard() {
+    final dic = I18n.of(context).assets;
+    final primaryColor = Theme.of(context).primaryColor;
+    final titleColor = Theme.of(context).cardColor;
     final String symbol = store.settings.networkState.tokenSymbol;
     final String token = ModalRoute.of(context).settings.arguments;
     final bool isBaseToken = token == symbol;
-    final isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
+
+    int decimals = store.settings.networkState.tokenDecimals;
+
+    BigInt balance = token == null
+        ? BigInt.from(0)
+        : Fmt.balanceInt(store.assets.tokenBalances[token.toUpperCase()]);
+
+    BalancesInfo balancesInfo = store.assets.balances[symbol];
+    String lockedInfo = '\n';
+    if (balancesInfo.lockedBreakdown != null) {
+      balancesInfo.lockedBreakdown.forEach((i) {
+        if (i.amount > BigInt.zero) {
+          lockedInfo +=
+              '${Fmt.token(i.amount, decimals: decimals)} $symbol ${dic['lock.${i.use}']}\n';
+        }
+      });
+    }
+
+    return RoundedCard(
+      color: primaryColor,
+      margin: EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.only(top: 10, bottom: 16, left: 15, right: 15),
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(bottom: 30, top: 30),
+            child: Text(
+              Fmt.token(isBaseToken ? balancesInfo.total : balance,
+                  decimals: decimals, length: 8),
+              style: Theme.of(context)
+                  .textTheme
+                  .headline2
+                  .copyWith(color: Colors.white),
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    if (lockedInfo.length > 2)
+                      TapTooltip(
+                        message: lockedInfo,
+                        child: Padding(
+                          padding: EdgeInsets.only(right: 6),
+                          child: Icon(
+                            Icons.info,
+                            size: 16,
+                            color: titleColor,
+                          ),
+                        ),
+                        waitDuration: Duration(seconds: 0),
+                      ),
+                    columnText(
+                      dic['locked'],
+                      Fmt.token(balancesInfo.lockedBalance, decimals: decimals),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: columnText(
+                  dic['available'],
+                  Fmt.token(balancesInfo.transferable, decimals: decimals),
+                ),
+              ),
+              Expanded(
+                child: columnText(
+                  dic['reserved'],
+                  Fmt.token(balancesInfo.reserved, decimals: decimals),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final String token = ModalRoute.of(context).settings.arguments;
 
     final dic = I18n.of(context).assets;
 
-    final List<Tab> _myTabs = <Tab>[
-      Tab(text: dic['all']),
-      Tab(text: dic['in']),
-      Tab(text: dic['out']),
+    final List<Text> _myTabs = <Text>[
+      Text(dic['all']),
+      Text(dic['in']),
+      Text(dic['out']),
     ];
-
-    final primaryColor = Theme.of(context).primaryColor;
-    final titleColor = Theme.of(context).cardColor;
     return Scaffold(
       appBar: AppBar(
-        title: Text(token),
+        title: Text(token ?? ''),
         centerTitle: true,
         elevation: 0.0,
       ),
       body: SafeArea(
         child: Observer(
           builder: (_) {
-            int decimals = store.settings.networkState.tokenDecimals;
-
-            BigInt balance =
-                Fmt.balanceInt(store.assets.tokenBalances[token.toUpperCase()]);
-
-            BalancesInfo balancesInfo = store.assets.balances[symbol];
-            String lockedInfo = '\n';
-            if (balancesInfo.lockedBreakdown != null) {
-              balancesInfo.lockedBreakdown.forEach((i) {
-                if (i.amount > BigInt.zero) {
-                  lockedInfo +=
-                      '${Fmt.token(i.amount, decimals: decimals)} $symbol ${dic['lock.${i.use}']}\n';
-                }
-              });
-            }
-
             return Column(
               children: <Widget>[
+                SizedBox(height: 10),
+                topCard(),
+                SizedBox(height: 24),
                 Container(
-                  width: MediaQuery.of(context).size.width,
-                  color: primaryColor,
-                  padding: EdgeInsets.only(bottom: 24),
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 16),
-                        child: Text(
-                          Fmt.token(isBaseToken ? balancesInfo.total : balance,
-                              decimals: decimals, length: 8),
-                          style: TextStyle(
-                            color: titleColor,
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      isBaseToken
-                          ? Builder(
-                              builder: (_) {
-                                return Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Container(
-                                      margin: EdgeInsets.only(right: 12),
-                                      child: Row(
-                                        children: <Widget>[
-                                          lockedInfo.length > 2
-                                              ? TapTooltip(
-                                                  message: lockedInfo,
-                                                  child: Padding(
-                                                    padding: EdgeInsets.only(
-                                                        right: 6),
-                                                    child: Icon(
-                                                      Icons.info,
-                                                      size: 16,
-                                                      color: titleColor,
-                                                    ),
-                                                  ),
-                                                  waitDuration:
-                                                      Duration(seconds: 0),
-                                                )
-                                              : Container(),
-                                          Text(
-                                            '${dic['locked']}: ${Fmt.token(balancesInfo.lockedBalance, decimals: decimals)}',
-                                            style: TextStyle(color: titleColor),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.only(right: 12),
-                                      child: Text(
-                                        '${dic['available']}: ${Fmt.token(balancesInfo.transferable, decimals: decimals)}',
-                                        style: TextStyle(color: titleColor),
-                                      ),
-                                    ),
-                                    Text(
-                                      '${dic['reserved']}: ${Fmt.token(balancesInfo.reserved, decimals: decimals)}',
-                                      style: TextStyle(color: titleColor),
-                                    ),
-                                  ],
-                                );
-                              },
-                            )
-                          : Container(),
-                    ],
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(horizontal: 18),
+                  child: CupertinoSlidingSegmentedControl<int>(
+                    children: _myTabs.asMap(),
+                    onValueChanged: (i) {
+                      store.assets.setTxsFilter(i);
+                    },
+                    groupValue: store.assets.txsFilter,
                   ),
                 ),
-                !isAcala
-                    ? TabBar(
-                        labelColor: Colors.black87,
-                        labelStyle: TextStyle(fontSize: 18),
-                        controller: _tabController,
-                        tabs: _myTabs,
-                        onTap: (i) {
-                          store.assets.setTxsFilter(i);
-                        },
-                      )
-                    : Container(
-                        color: titleColor,
-                        padding: EdgeInsets.all(16),
-                        child: Row(
-                          children: <Widget>[
-                            BorderedTitle(
-                              title: I18n.of(context).acala['loan.txs'],
-                            )
-                          ],
-                        ),
-                      ),
+                SizedBox(height: 24),
                 Expanded(
                   child: Container(
                     color: Colors.white,
@@ -283,66 +293,36 @@ class _AssetPageState extends State<AssetPage>
                   ),
                 ),
                 Row(
-                  children: <Widget>[
+                  children: [
+                    SizedBox(width: 16),
                     Expanded(
-                      child: Container(
-                        color: Colors.lightBlue,
-                        child: FlatButton(
-                          padding: EdgeInsets.all(16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.only(right: 16),
-                                child: Image.asset(
-                                    'assets/images/assets/assets_send.png'),
-                              ),
-                              Text(
-                                I18n.of(context).assets['transfer'],
-                                style: TextStyle(color: Colors.white),
-                              )
-                            ],
-                          ),
-                          onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              TransferPage.route,
-                              arguments: TransferPageParams(
-                                redirect: AssetPage.route,
-                                symbol: token,
-                              ),
-                            );
-                          },
-                        ),
+                      child: RoundedButton.dense(
+                        text: I18n.of(context).assets['transfer'],
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            TransferPage.route,
+                            arguments: TransferPageParams(
+                              redirect: AssetPage.route,
+                              symbol: token,
+                            ),
+                          );
+                        },
                       ),
                     ),
+                    SizedBox(width: 16),
                     Expanded(
-                      child: Container(
-                        color: Colors.lightGreen,
-                        child: FlatButton(
-                          padding: EdgeInsets.all(16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.only(right: 16),
-                                child: Image.asset(
-                                    'assets/images/assets/assets_receive.png'),
-                              ),
-                              Text(
-                                I18n.of(context).assets['receive'],
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ],
-                          ),
-                          onPressed: () {
-                            Navigator.pushNamed(context, ReceivePage.route);
-                          },
-                        ),
+                      child: RoundedButton.dense(
+                        text: I18n.of(context).assets['receive'],
+                        onPressed: () {
+                          Navigator.pushNamed(context, ReceivePage.route);
+                        },
                       ),
-                    )
+                    ),
+                    SizedBox(width: 16),
                   ],
-                )
+                ),
+                SizedBox(height: 30),
               ],
             );
           },

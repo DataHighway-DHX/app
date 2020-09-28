@@ -27,10 +27,12 @@ import 'package:polka_wallet/page/account/uos/qrSenderPage.dart';
 import 'package:polka_wallet/page/account/uos/qrSignerPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/claim/claimPage.dart';
+import 'package:polka_wallet/page/assets/lock/instruction/instruction_page.dart';
 import 'package:polka_wallet/page/assets/lock/lockDetailPage.dart';
 import 'package:polka_wallet/page/assets/lock/lockResultPage.dart';
 import 'package:polka_wallet/page/assets/lock/lockPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
+import 'package:polka_wallet/page/assets/signal/instruction/instruction_page.dart';
 import 'package:polka_wallet/page/assets/signal/signalDetailPage.dart';
 import 'package:polka_wallet/page/assets/signal/signalPage.dart';
 import 'package:polka_wallet/page/assets/signal/signalResultPage.dart';
@@ -245,10 +247,14 @@ class _WalletAppState extends State<WalletApp> {
           // mining
           SignalPage.route: (_) => SignalPage(_appStore),
           SignalDetailPage.route: (_) => SignalDetailPage(_appStore),
-          SignalResultPage.route: (_) => SignalResultPage(_appStore),
+          SignalResultPage.route: (ctx) => SignalResultPage(
+              _appStore, ModalRoute.of(ctx)?.settings?.arguments ?? ''),
+          SignalInstructionPage.route: (_) => SignalInstructionPage(),
           LockPage.route: (_) => LockPage(_appStore),
           LockDetailPage.route: (_) => LockDetailPage(_appStore),
-          LockResultPage.route: (_) => LockResultPage(_appStore),
+          LockResultPage.route: (ctx) => LockResultPage(
+              _appStore, ModalRoute.of(ctx)?.settings?.arguments ?? ''),
+          LockInstructionPage.route: (_) => LockInstructionPage(),
           ClaimPage.route: (_) => ClaimPage(_appStore),
           QrSignerPage.route: (_) => QrSignerPage(_appStore),
           QrSenderPage.route: (_) => QrSenderPage(),

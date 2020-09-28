@@ -20,7 +20,7 @@ class PickerCard<T> extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _PickerCardState createState() => _PickerCardState();
+  _PickerCardState<T> createState() => _PickerCardState<T>();
 }
 
 class _PickerCardState<T> extends State<PickerCard<T>> {

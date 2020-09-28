@@ -105,7 +105,8 @@ class _AssetCardState extends State<AssetCard>
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: InkWell(
-        onTap: () => Navigator.pushNamed(context, AssetPage.route),
+        onTap: () => Navigator.pushNamed(context, AssetPage.route,
+            arguments: widget.label),
         child: Column(
           children: <Widget>[
             SizedBox(
@@ -188,7 +189,6 @@ class _AssetCardState extends State<AssetCard>
                 axisAlignment: -1,
                 sizeFactor: expandAnimation,
                 child: Container(
-                  height: 150,
                   width: double.infinity,
                   padding: EdgeInsets.all(10),
                   child: widget.expandedContent,
@@ -242,6 +242,7 @@ class _AssetsCardContentState extends State<AssetsCardContent>
     with SingleTickerProviderStateMixin {
   String selectedTab = 'claim';
   TabController tabController;
+  int tabIndex = 0;
 
   void initState() {
     super.initState();
@@ -252,6 +253,7 @@ class _AssetsCardContentState extends State<AssetsCardContent>
   Widget build(BuildContext context) {
     final dic = I18n.of(context).assets;
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         CupertinoSlidingSegmentedControl(
           children: {
@@ -261,6 +263,7 @@ class _AssetsCardContentState extends State<AssetsCardContent>
           groupValue: selectedTab,
           onValueChanged: (key) {
             setState(() => selectedTab = key);
+            setState(() => tabIndex = key == 'claim' ? 0 : 1);
             if (key == 'claim')
               tabController.animateTo(0);
             else
@@ -268,15 +271,9 @@ class _AssetsCardContentState extends State<AssetsCardContent>
           },
         ),
         SizedBox(height: 15),
-        Expanded(
-          child: TabBarView(
-            children: <Widget>[
-              widget.tableSource.claimTable(context, widget.store),
-              widget.tableSource.rewardsTable(context, widget.store),
-            ],
-            controller: tabController,
-          ),
-        ),
+        tabIndex == 0
+            ? widget.tableSource.claimTable(context, widget.store)
+            : widget.tableSource.rewardsTable(context, widget.store),
       ],
     );
   }
