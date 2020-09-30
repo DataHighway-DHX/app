@@ -127,7 +127,7 @@ const Map<String, String> enAssets = {
   'lock.agree':
       'I have read, understood and agree with the above locking instruction',
   'token.currency': 'Token Currency',
-  'claim': 'Claim DOT',
+  'claim': 'Claim',
   'claim.agree': 'I Agree',
   'claim.terms': 'Terms and Conditions',
   'claim.terms.url': 'You can also find them at',
@@ -145,6 +145,19 @@ const Map<String, String> enAssets = {
   'transaction.qr': 'Add my transaction message to the wallet QR code',
   'transaction.double_check':
       '*Double check the transaction message, make sure your duration and amount is correct',
+  'blockchain': 'Blockchain',
+  'transaction.hash': 'Transaction Hash',
+  'transaction.fee': 'Transaction Fee',
+  'expected.msb': 'Expected MSB',
+  'transaction.success':
+      'You have been successfully claimed your transaction. It will be transferred to your account after contracted duration.',
+  'duration': 'Duration',
+  'timestamp': 'Timestamp',
+  'your.claim': 'Your Claim',
+  'signal.amount': 'Signal Amount',
+  'sort.by': 'Sort By',
+  'claim.history': 'Claim History',
+  'transaction.filter': 'Filter with Transaction Message',
 };
 
 const Map<String, String> zhAssets = {
@@ -269,7 +282,7 @@ const Map<String, String> zhAssets = {
   'lock.locking': '锁定',
   'lock.months': '月数',
   'lock.more': '了解有关锁定的更多信息',
-  'claim': '认领 DOT',
+  'claim': '认领',
   'claim.agree': '同意',
   'claim.terms': '使用条款',
   'claim.terms.url': '您也可以通过链接查看原文',
@@ -284,4 +297,16 @@ const Map<String, String> zhAssets = {
   'genesis.false': '假',
   'transaction.qr': '将我的交易消息添加到钱包QR码',
   'transaction.double_check': '*仔细检查交易消息，确保您的时间和金额正确',
+  'blockchain': '区块链',
+  'transaction.hash': '交易哈希',
+  'transaction.fee': '手续费',
+  'expected.msb': '预期的MSB',
+  'transaction.success': '您已成功声明您的交易。 在约定的期限后，它将转移到您的帐户中。',
+  'duration': '持续时间',
+  'timestamp': '时间戳记',
+  'your.claim': '您的要求',
+  'signal.amount': '信号量',
+  'sort.by': '排序方式',
+  'claim.history': '索赔历史',
+  'transaction.filter': '过滤交易消息',
 };

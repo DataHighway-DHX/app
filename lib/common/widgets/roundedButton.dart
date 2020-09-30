@@ -43,10 +43,12 @@ class RoundedButton extends StatelessWidget {
     @required String text,
     double height = 30,
     double width,
+    Color color,
   }) : this.custom(
           height: height,
           width: width,
           onPressed: onPressed,
+          color: color,
           padding: const EdgeInsets.all(0),
           child: Builder(
             builder: (context) => Text(

@@ -59,6 +59,13 @@ const Map<String, String> enStaking = {
   'notElected': 'Not Elected',
   'phala': 'Phala Airdrop',
   'recommend': 'Recommended',
+  'display': 'Display',
+  'display.parent': 'Display Parent',
+  'email': 'Email',
+  'legal': 'Legal',
+  'parent': 'Parent',
+  'twitter': 'Twitter',
+  'web': 'Web',
 };
 
 const Map<String, String> zhStaking = {
@@ -120,4 +127,11 @@ const Map<String, String> zhStaking = {
   'notElected': '未选中',
   'phala': 'Phala 空投',
   'recommend': '推荐节点',
+  'display': '显示',
+  'display.parent': '显示父项',
+  'email': '电子邮件',
+  'legal': '法律',
+  'parent': '父母',
+  'twitter': '推特',
+  'web': '网页',
 };

@@ -27,6 +27,7 @@ import 'package:polka_wallet/page/account/uos/qrSenderPage.dart';
 import 'package:polka_wallet/page/account/uos/qrSignerPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/claim/claimPage.dart';
+import 'package:polka_wallet/page/assets/claim/claim_details_page.dart';
 import 'package:polka_wallet/page/assets/lock/instruction/instruction_page.dart';
 import 'package:polka_wallet/page/assets/lock/lockDetailPage.dart';
 import 'package:polka_wallet/page/assets/lock/lockResultPage.dart';
@@ -256,6 +257,7 @@ class _WalletAppState extends State<WalletApp> {
               _appStore, ModalRoute.of(ctx)?.settings?.arguments ?? ''),
           LockInstructionPage.route: (_) => LockInstructionPage(),
           ClaimPage.route: (_) => ClaimPage(_appStore),
+          ClaimDetailsPage.route: (_) => ClaimDetailsPage(_appStore),
           QrSignerPage.route: (_) => QrSignerPage(_appStore),
           QrSenderPage.route: (_) => QrSenderPage(),
           // assets

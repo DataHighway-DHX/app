@@ -17,6 +17,35 @@ class ValidatorDetailPage extends StatelessWidget {
   static final String route = '/staking/validator';
   final AppStore store;
 
+  Widget tableRow(BuildContext context, String title, String content,
+      {bool copyable = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Text(title),
+          ),
+          Expanded(
+            child: Text(
+              content,
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+          ),
+          if (copyable)
+            GestureDetector(
+              child: Icon(
+                Icons.content_copy,
+                size: 20,
+                color: Theme.of(context).primaryColor,
+              ),
+            )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) => Observer(
         builder: (_) {
@@ -63,32 +92,57 @@ class ValidatorDetailPage extends StatelessWidget {
                             accInfo: accInfo, address: detail.accountId),
                         Divider(),
                         Padding(
-                          padding: EdgeInsets.only(top: 16, left: 24),
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              tableRow(context, dic['display'], '7'),
+                              tableRow(context, dic['display.parent'],
+                                  'DATAHIGHWAY.COM'),
+                              tableRow(context, dic['email'], 'hi@dhx.com'),
+                              tableRow(
+                                  context, dic['legal'], 'datahighway.com'),
+                              tableRow(
+                                  context, dic['parent'], '14QBQd…w3ErGtf'),
+                              tableRow(context, dic['twitter'], '@datahighway'),
+                              tableRow(context, dic['web'], 'datahighway.com'),
+                            ],
+                          ),
+                        ),
+                        Divider(),
+                        Padding(
+                          padding: EdgeInsets.only(top: 16),
                           child: Row(
                             children: <Widget>[
                               InfoItem(
                                 title: dic['stake.own'],
                                 content: Fmt.token(detail.bondOwn),
+                                crossAxisAlignment: CrossAxisAlignment.center,
                               ),
                               InfoItem(
                                 title: dic['stake.other'],
                                 content: Fmt.token(detail.bondOther),
+                                crossAxisAlignment: CrossAxisAlignment.center,
                               ),
                             ],
                           ),
                         ),
                         Padding(
                           padding:
-                              EdgeInsets.only(top: 16, left: 24, bottom: 24),
+                              EdgeInsets.only(top: 16, left: 0, bottom: 24),
                           child: Row(
                             children: <Widget>[
                               InfoItem(
                                 title: dic['commission'],
-                                content: detail.commission,
+                                content: (detail.commission?.isEmpty ?? true)
+                                    ? '?'
+                                    : detail.commission,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                               ),
                               InfoItem(
-                                title: 'points',
+                                title: dic['points'],
                                 content: detail.points.toString(),
+                                crossAxisAlignment: CrossAxisAlignment.center,
                               ),
                             ],
                           ),

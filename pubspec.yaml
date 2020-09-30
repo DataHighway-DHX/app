@@ -166,6 +166,7 @@ flutter:
     - assets/images/public/kusama.png
     - assets/images/public/substrate.png
     - assets/images/public/default.png
+    - assets/images/assets/claim_icon.png
     - assets/images/assets/logo.png
     - assets/images/assets/top_bg_pink.png
     - assets/images/assets/Assets_nav_0.png

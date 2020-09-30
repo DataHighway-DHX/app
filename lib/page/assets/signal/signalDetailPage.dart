@@ -63,6 +63,7 @@ class _DetailPageState extends State<SignalDetailPage> {
                       onValueSelected: (s, v) =>
                           setState(() => _selectedTokenValue = s),
                       margin: const EdgeInsets.symmetric(vertical: 10),
+                      usePickerDialog: true,
                     ),
                     PickerCard<int>(
                       label: dic['signal.duration'],
@@ -71,6 +72,7 @@ class _DetailPageState extends State<SignalDetailPage> {
                       onValueSelected: (s, v) =>
                           setState(() => _durationValue = s),
                       margin: const EdgeInsets.symmetric(vertical: 10),
+                      usePickerDialog: true,
                     ),
                     SizedBox(height: 15),
                     TextField(

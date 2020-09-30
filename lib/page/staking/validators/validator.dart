@@ -28,6 +28,11 @@ class Validator extends StatelessWidget {
 //    print(accInfo['identity']);
     bool hasDetail = validator.commission.isNotEmpty;
     return GestureDetector(
+      onTap: () {
+        webApi.staking.queryValidatorRewards(validator.accountId);
+        Navigator.of(context)
+            .pushNamed(ValidatorDetailPage.route, arguments: validator);
+      },
       child: Container(
         color: Colors.white,
         padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -92,13 +97,6 @@ class Validator extends StatelessWidget {
           ],
         ),
       ),
-      onTap: hasDetail
-          ? () {
-              webApi.staking.queryValidatorRewards(validator.accountId);
-              Navigator.of(context)
-                  .pushNamed(ValidatorDetailPage.route, arguments: validator);
-            }
-          : null,
     );
   }
 }

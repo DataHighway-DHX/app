@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/widgets/picker_dialog.dart';
 
 class PickerCard<T> extends StatefulWidget {
   final String label;
@@ -8,6 +9,7 @@ class PickerCard<T> extends StatefulWidget {
   final void Function(T, int) onValueSelected;
   final List<T> values;
   final EdgeInsets margin;
+  final bool usePickerDialog;
 
   const PickerCard({
     Key key,
@@ -17,6 +19,7 @@ class PickerCard<T> extends StatefulWidget {
     this.defaultValue,
     this.stringifier,
     this.margin = const EdgeInsets.all(10),
+    this.usePickerDialog = false,
   }) : super(key: key);
 
   @override
@@ -42,7 +45,23 @@ class _PickerCardState<T> extends State<PickerCard<T>> {
         : val.toString();
   }
 
-  void _showDialog() {
+  void _showPickerDialog() async {
+    final val = await PickerDialog.show(
+      context,
+      PickerDialog<int>(
+        selectedValue: selectionIndex,
+        stringifier: (i) => _valueStr(widget.values[i]),
+        values: List.generate(widget.values.length, (i) => i),
+      ),
+    );
+    setState(() {
+      selectionIndex = val;
+      selectedValue = widget.values[val];
+    });
+    widget.onValueSelected(selectedValue, selectionIndex);
+  }
+
+  void _showModalDialog() {
     showCupertinoModalPopup(
       context: context,
       builder: (_) => Container(
@@ -66,6 +85,14 @@ class _PickerCardState<T> extends State<PickerCard<T>> {
         ),
       ),
     );
+  }
+
+  void _showDialog() {
+    if (widget.usePickerDialog) {
+      _showPickerDialog();
+    } else {
+      _showModalDialog();
+    }
   }
 
   @override

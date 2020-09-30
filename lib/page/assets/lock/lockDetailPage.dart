@@ -1,14 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/components/checkRule.dart';
-import 'package:polka_wallet/common/components/formulaComma.dart';
-import 'package:polka_wallet/common/components/formulaInput.dart';
-import 'package:polka_wallet/common/components/formulaLabel.dart';
-import 'package:polka_wallet/common/components/goPageBtn.dart';
-import 'package:polka_wallet/common/components/linkTap.dart';
-import 'package:polka_wallet/common/components/lockAppBtn.dart';
-import 'package:polka_wallet/common/components/selectPicker.dart';
-import 'package:polka_wallet/common/components/subTitle.dart';
 import 'package:polka_wallet/common/widgets/picker_card.dart';
 import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/page/assets/lock/lockResultPage.dart';
@@ -73,6 +64,7 @@ class _DetailPageState extends State<LockDetailPage> {
                       onValueSelected: (s, v) =>
                           setState(() => _selectedTokenValue = s),
                       margin: const EdgeInsets.symmetric(vertical: 10),
+                      usePickerDialog: true,
                     ),
                     PickerCard<int>(
                       label: dic['lock.duration'],
@@ -81,6 +73,7 @@ class _DetailPageState extends State<LockDetailPage> {
                       onValueSelected: (s, v) =>
                           setState(() => _durationValue = s),
                       margin: const EdgeInsets.symmetric(vertical: 10),
+                      usePickerDialog: true,
                     ),
                     PickerCard<bool>(
                       label: dic['genesis.validator'],
@@ -90,6 +83,7 @@ class _DetailPageState extends State<LockDetailPage> {
                       onValueSelected: (s, v) =>
                           setState(() => _genesisValidator = s),
                       margin: const EdgeInsets.symmetric(vertical: 10),
+                      usePickerDialog: true,
                     ),
                     SizedBox(height: 15),
                     TextField(

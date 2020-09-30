@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/components/JumpToBrowserLink.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -60,25 +59,16 @@ class AccountInfo extends StatelessWidget {
                   )
                 : Container(),
             Text(Fmt.address(address)),
-            IconButton(
-              icon: Image.asset('assets/images/public/copy.png'),
-              onPressed: () => UI.copyAndNotify(context, address),
-            )
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(right: 16),
-              child: JumpToBrowserLink(
-                'https://polkascan.io/pre/kusama/module/account/$address',
-                text: 'Polkascan',
+            SizedBox(
+              child: IconButton(
+                icon: Icon(
+                  Icons.content_copy,
+                  size: 18,
+                  color: Theme.of(context).primaryColor,
+                ),
+                onPressed: () => UI.copyAndNotify(context, address),
               ),
-            ),
-            JumpToBrowserLink(
-              'https://kusama.subscan.io/account/$address',
-              text: 'Subscan',
+              height: 35,
             ),
           ],
         ),

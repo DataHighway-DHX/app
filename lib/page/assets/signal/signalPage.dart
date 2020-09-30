@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/components/goPageBtn.dart';
-import 'package:polka_wallet/common/components/linkTap.dart';
 import 'package:polka_wallet/common/widgets/picker_button.dart';
 import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/page/assets/signal/instruction/instruction_page.dart';
