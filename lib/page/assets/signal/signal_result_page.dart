@@ -4,18 +4,21 @@ import 'package:flutter/services.dart';
 import 'package:polka_wallet/common/components/gasInput.dart';
 import 'package:polka_wallet/common/components/transaction_message.dart';
 import 'package:polka_wallet/common/widgets/roundedButton.dart';
+import 'package:polka_wallet/service/ethereumApi/api.dart';
+import 'package:polka_wallet/service/ethereumApi/model.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../constants.dart';
+import 'signal_params.dart';
 
 class SignalResultPage extends StatefulWidget {
-  SignalResultPage(this.store, this.transactionMessage);
+  SignalResultPage(this.store, this.signalParams);
 
   static final String route = '/assets/signal/result';
   final AppStore store;
-  final String transactionMessage;
+  final SignalParams signalParams;
 
   @override
   _ResultPageState createState() => _ResultPageState(store);
@@ -27,6 +30,38 @@ class _ResultPageState extends State<SignalResultPage> {
   final AppStore store;
   bool _showMessageInQr = false;
   bool _continueBox = false;
+
+  SignalWalletStructsResponse walletStructs;
+
+  @override
+  void initState() {
+    super.initState();
+    init();
+  }
+
+  Future<void> init() async {
+    walletStructs = await ethereum.lockdrop.signalWalletStructs(
+      widget.signalParams.currentAddress,
+      widget.signalParams.currency.address,
+    );
+    if (mounted) setState(() {});
+  }
+
+  Future<void> signal() async {
+    final walletStructs = await ethereum.lockdrop.signalWalletStructs(
+      widget.signalParams.currentAddress,
+      widget.signalParams.currency.address,
+    );
+
+    await ethereum.lockdrop.signal(
+      amount: widget.signalParams.parsedAmount,
+      term: widget.signalParams.term,
+      dhxPublicKey: walletStructs.dataHighwayPublicKey,
+      tokenContractAddress: widget.signalParams.currency.address,
+    );
+
+    print('success');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,40 +103,43 @@ class _ResultPageState extends State<SignalResultPage> {
                             child: Container(
                               height: 150,
                               width: 150,
-                              child: Stack(
-                                children: [
-                                  QrImage(
-                                    data: _showMessageInQr
-                                        ? widget.transactionMessage
-                                        : kContractAddrDataHighwayLockdropTestnet
-                                            .toString(),
-                                    version: QrVersions.auto,
-                                    size: 150.0,
-                                    foregroundColor:
-                                        Theme.of(context).primaryColor,
-                                    errorCorrectionLevel: 3,
-                                  ),
-                                  Align(
-                                    child: Container(
-                                      padding: EdgeInsets.only(
-                                        left: 8,
-                                        top: 8,
-                                        bottom: 8,
-                                        right: 5,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Image.asset(
-                                        'assets/images/assets/DHX.png',
-                                        height: 35,
-                                        width: 35,
-                                      ),
+                              child: walletStructs == null
+                                  ? Center(child: CircularProgressIndicator())
+                                  : Stack(
+                                      children: [
+                                        QrImage(
+                                          data: _showMessageInQr
+                                              ? widget.signalParams
+                                                  .transactionMessage
+                                              : walletStructs.contractAddr
+                                                  .toString(),
+                                          version: QrVersions.auto,
+                                          size: 150.0,
+                                          foregroundColor:
+                                              Theme.of(context).primaryColor,
+                                          errorCorrectionLevel: 3,
+                                        ),
+                                        Align(
+                                          child: Container(
+                                            padding: EdgeInsets.only(
+                                              left: 8,
+                                              top: 8,
+                                              bottom: 8,
+                                              right: 5,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: Image.asset(
+                                              'assets/images/assets/DHX.png',
+                                              height: 35,
+                                              width: 35,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                ],
-                              ),
                             ),
                           ),
                           SizedBox(height: 8),
@@ -110,8 +148,9 @@ class _ResultPageState extends State<SignalResultPage> {
                               SizedBox(width: 16),
                               Expanded(
                                 child: Text(
-                                  kContractAddrDataHighwayLockdropTestnet
-                                      .toString(),
+                                  walletStructs == null
+                                      ? '...'
+                                      : walletStructs.contractAddr.toString(),
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText2
@@ -123,15 +162,16 @@ class _ResultPageState extends State<SignalResultPage> {
                               IconButton(
                                 icon: Icon(Icons.content_copy),
                                 color: Theme.of(context).primaryColor,
-                                onPressed: () {
-                                  Clipboard.setData(
-                                    ClipboardData(
-                                      text:
-                                          kContractAddrDataHighwayLockdropTestnet
-                                              .toString(),
-                                    ),
-                                  );
-                                },
+                                onPressed: walletStructs == null
+                                    ? null
+                                    : () {
+                                        Clipboard.setData(
+                                          ClipboardData(
+                                            text: walletStructs.contractAddr
+                                                .toString(),
+                                          ),
+                                        );
+                                      },
                               ),
                             ],
                           )
@@ -157,7 +197,7 @@ class _ResultPageState extends State<SignalResultPage> {
                   ),
                   SizedBox(height: 10),
                   TransactionMessage(
-                    message: widget.transactionMessage,
+                    message: widget.signalParams.transactionMessage,
                   ),
                   SizedBox(height: 10),
                   CheckboxListTile(
@@ -195,10 +235,8 @@ class _ResultPageState extends State<SignalResultPage> {
               const EdgeInsets.only(left: 10, right: 10, bottom: 30, top: 5),
           child: Container(
             child: RoundedButton(
-              text: I18n.of(context).assets['lock'],
-              onPressed: _continueBox
-                  ? () => Navigator.pushNamed(context, SignalResultPage.route)
-                  : null,
+              text: I18n.of(context).assets['signal'],
+              onPressed: _continueBox ? () => signal() : null,
             ),
           ),
         ),

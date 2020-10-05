@@ -1,9 +1,11 @@
 import 'dart:async' show Future;
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:polka_wallet/constants.dart';
 import 'package:polka_wallet/service/ethereumApi/apiAssetsIOTAPegged.dart';
 import 'package:polka_wallet/service/ethereumApi/apiAssetsMXC.dart';
-import 'package:polka_wallet/service/ethereumApi/apiMiningIOTAPegged.dart';
+import 'package:polka_wallet/service/ethereumApi/lockdrop.dart';
 import 'package:polka_wallet/service/ethereumApi/apiMiningMXC.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:web3dart/web3dart.dart';
@@ -24,29 +26,41 @@ class EthereumApi {
   // for event streams over websockets instead of http-polls.
   // Note that the socketConnector property is experimental.
   Future<Web3Client> connectToWeb3EthereumClient() async {
-    return client = Web3Client(this.rpcUrl, (kEnvironment == 'testnet' ? LoggingClient(Client()) : Client()), socketConnector: () {
-      return IOWebSocketChannel.connect(this.wsUrl,headers: {'Connection': 'upgrade', 'Upgrade': 'websocket','sec-websocket-version': '13'}).cast<String>();
+    return client = Web3Client(this.rpcUrl,
+        (kEnvironment == 'testnet' ? LoggingClient(Client()) : Client()),
+        socketConnector: () {
+      return IOWebSocketChannel.connect(this.wsUrl, headers: {
+        'Connection': 'upgrade',
+        'Upgrade': 'websocket',
+        'sec-websocket-version': '13'
+      }).cast<String>();
     });
   }
 }
 
 Ethereum ethereum;
 
-class Ethereum{
-  Ethereum();
-  
+class Ethereum {
+  Ethereum()
+      : lockdrop = LockdropApi(
+          rpcUrl: kRpcUrlInfuraTestnetRopsten,
+          wsUrl: kWsUrlInfuraTestnetRopsten,
+          dhxContractAddress: kContractAddrDataHighwayLockdropTestnet,
+          abiProvider: ContractAbiProvider.fromAsset(
+            'assets/data/${kAbiCodeFileDataHighwayLockdropTestnet}',
+          ),
+        );
+
   final store = globalAppStore;
 
   EthereumApiAssetsMXC assetsMXC;
   EthereumApiAssetsIOTAPegged assetsIOTAPegged;
   EthereumApiMiningMXC ethApiMiningMXC;
-  EthereumApiMiningIOTAPegged ethApiMiningIOTAPegged;
+  final LockdropApi lockdrop;
 
-  void init() async{
-    await getBalanceMXC(); 
+  Future<void> init() async {
     await fetchMXCLockedClaimsData();
     await fetchMXCSignaledClaimsData();
-
     // TODO - temporarily disabled IOTA Pegged
     // await getBalanceIOTAPegged();
     // Note: Do not support locking IOTA Pegged tokens
@@ -54,13 +68,14 @@ class Ethereum{
   }
 
   //MXC balance
-  Future<void> getBalanceMXC() async{
+  Future<void> getBalanceMXC() async {
     assetsMXC = EthereumApiAssetsMXC();
 
     // print('Getting MXC account balance');
-    BigInt balance = await assetsMXC.getAccountBalanceFromMXCContract(kContractAddrMXCTestnet, kMnemonicSeed);
+    BigInt balance = await assetsMXC.getAccountBalanceFromMXCContract(
+        kContractAddrMXCTestnet, kMnemonicSeed);
 
-    store.ethereum.setBalanceMXC(balance);   
+    store.ethereum.setBalanceMXC(balance);
   }
 
   //MXC locked claim data
@@ -72,8 +87,7 @@ class Ethereum{
             kRpcUrlInfuraTestnetRopsten,
             kWsUrlInfuraTestnetRopsten,
             kContractAddrDataHighwayLockdropTestnet,
-            kMnemonicSeed
-        );
+            kMnemonicSeed);
 
     store.ethereum.setClaimsDataMXCLocked(claimsData);
   }
@@ -87,8 +101,7 @@ class Ethereum{
             kRpcUrlInfuraTestnetRopsten,
             kWsUrlInfuraTestnetRopsten,
             kContractAddrDataHighwayLockdropTestnet,
-            kMnemonicSeed
-        );
+            kMnemonicSeed);
 
     store.ethereum.setClaimsDataMXCSignaled(claimsData);
   }
@@ -99,11 +112,9 @@ class Ethereum{
     assetsIOTAPegged = EthereumApiAssetsIOTAPegged();
     EthereumApiAssetsIOTAPegged ethApiAssetsIOTAPegged =
         EthereumApiAssetsIOTAPegged();
-    BigInt balance = await assetsIOTAPegged
-        .getAccountBalanceFromIOTAPeggedContract(
-            kContractAddrIOTAPeggedTestnet,
-            kMnemonicSeed
-        );
+    BigInt balance =
+        await assetsIOTAPegged.getAccountBalanceFromIOTAPeggedContract(
+            kContractAddrIOTAPeggedTestnet, kMnemonicSeed);
 
     store.ethereum.setBalanceIOTAPegged(balance);
   }
@@ -113,14 +124,13 @@ class Ethereum{
   //IOTA Pegged signaled claim data
   Future<void> fetchIOTAPeggedSignaledClaimsData() async {
     print('Getting data of reward claims for signaling IOTAPegged');
-    ethApiMiningIOTAPegged = EthereumApiMiningIOTAPegged();
-    Map claimsData = await ethApiMiningIOTAPegged
-        .getAccountSignaledClaimsDataFromDataHighwayIOTAPeggedMiningContract(
-            kRpcUrlInfuraTestnetRopsten,
-            kWsUrlInfuraTestnetRopsten,
-            kContractAddrDataHighwayLockdropTestnet,
-            kMnemonicSeed
-        );
+
+    Map claimsData = await lockdrop.getSignaledClaimsIota(
+      kRpcUrlInfuraTestnetRopsten,
+      kWsUrlInfuraTestnetRopsten,
+      kContractAddrDataHighwayLockdropTestnet,
+      kMnemonicSeed,
+    );
 
     store.ethereum.setClaimsDataIOTAPeggedSignaled(claimsData);
   }

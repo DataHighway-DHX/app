@@ -2,37 +2,31 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/widgets/picker_card.dart';
 import 'package:polka_wallet/common/widgets/roundedButton.dart';
-import 'package:polka_wallet/page/assets/lock/lockResultPage.dart';
 import 'package:polka_wallet/common/components/transaction_message.dart';
+import 'package:polka_wallet/service/ethereumApi/model.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
+import 'signal_result_page.dart';
 
-import '../../../constants.dart';
+import 'signal_params.dart';
 
-class LockDetailPage extends StatefulWidget {
-  LockDetailPage(this.store);
+class SignalDetailPage extends StatefulWidget {
+  SignalDetailPage(this.store);
 
-  static final String route = '/assets/lock/detail';
+  static final String route = '/assets/signal/detail';
   final AppStore store;
 
   @override
   _DetailPageState createState() => _DetailPageState(store);
 }
 
-class _DetailPageState extends State<LockDetailPage> {
+class _DetailPageState extends State<SignalDetailPage> {
   _DetailPageState(this.store);
 
   final AppStore store;
 
-  String _selectedTokenValue = 'MXC';
-  int _durationValue = 3;
-  String _amountValue = '0';
-
   TextEditingController _amountCtl = TextEditingController(text: '0');
-
-  bool _genesisValidator = false;
-  bool _qrcodeValue = false;
-  bool _doubleCheckValue = false;
+  SignalParams params = SignalParams();
 
   @override
   Widget build(BuildContext context) {
@@ -40,13 +34,13 @@ class _DetailPageState extends State<LockDetailPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(dic['lock.tokens']),
+        title: Text(dic['signal.tokens']),
         centerTitle: true,
       ),
-      body: SafeArea(
-        child: Builder(
-          builder: (BuildContext context) {
-            return Scrollbar(
+      body: Column(
+        children: [
+          Expanded(
+            child: Scrollbar(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
                 child: Column(
@@ -58,41 +52,31 @@ class _DetailPageState extends State<LockDetailPage> {
                         dic['transaction.instruction'],
                       ),
                     ),
-                    PickerCard<String>(
+                    PickerCard<SignalCurrency>(
                       label: dic['token.currency'],
-                      values: ['MXC', 'DHX', 'DOT', 'IOTA'],
+                      values: SignalCurrency.values,
                       onValueSelected: (s, v) =>
-                          setState(() => _selectedTokenValue = s),
+                          setState(() => params.currency = s),
                       margin: const EdgeInsets.symmetric(vertical: 10),
                       usePickerDialog: true,
                     ),
                     PickerCard<int>(
-                      label: dic['lock.duration'],
+                      label: dic['signal.duration'],
                       values: [3, 6, 9, 12, 24, 36],
                       stringifier: (i) => '$i ${dic['lock.months']}',
                       onValueSelected: (s, v) =>
-                          setState(() => _durationValue = s),
-                      margin: const EdgeInsets.symmetric(vertical: 10),
-                      usePickerDialog: true,
-                    ),
-                    PickerCard<bool>(
-                      label: dic['genesis.validator'],
-                      values: [false, true],
-                      stringifier: (i) =>
-                          i ? dic['genesis.true'] : dic['genesis.false'],
-                      onValueSelected: (s, v) =>
-                          setState(() => _genesisValidator = s),
+                          setState(() => params.term = LockdropTerm.values[v]),
                       margin: const EdgeInsets.symmetric(vertical: 10),
                       usePickerDialog: true,
                     ),
                     SizedBox(height: 15),
                     TextField(
                       controller: _amountCtl,
-                      onChanged: (s) => setState(() => _amountValue = s),
+                      onChanged: (s) => setState(() => params.amount = s),
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.only(top: 0),
                         hintText: dic['amount'],
-                        errorText: double.tryParse(_amountValue) == null
+                        errorText: params.parsedAmount == null
                             ? dic['amount.error']
                             : null,
                         labelText: dic['amount.balance'].replaceAll(
@@ -118,8 +102,7 @@ class _DetailPageState extends State<LockDetailPage> {
                     ),
                     SizedBox(height: 10),
                     TransactionMessage(
-                      message:
-                          '$_durationValue,lock,$_amountValue(amount),${_selectedTokenValue}PublicKey#,$kContractAddrMXCTestnet',
+                      message: params.transactionMessage,
                     ),
                     SizedBox(height: 20),
                     Text(
@@ -129,26 +112,26 @@ class _DetailPageState extends State<LockDetailPage> {
                   ],
                 ),
               ),
-            );
-          },
-        ),
-      ),
-      bottomNavigationBar: Container(
-        color: Theme.of(context).bottomAppBarColor,
-        child: Padding(
-          padding:
-              const EdgeInsets.only(left: 10, right: 10, bottom: 30, top: 5),
-          child: Container(
-            child: RoundedButton(
-              text: I18n.of(context).home['next'],
-              onPressed: double.tryParse(_amountValue) != null
-                  ? () => Navigator.pushNamed(context, LockResultPage.route,
-                      arguments:
-                          '$_durationValue,lock,$_amountValue(amount),${_selectedTokenValue}PublicKey#,$kContractAddrMXCTestnet')
-                  : null,
             ),
           ),
-        ),
+          Container(
+            color: Theme.of(context).bottomAppBarColor,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  left: 10, right: 10, bottom: 30, top: 5),
+              child: Container(
+                child: RoundedButton(
+                  text: I18n.of(context).home['next'],
+                  onPressed: params.parsedAmount != null
+                      ? () => Navigator.pushNamed(
+                          context, SignalResultPage.route,
+                          arguments: params)
+                      : null,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

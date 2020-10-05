@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 
 import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/page/assets/claim/claimPage.dart';
-import 'package:polka_wallet/page/assets/signal/signalPage.dart';
+import 'package:polka_wallet/page/assets/signal/signal_page.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 import 'asset/assetPage.dart';
-import 'lock/lockPage.dart';
+import 'lock/lock_page.dart';
 import 'table_source.dart';
 
 class AssetCard extends StatefulWidget {

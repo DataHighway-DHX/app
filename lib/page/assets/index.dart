@@ -7,9 +7,9 @@ import 'package:polka_wallet/common/configs/sys.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/asset_card.dart';
 import 'package:polka_wallet/page/assets/claim/claimPage.dart';
-import 'package:polka_wallet/page/assets/lock/lockPage.dart';
+import 'package:polka_wallet/page/assets/lock/lock_page.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
-import 'package:polka_wallet/page/assets/signal/signalPage.dart';
+import 'package:polka_wallet/page/assets/signal/signal_page.dart';
 import 'package:polka_wallet/service/ethereumApi/api.dart';
 import 'package:polka_wallet/common/components/passwordInputDialog.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
@@ -35,7 +35,7 @@ import 'package:polka_wallet/utils/i18n/index.dart';
 
 import '../../service/ethereumApi/apiAssetsMXC.dart';
 import '../../service/ethereumApi/apiMiningMXC.dart';
-import '../../service/ethereumApi/apiMiningIOTAPegged.dart';
+import '../../service/ethereumApi/lockdrop.dart';
 import '../../constants.dart';
 import 'package:polka_wallet/common/widgets/roundedButton.dart';
 

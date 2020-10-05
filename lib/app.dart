@@ -29,14 +29,14 @@ import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/claim/claimPage.dart';
 import 'package:polka_wallet/page/assets/claim/claim_details_page.dart';
 import 'package:polka_wallet/page/assets/lock/instruction/instruction_page.dart';
-import 'package:polka_wallet/page/assets/lock/lockDetailPage.dart';
-import 'package:polka_wallet/page/assets/lock/lockResultPage.dart';
-import 'package:polka_wallet/page/assets/lock/lockPage.dart';
+import 'package:polka_wallet/page/assets/lock/lock_detail_page.dart';
+import 'package:polka_wallet/page/assets/lock/lock_result_page.dart';
+import 'package:polka_wallet/page/assets/lock/lock_page.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
 import 'package:polka_wallet/page/assets/signal/instruction/instruction_page.dart';
-import 'package:polka_wallet/page/assets/signal/signalDetailPage.dart';
-import 'package:polka_wallet/page/assets/signal/signalPage.dart';
-import 'package:polka_wallet/page/assets/signal/signalResultPage.dart';
+import 'package:polka_wallet/page/assets/signal/signal_detail_page.dart';
+import 'package:polka_wallet/page/assets/signal/signal_page.dart';
+import 'package:polka_wallet/page/assets/signal/signal_result_page.dart';
 import 'package:polka_wallet/page/assets/claim/attestPage.dart';
 import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/page/assets/transfer/detailPage.dart';
@@ -254,7 +254,7 @@ class _WalletAppState extends State<WalletApp> {
           LockPage.route: (_) => LockPage(_appStore),
           LockDetailPage.route: (_) => LockDetailPage(_appStore),
           LockResultPage.route: (ctx) => LockResultPage(
-              _appStore, ModalRoute.of(ctx)?.settings?.arguments ?? ''),
+              _appStore, ModalRoute.of(ctx)?.settings?.arguments),
           LockInstructionPage.route: (_) => LockInstructionPage(),
           ClaimPage.route: (_) => ClaimPage(_appStore),
           ClaimDetailsPage.route: (_) => ClaimDetailsPage(_appStore),
