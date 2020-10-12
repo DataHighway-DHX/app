@@ -33,7 +33,10 @@ dependencies:
   flutter_webview_plugin: ^0.3.11
   rxdart: ^0.23.1
   flutter_local_notifications: ^1.4.2
-  flutter_qr_scan: ^1.0.4
+  flutter_qr_scan: 
+    git: 
+      url: https://github.com/festelo/flutter_qr_reader
+      ref: 820589d585821f9c732bf74eea6bdc1829aa48b1
   flutter:
     sdk: flutter
   flutter_localizations:
