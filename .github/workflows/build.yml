@@ -22,24 +22,24 @@ jobs:
     - name: Install NDK (workaround to https://github.com/gradle/gradle/issues/12440)
       run: echo "y" | sudo /usr/local/lib/android/sdk/tools/bin/sdkmanager --install "ndk;20.0.5594570" --sdk_root=${ANDROID_SDK_ROOT}
     - name: create env file
-      run: touch assets/.env
+      run: |
+        touch assets/.env
+        echo "APPCENTER_BUILD_ID=${{ secrets.APPCENTER_BUILD_ID }}" > assets/.env
+        echo "APPCENTER_KEYSTORE_PASSWORD=${{ secrets.APPCENTER_KEYSTORE_PASSWORD }}" >> assets/.env
+        echo "APPCENTER_KEY_ALIAS=${{ secrets.APPCENTER_KEY_ALIAS }}" >> assets/.env
+        echo "APPCENTER_KEY_PASSWORD=${{ secrets.APPCENTER_KEY_PASSWORD }}" >> assets/.env
+        echo "MNENOMIC=${{ secrets.MNENOMIC }}" >> assets/.env
+        echo "ETHEREUM_ADDRESS=${{ secrets.ETHEREUM_ADDRESS }}" >> assets/.env
+        echo "CONTRACT_ADDRESS_LOCKDROP_TESTNET=${{ secrets.CONTRACT_ADDRESS_LOCKDROP_TESTNET }}" >> assets/.env
+        echo "CONTRACT_ADDRESS_MXC_TESTNET=${{ secrets.CONTRACT_ADDRESS_MXC_TESTNET }}" >> assets/.env
+        echo "CONTRACT_ADDRESS_IOTA_PEGGED_TESTNET=${{ secrets.CONTRACT_ADDRESS_IOTA_PEGGED_TESTNET }}" >> assets/.env
+        echo "CONTRACT_ADDRESS_LOCKDROP_MAINNET=${{ secrets.CONTRACT_ADDRESS_LOCKDROP_MAINNET }}" >> assets/.env
+        echo "CONTRACT_ADDRESS_MXC_MAINNET=${{ secrets.CONTRACT_ADDRESS_MXC_MAINNET }}" >> assets/.env
+        echo "CONTRACT_ADDRESS_IOTA_PEGGED_MAINNET=${{ secrets.CONTRACT_ADDRESS_IOTA_PEGGED_MAINNET }}" >> assets/.env
+        echo "INFURA_API_PROJECT_ID=${{ secrets.INFURA_API_PROJECT_ID }}" >> assets/.env
+        echo "ENVIRONMENT=${{ secrets.ENVIRONMENT }}" >> assets/.env
     - name: Build APK
       run: flutter build apk --flavor prod
-      env:
-        APPCENTER_BUILD_ID: ${{ secrets.APPCENTER_BUILD_ID }}
-        APPCENTER_KEYSTORE_PASSWORD: ${{ secrets.APPCENTER_KEYSTORE_PASSWORD }}
-        APPCENTER_KEY_ALIAS: ${{ secrets.APPCENTER_KEY_ALIAS }}
-        APPCENTER_KEY_PASSWORD: ${{ secrets.APPCENTER_KEY_PASSWORD }}
-        MNENOMIC: ${{ secrets.MNENOMIC }}
-        ETHEREUM_ADDRESS: ${{ secrets.ETHEREUM_ADDRESS }}
-        CONTRACT_ADDRESS_LOCKDROP_TESTNET: ${{ secrets.CONTRACT_ADDRESS_LOCKDROP_TESTNET }}
-        CONTRACT_ADDRESS_MXC_TESTNET: ${{ secrets.CONTRACT_ADDRESS_MXC_TESTNET }}
-        CONTRACT_ADDRESS_IOTA_PEGGED_TESTNET: ${{ secrets.CONTRACT_ADDRESS_IOTA_PEGGED_TESTNET }}
-        CONTRACT_ADDRESS_LOCKDROP_MAINNET: ${{ secrets.CONTRACT_ADDRESS_LOCKDROP_MAINNET }}
-        CONTRACT_ADDRESS_MXC_MAINNET: ${{ secrets.CONTRACT_ADDRESS_MXC_MAINNET }}
-        CONTRACT_ADDRESS_IOTA_PEGGED_MAINNET: ${{ secrets.CONTRACT_ADDRESS_IOTA_PEGGED_MAINNET }}
-        INFURA_API_PROJECT_ID: ${{ secrets.INFURA_API_PROJECT_ID }}
-        ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
     - name: Upload APK
       uses: actions/upload-artifact@master
       with:
@@ -63,24 +63,24 @@ jobs:
     - name: Clean workspace
       run: flutter clean
     - name: create env file
-      run: touch assets/.env
+      run: |
+        touch assets/.env
+        echo "APPCENTER_BUILD_ID=${{ secrets.APPCENTER_BUILD_ID }}" > assets/.env
+        echo "APPCENTER_KEYSTORE_PASSWORD=${{ secrets.APPCENTER_KEYSTORE_PASSWORD }}" >> assets/.env
+        echo "APPCENTER_KEY_ALIAS=${{ secrets.APPCENTER_KEY_ALIAS }}" >> assets/.env
+        echo "APPCENTER_KEY_PASSWORD=${{ secrets.APPCENTER_KEY_PASSWORD }}" >> assets/.env
+        echo "MNENOMIC=${{ secrets.MNENOMIC }}" >> assets/.env
+        echo "ETHEREUM_ADDRESS=${{ secrets.ETHEREUM_ADDRESS }}" >> assets/.env
+        echo "CONTRACT_ADDRESS_LOCKDROP_TESTNET=${{ secrets.CONTRACT_ADDRESS_LOCKDROP_TESTNET }}" >> assets/.env
+        echo "CONTRACT_ADDRESS_MXC_TESTNET=${{ secrets.CONTRACT_ADDRESS_MXC_TESTNET }}" >> assets/.env
+        echo "CONTRACT_ADDRESS_IOTA_PEGGED_TESTNET=${{ secrets.CONTRACT_ADDRESS_IOTA_PEGGED_TESTNET }}" >> assets/.env
+        echo "CONTRACT_ADDRESS_LOCKDROP_MAINNET=${{ secrets.CONTRACT_ADDRESS_LOCKDROP_MAINNET }}" >> assets/.env
+        echo "CONTRACT_ADDRESS_MXC_MAINNET=${{ secrets.CONTRACT_ADDRESS_MXC_MAINNET }}" >> assets/.env
+        echo "CONTRACT_ADDRESS_IOTA_PEGGED_MAINNET=${{ secrets.CONTRACT_ADDRESS_IOTA_PEGGED_MAINNET }}" >> assets/.env
+        echo "INFURA_API_PROJECT_ID=${{ secrets.INFURA_API_PROJECT_ID }}" >> assets/.env
+        echo "ENVIRONMENT=${{ secrets.ENVIRONMENT }}" >> assets/.env
     - name: Build IOS
       run: flutter build ios --release --no-codesign
-      env:
-        APPCENTER_BUILD_ID: ${{ secrets.APPCENTER_BUILD_ID }}
-        APPCENTER_KEYSTORE_PASSWORD: ${{ secrets.APPCENTER_KEYSTORE_PASSWORD }}
-        APPCENTER_KEY_ALIAS: ${{ secrets.APPCENTER_KEY_ALIAS }}
-        APPCENTER_KEY_PASSWORD: ${{ secrets.APPCENTER_KEY_PASSWORD }}
-        MNENOMIC: ${{ secrets.MNENOMIC }}
-        ETHEREUM_ADDRESS: ${{ secrets.ETHEREUM_ADDRESS }}
-        CONTRACT_ADDRESS_LOCKDROP_TESTNET: ${{ secrets.CONTRACT_ADDRESS_LOCKDROP_TESTNET }}
-        CONTRACT_ADDRESS_MXC_TESTNET: ${{ secrets.CONTRACT_ADDRESS_MXC_TESTNET }}
-        CONTRACT_ADDRESS_IOTA_PEGGED_TESTNET: ${{ secrets.CONTRACT_ADDRESS_IOTA_PEGGED_TESTNET }}
-        CONTRACT_ADDRESS_LOCKDROP_MAINNET: ${{ secrets.CONTRACT_ADDRESS_LOCKDROP_MAINNET }}
-        CONTRACT_ADDRESS_MXC_MAINNET: ${{ secrets.CONTRACT_ADDRESS_MXC_MAINNET }}
-        CONTRACT_ADDRESS_IOTA_PEGGED_MAINNET: ${{ secrets.CONTRACT_ADDRESS_IOTA_PEGGED_MAINNET }}
-        INFURA_API_PROJECT_ID: ${{ secrets.INFURA_API_PROJECT_ID }}
-        ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
     - name: Upload IPA
       uses: actions/upload-artifact@master
       with:
