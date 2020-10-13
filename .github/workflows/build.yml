@@ -21,6 +21,8 @@ jobs:
       run: flutter clean
     - name: Install NDK (workaround to https://github.com/gradle/gradle/issues/12440)
       run: echo "y" | sudo /usr/local/lib/android/sdk/tools/bin/sdkmanager --install "ndk;20.0.5594570" --sdk_root=${ANDROID_SDK_ROOT}
+    - name: create env file
+      run: touch assets/.env
     - name: Build APK
       run: flutter build apk --flavor prod
       env:
@@ -60,6 +62,8 @@ jobs:
         flutter-version: '1.20'
     - name: Clean workspace
       run: flutter clean
+    - name: create env file
+      run: touch assets/.env
     - name: Build IOS
       run: flutter build ios --release --no-codesign
       env:
