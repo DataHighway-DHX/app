@@ -172,7 +172,7 @@
 				TargetAttributes = {
 					97C146ED1CF9000F007C117D = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = 828FY4BZY8;
+						DevelopmentTeam = CZ5648JQN8;
 						LastSwiftMigration = 1100;
 					};
 				};
@@ -392,7 +392,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = 6;
-				DEVELOPMENT_TEAM = 828FY4BZY8;
+				DEVELOPMENT_TEAM = CZ5648JQN8;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -406,7 +406,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				MARKETING_VERSION = 0.6.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.datahighway.mobilee;
+				PRODUCT_BUNDLE_IDENTIFIER = com.datahighway.mobile;
 				PRODUCT_NAME = Runner;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -528,7 +528,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = 6;
-				DEVELOPMENT_TEAM = 828FY4BZY8;
+				DEVELOPMENT_TEAM = CZ5648JQN8;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -542,7 +542,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				MARKETING_VERSION = 0.6.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.datahighway.mobilee;
+				PRODUCT_BUNDLE_IDENTIFIER = com.datahighway.mobile;
 				PRODUCT_NAME = Runner;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -561,7 +561,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 6;
-				DEVELOPMENT_TEAM = 828FY4BZY8;
+				DEVELOPMENT_TEAM = CZ5648JQN8;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -575,7 +575,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				MARKETING_VERSION = 0.6.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.datahighway.mobilee;
+				PRODUCT_BUNDLE_IDENTIFIER = com.datahighway.mobile;
 				PRODUCT_NAME = Runner;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
