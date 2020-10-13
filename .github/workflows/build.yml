@@ -1,0 +1,88 @@
+name: CI
+on:
+  push:
+#    branches:
+#      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  build_apk:
+    name: Build flutter (Android)
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Setup Java
+      uses: actions/setup-java@v1
+      with:
+        java-version: '8.x' #https://github.com/subosito/flutter-action/issues/58
+    - name: Setup subosito/flutter-action@v1
+      uses: subosito/flutter-action@v1
+      with:
+        flutter-version: '1.20'
+    - name: Clean workspace
+      run: flutter clean
+    - name: Install NDK (workaround to https://github.com/gradle/gradle/issues/12440)
+      run: echo "y" | sudo /usr/local/lib/android/sdk/tools/bin/sdkmanager --install "ndk;20.0.5594570" --sdk_root=${ANDROID_SDK_ROOT}
+    - name: Build APK
+      run: flutter build apk --flavor prod
+      env:
+        APPCENTER_BUILD_ID: ${{ secrets.APPCENTER_BUILD_ID }}
+        APPCENTER_KEYSTORE_PASSWORD: ${{ secrets.APPCENTER_KEYSTORE_PASSWORD }}
+        APPCENTER_KEY_ALIAS: ${{ secrets.APPCENTER_KEY_ALIAS }}
+        APPCENTER_KEY_PASSWORD: ${{ secrets.APPCENTER_KEY_PASSWORD }}
+        MNENOMIC: ${{ MNENOMIC }}
+        ETHEREUM_ADDRESS: ${{ ETHEREUM_ADDRESS }}
+        CONTRACT_ADDRESS_LOCKDROP_TESTNET: ${{ secrets.CONTRACT_ADDRESS_LOCKDROP_TESTNET }}
+        CONTRACT_ADDRESS_MXC_TESTNET: ${{ secrets.CONTRACT_ADDRESS_MXC_TESTNET }}
+        CONTRACT_ADDRESS_IOTA_PEGGED_TESTNET: ${{ secrets.CONTRACT_ADDRESS_IOTA_PEGGED_TESTNET }}
+        CONTRACT_ADDRESS_LOCKDROP_MAINNET: ${{ secrets.CONTRACT_ADDRESS_LOCKDROP_MAINNET }}
+        CONTRACT_ADDRESS_MXC_MAINNET: ${{ secrets.CONTRACT_ADDRESS_MXC_MAINNET }}
+        CONTRACT_ADDRESS_IOTA_PEGGED_MAINNET: ${{ secrets.CONTRACT_ADDRESS_IOTA_PEGGED_MAINNET }}
+        INFURA_API_PROJECT_ID: ${{ secrets.INFURA_API_PROJECT_ID }}
+        ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+
+    - name: Upload APK
+      uses: actions/upload-artifact@master
+      with:
+        name: apk-build
+        path: build/app/outputs/flutter-apk
+  build_ios:
+    name: Build flutter (IOS)
+    runs-on: macos-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Setup Java
+      uses: actions/setup-java@v1
+      with:
+        java-version: '8.x' #https://github.com/subosito/flutter-action/issues/58
+    - name: Setup subosito/flutter-action@v1
+      uses: subosito/flutter-action@v1
+      with:
+        flutter-version: '1.20'
+    - name: Clean workspace
+      run: flutter clean
+    - name: Build IOS
+      run: flutter build ios --release --no-codesign
+      env:
+        APPCENTER_BUILD_ID: ${{ secrets.APPCENTER_BUILD_ID }}
+        APPCENTER_KEYSTORE_PASSWORD: ${{ secrets.APPCENTER_KEYSTORE_PASSWORD }}
+        APPCENTER_KEY_ALIAS: ${{ secrets.APPCENTER_KEY_ALIAS }}
+        APPCENTER_KEY_PASSWORD: ${{ secrets.APPCENTER_KEY_PASSWORD }}
+        MNENOMIC: ${{ MNENOMIC }}
+        ETHEREUM_ADDRESS: ${{ ETHEREUM_ADDRESS }}
+        CONTRACT_ADDRESS_LOCKDROP_TESTNET: ${{ secrets.CONTRACT_ADDRESS_LOCKDROP_TESTNET }}
+        CONTRACT_ADDRESS_MXC_TESTNET: ${{ secrets.CONTRACT_ADDRESS_MXC_TESTNET }}
+        CONTRACT_ADDRESS_IOTA_PEGGED_TESTNET: ${{ secrets.CONTRACT_ADDRESS_IOTA_PEGGED_TESTNET }}
+        CONTRACT_ADDRESS_LOCKDROP_MAINNET: ${{ secrets.CONTRACT_ADDRESS_LOCKDROP_MAINNET }}
+        CONTRACT_ADDRESS_MXC_MAINNET: ${{ secrets.CONTRACT_ADDRESS_MXC_MAINNET }}
+        CONTRACT_ADDRESS_IOTA_PEGGED_MAINNET: ${{ secrets.CONTRACT_ADDRESS_IOTA_PEGGED_MAINNET }}
+        INFURA_API_PROJECT_ID: ${{ secrets.INFURA_API_PROJECT_ID }}
+        ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+    - name: Upload IPA
+      uses: actions/upload-artifact@master
+      with:
+        name: ios-build
+        path: build/ios/iphoneos
