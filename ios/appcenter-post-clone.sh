@@ -22,6 +22,9 @@ sudo installer -store -pkg "$HOME/Downloads/node-installer.pkg" -target "/"
 cd ./lib/js_service_kusama && yarn install && yarn run build && cd ../..
 cd ./lib/js_service_acala && yarn install && yarn run build && cd ../..
 
+# pod update to fix IOS 8 error
+pod repo update
+
 touch assets/.env
 echo "MNENOMIC=${MNENOMIC}" > assets/.env
 echo "ETHEREUM_ADDRESS=${ETHEREUM_ADDRESS}" >> assets/.env
