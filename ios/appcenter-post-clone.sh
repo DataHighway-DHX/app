@@ -38,3 +38,5 @@ echo "INFURA_API_PROJECT_ID=${INFURA_API_PROJECT_ID}" >> assets/.env
 echo "ENVIRONMENT=${ENVIRONMENT}" >> assets/.env
 
 flutter build ios --release --no-codesign
+
+grep -v "Embed Frameworks" ios/Runner.xcodeproj/project.pbxproj > tmpfile && mv tmpfile ios/Runner.xcodeproj/project.pbxproj
