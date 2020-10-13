@@ -38,12 +38,12 @@ jobs:
         CONTRACT_ADDRESS_IOTA_PEGGED_MAINNET: ${{ secrets.CONTRACT_ADDRESS_IOTA_PEGGED_MAINNET }}
         INFURA_API_PROJECT_ID: ${{ secrets.INFURA_API_PROJECT_ID }}
         ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
-
     - name: Upload APK
       uses: actions/upload-artifact@master
       with:
         name: apk-build
         path: build/app/outputs/flutter-apk
+        
   build_ios:
     name: Build flutter (IOS)
     runs-on: macos-latest
@@ -67,8 +67,8 @@ jobs:
         APPCENTER_KEYSTORE_PASSWORD: ${{ secrets.APPCENTER_KEYSTORE_PASSWORD }}
         APPCENTER_KEY_ALIAS: ${{ secrets.APPCENTER_KEY_ALIAS }}
         APPCENTER_KEY_PASSWORD: ${{ secrets.APPCENTER_KEY_PASSWORD }}
-        MNENOMIC: ${{ MNENOMIC }}
-        ETHEREUM_ADDRESS: ${{ ETHEREUM_ADDRESS }}
+        MNENOMIC: ${{ secrets.MNENOMIC }}
+        ETHEREUM_ADDRESS: ${{ secrets.ETHEREUM_ADDRESS }}
         CONTRACT_ADDRESS_LOCKDROP_TESTNET: ${{ secrets.CONTRACT_ADDRESS_LOCKDROP_TESTNET }}
         CONTRACT_ADDRESS_MXC_TESTNET: ${{ secrets.CONTRACT_ADDRESS_MXC_TESTNET }}
         CONTRACT_ADDRESS_IOTA_PEGGED_TESTNET: ${{ secrets.CONTRACT_ADDRESS_IOTA_PEGGED_TESTNET }}
