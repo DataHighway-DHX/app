@@ -38,5 +38,3 @@ echo "INFURA_API_PROJECT_ID=${INFURA_API_PROJECT_ID}" >> assets/.env
 echo "ENVIRONMENT=${ENVIRONMENT}" >> assets/.env
 
 flutter build ios --release --no-codesign
-
-flutter pub run ./scripts/disable_embed.dart ios/Runner.xcodeproj/project.pbxproj
