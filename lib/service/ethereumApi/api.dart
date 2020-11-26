@@ -7,6 +7,7 @@ import 'package:polka_wallet/service/ethereumApi/apiAssetsIOTAPegged.dart';
 import 'package:polka_wallet/service/ethereumApi/apiAssetsMXC.dart';
 import 'package:polka_wallet/service/ethereumApi/lockdrop.dart';
 import 'package:polka_wallet/service/ethereumApi/apiMiningMXC.dart';
+import 'package:polka_wallet/service/ethereumApi/mxc_token.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:http/http.dart';
@@ -14,6 +15,9 @@ import 'package:web_socket_channel/io.dart';
 
 import '../../utils/httpLogger.dart';
 import '../../constants.dart';
+import 'contract.dart';
+
+export 'extensions.dart';
 
 class EthereumApi {
   EthereumApi({this.rpcUrl, this.wsUrl});
@@ -41,15 +45,34 @@ class EthereumApi {
 Ethereum ethereum;
 
 class Ethereum {
-  Ethereum()
-      : lockdrop = LockdropApi(
-          rpcUrl: kRpcUrlInfuraTestnetRopsten,
-          wsUrl: kWsUrlInfuraTestnetRopsten,
-          dhxContractAddress: kContractAddrDataHighwayLockdropTestnet,
-          abiProvider: ContractAbiProvider.fromAsset(
-            'assets/data/${kAbiCodeFileDataHighwayLockdropTestnet}',
-          ),
-        );
+  factory Ethereum.fromAssets() {
+    final ethereumApi = EthereumApi(
+      rpcUrl: kRpcUrlInfuraTestnetRopsten,
+      wsUrl: kWsUrlInfuraTestnetRopsten,
+    );
+
+    final lockdrop = LockdropApi(
+      ContractAbiProvider.fromAsset(
+        'DataHighwayLockdrop',
+        'assets/data/$kAbiCodeFileDataHighwayLockdropTestnet',
+      ),
+      kContractAddrDataHighwayLockdropTestnet,
+      ethereumApi,
+    );
+
+    final mxcToken = MxcTokenApi(
+      ContractAbiProvider.fromAsset(
+        'MXCToken',
+        'assets/data/$kAbiCodeFileMXC',
+      ),
+      kContractAddrMXCTestnet,
+      ethereumApi,
+    );
+
+    return Ethereum(lockdrop, mxcToken);
+  }
+
+  Ethereum(this.lockdrop, this.mxcToken);
 
   final store = globalAppStore;
 
@@ -57,6 +80,7 @@ class Ethereum {
   EthereumApiAssetsIOTAPegged assetsIOTAPegged;
   EthereumApiMiningMXC ethApiMiningMXC;
   final LockdropApi lockdrop;
+  final MxcTokenApi mxcToken;
 
   Future<void> init() async {
     await fetchMXCLockedClaimsData();
@@ -68,7 +92,7 @@ class Ethereum {
   }
 
   //MXC balance
-  Future<void> getBalanceMXC() async {
+  Future<BigInt> getBalanceMXC() async {
     assetsMXC = EthereumApiAssetsMXC();
 
     // print('Getting MXC account balance');
@@ -76,6 +100,7 @@ class Ethereum {
         kContractAddrMXCTestnet, kMnemonicSeed);
 
     store.ethereum.setBalanceMXC(balance);
+    return balance;
   }
 
   //MXC locked claim data
@@ -107,7 +132,7 @@ class Ethereum {
   }
 
   //IOTA Pegged balance
-  Future<void> getBalanceIOTAPegged() async {
+  Future<BigInt> getBalanceIOTAPegged() async {
     print('Getting balance of IOTA Pegged');
     assetsIOTAPegged = EthereumApiAssetsIOTAPegged();
     EthereumApiAssetsIOTAPegged ethApiAssetsIOTAPegged =
@@ -117,6 +142,7 @@ class Ethereum {
             kContractAddrIOTAPeggedTestnet, kMnemonicSeed);
 
     store.ethereum.setBalanceIOTAPegged(balance);
+    return balance;
   }
 
   // Note: Do not support locking IOTA Pegged tokens

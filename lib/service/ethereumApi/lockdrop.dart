@@ -6,69 +6,23 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:polka_wallet/constants.dart';
 import 'package:polka_wallet/service/ethereumApi/model.dart';
 import 'package:web3dart/web3dart.dart';
+import 'package:web3dart/credentials.dart';
 
 import 'api.dart';
 import 'apiAccount.dart';
 
 import '../../constants.dart';
+import 'contract.dart';
 
-abstract class ContractAbiProvider {
-  Future<String> getAbiCode();
-
-  factory ContractAbiProvider.fromAsset(String path) {
-    return _ContractAbiProviderAsset(path);
-  }
-}
-
-class _ContractAbiProviderAsset implements ContractAbiProvider {
-  final String assetPath;
-  String _abi;
-
-  _ContractAbiProviderAsset(this.assetPath);
-  Future<String> getAbiCode() async {
-    _abi ??= await rootBundle.loadString(assetPath);
-    return _abi;
-  }
-}
-
-class LockdropApi {
-  final EthereumAddress dhxContractAddress;
-  final ContractAbiProvider abiProvider;
-
-  final EthereumApi _ethereumApi;
-
-  LockdropApi({
-    String rpcUrl,
-    String wsUrl,
-    @required this.dhxContractAddress,
-    @required this.abiProvider,
-  }) : _ethereumApi = EthereumApi(rpcUrl: rpcUrl, wsUrl: wsUrl);
-
-  Web3Client _cachedClient;
-
-  Future<String> _abiCode() async {
-    return await abiProvider.getAbiCode();
-  }
-
-  Future<Web3Client> _client() async {
-    if (_cachedClient != null) return _cachedClient;
-    Web3Client client = await _ethereumApi.connectToWeb3EthereumClient();
-    _cachedClient = client;
-    return client;
-  }
-
-  Future<DeployedContract> _contract() async {
-    final abiCode = await _abiCode();
-    return DeployedContract(
-      ContractAbi.fromJson(abiCode, 'DataHighwayLockdrop'),
-      dhxContractAddress,
-    );
-  }
+class LockdropApi extends BaseContractApi {
+  LockdropApi(ContractAbiProvider abiProvider, EthereumAddress contractAddress,
+      EthereumApi ethereumApi)
+      : super(abiProvider, contractAddress, ethereumApi);
 
   Future<SignalWalletStructsResponse> signalWalletStructs(
       EthereumAddress accountAddress, EthereumAddress tokenAddress) async {
-    final client = await _client();
-    final contract = await _contract();
+    final client = await getClient();
+    final contract = await getContract();
 
     List response = await client.call(
       contract: contract,
@@ -103,8 +57,8 @@ class LockdropApi {
     @required Uint8List dhxPublicKey,
     @required EthereumAddress tokenContractAddress,
   }) async {
-    final client = await _client();
-    final contract = await _contract();
+    final client = await getClient();
+    final contract = await getContract();
 
     List response = await client.call(
       contract: contract,
@@ -121,8 +75,8 @@ class LockdropApi {
 
   Future<LockWalletStructsResponse> lockWalletStructs(
       EthereumAddress accountAddress, EthereumAddress tokenAddress) async {
-    final client = await _client();
-    final contract = await _contract();
+    final client = await getClient();
+    final contract = await getContract();
 
     List response = await client.call(
       contract: contract,
@@ -151,33 +105,69 @@ class LockdropApi {
     );
   }
 
-  Future<EthereumAddress> lock({
+  /// Creates locking transaction and returns its hash
+  Future<String> lock({
     @required EthereumAddress contractOwnerAddress,
     @required LockdropTerm term,
     @required BigInt amount,
     @required Uint8List dhxPublicKey,
     @required EthereumAddress tokenContractAddress,
     @required bool isValidator,
+    @required String privateKey,
+    int maxGas = 2000000,
+    int gasPrice = 30,
   }) async {
-    final client = await _client();
+    final client = await getClient();
     client.printErrors = true;
-    final contract = await _contract();
-
-    final balance = await client.getBalance(contractOwnerAddress);
-
-    List response = await client.call(
-      contract: contract,
-      function: contract.function('lock'),
-      params: [
-        contractOwnerAddress,
-        term.deserialize(),
-        amount,
-        dhxPublicKey,
-        tokenContractAddress,
-        isValidator,
-      ],
+    final contract = await getContract();
+    final privateKeyWrapped =
+        await client.credentialsFromPrivateKey(ethPrivateKey);
+    final res = await client.sendTransaction(
+      privateKeyWrapped,
+      Transaction.callContract(
+        contract: contract,
+        function: contract.function('lock'),
+        maxGas: maxGas,
+        gasPrice: EtherAmount.fromUnitAndValue(EtherUnit.gwei, gasPrice),
+        parameters: [
+          contractOwnerAddress,
+          term.deserialize(),
+          amount,
+          dhxPublicKey,
+          tokenContractAddress,
+          isValidator,
+        ],
+      ),
+      fetchChainIdFromNetworkId: true,
     );
-    return response[0] as EthereumAddress;
+    final transaction = await client.getTransactionByHash(res);
+    print(transaction);
+    return res;
+  }
+
+  Future<TransactionStatus> waitForTransaction(String hash,
+      {Duration timeout = const Duration(milliseconds: 1000)}) async {
+    var status = TransactionStatus.pending;
+    do {
+      status = await getTransactionStatus(hash);
+      if (status == TransactionStatus.pending) {
+        await Future.delayed(timeout);
+      }
+    } while (status == TransactionStatus.pending);
+    return status;
+  }
+
+  Future<TransactionStatus> getTransactionStatus(String hash) async {
+    final client = await getClient();
+    final transaction = await client.getTransactionReceipt(hash);
+    if (transaction == null ||
+        transaction.blockNumber == null ||
+        transaction.blockNumber.isPending) {
+      return TransactionStatus.pending;
+    }
+    return transaction.status
+        ? TransactionStatus.succeed
+        : TransactionStatus.failed;
   }
 
   @deprecated
@@ -275,9 +265,5 @@ class LockdropApi {
     // await client.dispose();
 
     return claimDataSignaled;
-  }
-
-  Future<void> dispose() async {
-    await _cachedClient?.dispose();
   }
 }

@@ -9,7 +9,10 @@ class LockParams {
   LockdropTerm term = LockdropTerm.threeMo;
   LockCurrency currency = LockCurrency.mxc;
 
+  EthereumAddress get contractAddress =>
+      kContractAddrDataHighwayLockdropTestnet;
   EthereumAddress get currentAddress => kAccountAddrTestnet;
+
   BigInt get parsedAmount {
     final parsedDecimal = Decimal.tryParse(amount);
     if (parsedDecimal == null) return null;
@@ -17,6 +20,11 @@ class LockParams {
     return BigInt.parse((parsedDecimal * Decimal.parse('1000000000000000000'))
         .round()
         .toString());
+  }
+
+  bool get amountValid {
+    final parsedAmount = this.parsedAmount;
+    return parsedAmount != null && parsedAmount > BigInt.zero;
   }
 
   String get transactionMessage {

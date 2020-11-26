@@ -161,7 +161,7 @@ class _WalletAppState extends State<WalletApp> {
 
       //init Ethereum
       try {
-        ethereum = Ethereum();
+        ethereum = Ethereum.fromAssets();
         ethereum.init();
       } catch (e) {
         print('Ethereum init problems');

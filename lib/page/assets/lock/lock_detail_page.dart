@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/widgets/picker_card.dart';
@@ -5,6 +6,7 @@ import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/page/assets/lock/lock_params.dart';
 import 'package:polka_wallet/page/assets/lock/lock_result_page.dart';
 import 'package:polka_wallet/common/components/transaction_message.dart';
+import 'package:polka_wallet/service/ethereumApi/api.dart';
 import 'package:polka_wallet/service/ethereumApi/model.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -27,6 +29,27 @@ class _DetailPageState extends State<LockDetailPage> {
   TextEditingController _amountCtl = TextEditingController(text: '0');
 
   LockParams params = LockParams();
+
+  Decimal mxcBalance;
+  Decimal iotaBalance;
+
+  @override
+  void initState() {
+    super.initState();
+    initStateAsync();
+  }
+
+  Future<void> initStateAsync() async {
+    final mxcBalance = await ethereum.mxcToken.balanceOf(params.currentAddress);
+    final iotaBalance =
+        BigInt.parse('-10000000000'); //await ethereum.getBalanceIOTAPegged();
+    if (mounted) {
+      setState(() {
+        this.mxcBalance = mxcBalance.toMxcAmount();
+        this.iotaBalance = iotaBalance.toMxcAmount();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,14 +109,18 @@ class _DetailPageState extends State<LockDetailPage> {
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.only(top: 0),
                         hintText: dic['amount'],
-                        errorText: params.parsedAmount == null
-                            ? dic['amount.error']
-                            : null,
+                        errorText:
+                            !params.amountValid ? dic['amount.error'] : null,
                         labelText: dic['amount.balance'].replaceAll(
                           '{0}',
-                          (store.assets.balances['DHX']?.transferable ??
-                                  BigInt.zero)
-                              .toString(),
+                          () {
+                            if (params.currency == LockCurrency.iota)
+                              return '$iotaBalance IOTA';
+                            if (params.currency == LockCurrency.mxc)
+                              return '$mxcBalance MXC';
+                            throw Exception(
+                                'Unknown currency ${params.currency}');
+                          }(),
                         ),
                       ),
                       keyboardType: TextInputType.number,
@@ -132,7 +159,7 @@ class _DetailPageState extends State<LockDetailPage> {
               child: Container(
                 child: RoundedButton(
                   text: I18n.of(context).home['next'],
-                  onPressed: params.parsedAmount != null
+                  onPressed: params.amountValid
                       ? () => Navigator.pushNamed(
                             context,
                             LockResultPage.route,

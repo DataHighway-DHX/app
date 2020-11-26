@@ -41,7 +41,7 @@ class Api {
 
   Function _connectFunc;
 
-  void init() {
+  Future<void> init() async {
     account = ApiAccount(this);
 
     acala = ApiAcala(this);
@@ -50,7 +50,7 @@ class Api {
     staking = ApiStaking(this);
     gov = ApiGovernance(this);
 
-    launchWebview();
+    await launchWebview();
   }
 
   Future<void> launchWebview({bool customNode = false}) async {
@@ -65,7 +65,6 @@ class Api {
       _web.reload();
       return;
     }
-
     _web = FlutterWebviewPlugin();
 
     _web.onStateChanged.listen((viewState) async {

@@ -70,3 +70,5 @@ class SignalWalletStructsResponse {
     this.createdAt,
   });
 }
+
+enum TransactionStatus { pending, failed, succeed }

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:polka_wallet/common/components/gasInput.dart';
+import 'package:polka_wallet/common/components/snackbars.dart';
 import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/service/ethereumApi/api.dart';
 import 'package:polka_wallet/service/ethereumApi/model.dart';
@@ -12,6 +13,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import '../../../constants.dart';
 import '../../../common/components/transaction_message.dart';
 import 'lock_params.dart';
+import 'dart:convert' show utf8;
 
 class LockResultPage extends StatefulWidget {
   LockResultPage(this.store, this.lockParams);
@@ -28,42 +30,48 @@ class _ResultPageState extends State<LockResultPage> {
   _ResultPageState(this.store);
 
   final AppStore store;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
+
   bool _showMessageInQr = false;
   bool _continueBox = false;
 
-  LockWalletStructsResponse walletStructs;
+  bool _isLoading = false;
 
-  @override
-  void initState() {
-    super.initState();
-    init();
+  int gasLimit = int.parse(kGasLimitRecommended);
+  int gasPrice = int.parse(kGasPriceRecommended);
+
+  void _turnLoading(bool value) {
+    if (mounted) setState(() => _isLoading = value);
   }
 
-  Future<void> init() async {
-    walletStructs = await ethereum.lockdrop.lockWalletStructs(
-      widget.lockParams.currentAddress,
-      widget.lockParams.currency.address,
-    );
-    if (mounted) setState(() {});
-  }
+  Future<void> _lock() async {
+    _turnLoading(true);
+    try {
+      final hash = await ethereum.lockdrop.lock(
+        amount: widget.lockParams.parsedAmount,
+        contractOwnerAddress: contractOwnerLockdrop,
+        isValidator: widget.lockParams.isValidator,
+        term: widget.lockParams.term,
+        dhxPublicKey: utf8.encode(dataHighwayPublicKey),
+        tokenContractAddress: widget.lockParams.currency.address,
+        privateKey: ethPrivateKey,
+        gasPrice: gasPrice,
+        maxGas: gasLimit,
+      );
 
-  Future<void> lock() async {
-    final walletStructs = await ethereum.lockdrop.lockWalletStructs(
-      widget.lockParams.currentAddress,
-      widget.lockParams.currency.address,
-    );
-
-    final address = await ethereum.lockdrop.lock(
-      amount: widget.lockParams.parsedAmount,
-      contractOwnerAddress: widget.lockParams.currentAddress,
-      isValidator: widget.lockParams.isValidator,
-      term: widget.lockParams.term,
-      dhxPublicKey: walletStructs.dataHighwayPublicKey,
-      tokenContractAddress: widget.lockParams.currency.address,
-    );
-
-    print(address);
-    print('success');
+      final result = await ethereum.lockdrop.waitForTransaction(hash);
+      print('$_lock ($hash): $result');
+      if (result == TransactionStatus.succeed) {
+        Navigator.of(context).push(null);
+      } else {
+        scaffoldKey.currentState
+            .showSnackBar(SnackBars.error('transaction failed'));
+      }
+    } catch (e) {
+      scaffoldKey.currentState.showSnackBar(SnackBars.error(e.toString()));
+    } finally {
+      _turnLoading(false);
+    }
   }
 
   @override
@@ -71,6 +79,7 @@ class _ResultPageState extends State<LockResultPage> {
     var dic = I18n.of(context).assets;
 
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         title: Text(dic['lock.tokens']),
         centerTitle: true,
@@ -106,43 +115,40 @@ class _ResultPageState extends State<LockResultPage> {
                             child: Container(
                               height: 150,
                               width: 150,
-                              child: walletStructs == null
-                                  ? Center(child: CircularProgressIndicator())
-                                  : Stack(
-                                      children: [
-                                        QrImage(
-                                          data: _showMessageInQr
-                                              ? widget
-                                                  .lockParams.transactionMessage
-                                              : walletStructs.lockAddress
-                                                  .toString(),
-                                          version: QrVersions.auto,
-                                          size: 150.0,
-                                          foregroundColor:
-                                              Theme.of(context).primaryColor,
-                                          errorCorrectionLevel: 3,
-                                        ),
-                                        Align(
-                                          child: Container(
-                                            padding: EdgeInsets.only(
-                                              left: 8,
-                                              top: 8,
-                                              bottom: 8,
-                                              right: 5,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: Image.asset(
-                                              'assets/images/assets/DHX.png',
-                                              height: 35,
-                                              width: 35,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                              child: Stack(
+                                children: [
+                                  QrImage(
+                                    data: _showMessageInQr
+                                        ? widget.lockParams.transactionMessage
+                                        : widget.lockParams.contractAddress
+                                            .toString(),
+                                    version: QrVersions.auto,
+                                    size: 150.0,
+                                    foregroundColor:
+                                        Theme.of(context).primaryColor,
+                                    errorCorrectionLevel: 3,
+                                  ),
+                                  Align(
+                                    child: Container(
+                                      padding: EdgeInsets.only(
+                                        left: 8,
+                                        top: 8,
+                                        bottom: 8,
+                                        right: 5,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Image.asset(
+                                        'assets/images/assets/DHX.png',
+                                        height: 35,
+                                        width: 35,
+                                      ),
                                     ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           SizedBox(height: 8),
@@ -151,9 +157,7 @@ class _ResultPageState extends State<LockResultPage> {
                               SizedBox(width: 16),
                               Expanded(
                                 child: Text(
-                                  walletStructs == null
-                                      ? '...'
-                                      : walletStructs.lockAddress.toString(),
+                                  widget.lockParams.contractAddress.toString(),
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText2
@@ -165,16 +169,14 @@ class _ResultPageState extends State<LockResultPage> {
                               IconButton(
                                 icon: Icon(Icons.content_copy),
                                 color: Theme.of(context).primaryColor,
-                                onPressed: walletStructs == null
-                                    ? null
-                                    : () {
-                                        Clipboard.setData(
-                                          ClipboardData(
-                                            text: walletStructs.lockAddress
-                                                .toString(),
-                                          ),
-                                        );
-                                      },
+                                onPressed: () {
+                                  Clipboard.setData(
+                                    ClipboardData(
+                                      text: widget.lockParams.contractAddress
+                                          .toString(),
+                                    ),
+                                  );
+                                },
                               ),
                             ],
                           )
@@ -218,12 +220,14 @@ class _ResultPageState extends State<LockResultPage> {
                     title: dic['gas.limit'],
                     defaultValue: kGasLimitRecommended,
                     subtitle: dic['units'],
+                    onValue: (s) => gasLimit = s,
                   ),
                   SizedBox(height: 10),
                   GasInput(
                     title: dic['gas.price'],
                     defaultValue: kGasPriceRecommended,
                     subtitle: dic['gwei'],
+                    onValue: (s) => gasPrice = s,
                   ),
                 ],
               ),
@@ -237,7 +241,12 @@ class _ResultPageState extends State<LockResultPage> {
               child: Container(
                 child: RoundedButton(
                   text: I18n.of(context).assets['lock'],
-                  onPressed: _continueBox ? () => lock() : null,
+                  onPressed: _continueBox &&
+                          gasPrice != null &&
+                          gasLimit != null &&
+                          !_isLoading
+                      ? () => _lock()
+                      : null,
                 ),
               ),
             ),

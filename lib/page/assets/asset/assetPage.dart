@@ -170,7 +170,7 @@ class _AssetPageState extends State<AssetPage>
 
     BalancesInfo balancesInfo = store.assets.balances[symbol];
     String lockedInfo = '\n';
-    if (balancesInfo.lockedBreakdown != null) {
+    if (balancesInfo?.lockedBreakdown != null) {
       balancesInfo.lockedBreakdown.forEach((i) {
         if (i.amount > BigInt.zero) {
           lockedInfo +=
@@ -218,7 +218,8 @@ class _AssetPageState extends State<AssetPage>
                       ),
                     columnText(
                       dic['locked'],
-                      Fmt.token(balancesInfo.lockedBalance, decimals: decimals),
+                      Fmt.token(balancesInfo?.lockedBalance,
+                          decimals: decimals),
                     ),
                   ],
                 ),
@@ -226,13 +227,13 @@ class _AssetPageState extends State<AssetPage>
               Expanded(
                 child: columnText(
                   dic['available'],
-                  Fmt.token(balancesInfo.transferable, decimals: decimals),
+                  Fmt.token(balancesInfo?.transferable, decimals: decimals),
                 ),
               ),
               Expanded(
                 child: columnText(
                   dic['reserved'],
-                  Fmt.token(balancesInfo.reserved, decimals: decimals),
+                  Fmt.token(balancesInfo?.reserved, decimals: decimals),
                 ),
               ),
             ],

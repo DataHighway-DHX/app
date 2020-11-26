@@ -23,7 +23,7 @@ Widget gasInput(title, gasText, subtile) {
 class GasInput extends StatefulWidget {
   final String title;
   final String subtitle;
-  final void Function(String) onValue;
+  final void Function(int) onValue;
   final String defaultValue;
 
   const GasInput({
@@ -59,9 +59,9 @@ class _GasInputState extends State<GasInput> {
         TextField(
           controller: controller,
           onChanged: (v) {
-            final val = double.tryParse(v) == null ? null : v;
-            setState(() => error = val == null);
-            widget.onValue(val);
+            final parsed = int.tryParse(v);
+            setState(() => error = parsed == null);
+            widget.onValue(parsed);
           },
           decoration: InputDecoration(
             isDense: true,
