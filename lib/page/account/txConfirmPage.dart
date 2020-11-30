@@ -252,11 +252,9 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     /// tip division from 0 to 19:
     /// 0-10 for 0-0.1
     /// 10-19 for 0.1-1
-    BigInt value =
-        Fmt.tokenInt('0.01', decimals: decimals) * BigInt.from(tip.toInt());
+    BigInt value = Fmt.tokenInt('0.01', decimals) * BigInt.from(tip.toInt());
     if (tip > 10) {
-      value = Fmt.tokenInt('0.1', decimals: decimals) *
-          BigInt.from((tip - 9).toInt());
+      value = Fmt.tokenInt('0.1', decimals) * BigInt.from((tip - 9).toInt());
     }
     setState(() {
       _tip = tip;
@@ -414,7 +412,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                                     if (snapshot.hasData) {
                                       String fee = Fmt.balance(
                                         _fee['partialFee'].toString(),
-                                        decimals: decimals,
+                                        decimals,
                                         length: 6,
                                       );
                                       return Container(
@@ -467,8 +465,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                             width: 64,
                             child: Text(dicAsset['tip']),
                           ),
-                          Text(
-                              '${Fmt.token(_tipValue, decimals: decimals)} $symbol'),
+                          Text('${Fmt.token(_tipValue, decimals)} $symbol'),
                           TapTooltip(
                             message: dicAsset['tip.tip'],
                             child: Icon(

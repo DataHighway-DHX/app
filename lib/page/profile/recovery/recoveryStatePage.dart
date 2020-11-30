@@ -65,7 +65,7 @@ class _RecoveryStatePage extends State<RecoveryStatePage> {
 
       /// fetch active recovery status
       List status = await Future.wait([
-        webApi.evalJavascript('api.derive.chain.bestNumber()'),
+        webApi.connector.eval('api.derive.chain.bestNumber()'),
         webApi.account.queryRecoverableList(addresses),
         webApi.account.queryActiveRecoveries(
           addresses,

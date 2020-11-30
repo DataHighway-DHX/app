@@ -8,6 +8,7 @@ import 'package:package_info/package_info.dart';
 import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/downloadDialog.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -182,6 +183,11 @@ class UI {
       return true;
     }
   }
+
+  static TextInputFormatter decimalInputFormatter(int decimals) {
+    return RegExInputFormatter.withRegex(
+        '^[0-9]{0,$decimals}(\\.[0-9]{0,$decimals})?\$');
+  }
 }
 
 // access the refreshIndicator globally
@@ -199,6 +205,8 @@ final GlobalKey<RefreshIndicatorState> globalNominatingRefreshKey =
     new GlobalKey<RefreshIndicatorState>();
 // council page:
 final GlobalKey<RefreshIndicatorState> globalCouncilRefreshKey =
+    new GlobalKey<RefreshIndicatorState>();
+final GlobalKey<RefreshIndicatorState> globalMotionsRefreshKey =
     new GlobalKey<RefreshIndicatorState>();
 // democracy page:
 final GlobalKey<RefreshIndicatorState> globalDemocracyRefreshKey =

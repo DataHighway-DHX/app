@@ -14,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 
 void pendingTasks() {
+  print('test');
   print(webApi.debugCompleters);
 }
 

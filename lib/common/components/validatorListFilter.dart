@@ -2,22 +2,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-enum ValidatorSortOptions { staked, points, commission }
+enum ValidatorSortOptions { staked, points, commission, judgements }
 
 class ValidatorListFilter extends StatefulWidget {
-  ValidatorListFilter({this.onFilterChange, this.onSortChange});
+  ValidatorListFilter(
+      {this.onFilterChange, this.onSortChange, this.needSort = true});
   final Function(String) onFilterChange;
   final Function(int) onSortChange;
+  final bool needSort;
   @override
-  _ValidatorListFilterState createState() => _ValidatorListFilterState(
-      onSortChange: onSortChange, onFilterChange: onFilterChange);
+  _ValidatorListFilterState createState() => _ValidatorListFilterState();
 }
 
 class _ValidatorListFilterState extends State<ValidatorListFilter> {
-  _ValidatorListFilterState({this.onFilterChange, this.onSortChange});
-  final Function(String) onFilterChange;
-  final Function(int) onSortChange;
-
   int _sort = 0;
 
   void _showActions() {
@@ -33,7 +30,7 @@ class _ValidatorListFilterState extends State<ValidatorListFilter> {
                       _sort = i.index;
                     });
                     Navigator.of(context).pop();
-                    onSortChange(i.index);
+                    widget.onSortChange(i.index);
                   },
                 ))
             .toList(),
@@ -67,33 +64,36 @@ class _ValidatorListFilterState extends State<ValidatorListFilter> {
                   borderRadius: BorderRadius.all(Radius.circular(24)),
                   border: Border.all(width: 0.5, color: theme.dividerColor),
                 ),
-                onChanged: (value) => onFilterChange(value.trim()),
+                onChanged: (value) => widget.onFilterChange(value.trim()),
               ),
             ),
           ),
-          Row(
-            children: <Widget>[
-              Text(
-                dic['sort'],
-                style: Theme.of(context).textTheme.bodyText1,
-              ),
-              GestureDetector(
-                child: Container(
-                  margin: EdgeInsets.only(left: 8),
-                  padding: EdgeInsets.fromLTRB(16, 5, 16, 5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(24)),
-                    border: Border.all(width: 0.5, color: theme.dividerColor),
-                    color: Color(0x334665EA),
-                  ),
-                  child: Text(dic[ValidatorSortOptions.values[_sort]
-                      .toString()
-                      .split('.')[1]]),
-                ),
-                onTap: _showActions,
-              )
-            ],
-          )
+          widget.needSort
+              ? Row(
+                  children: <Widget>[
+                    Text(
+                      dic['sort'],
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                    GestureDetector(
+                      child: Container(
+                        margin: EdgeInsets.only(left: 8),
+                        padding: EdgeInsets.fromLTRB(16, 5, 16, 5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(24)),
+                          color: Color(0x334665EA),
+                          border:
+                              Border.all(width: 0.5, color: theme.dividerColor),
+                        ),
+                        child: Text(dic[ValidatorSortOptions.values[_sort]
+                            .toString()
+                            .split('.')[1]]),
+                      ),
+                      onTap: _showActions,
+                    )
+                  ],
+                )
+              : Container(height: 8)
         ],
       ),
     );

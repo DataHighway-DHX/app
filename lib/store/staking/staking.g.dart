@@ -143,18 +143,33 @@ mixin _$StakingStore on _StakingStore, Store {
     });
   }
 
-  final _$ledgerAtom = Atom(name: '_StakingStore.ledger');
+  final _$rewardsAtom = Atom(name: '_StakingStore.rewards');
 
   @override
-  ObservableMap<String, dynamic> get ledger {
-    _$ledgerAtom.reportRead();
-    return super.ledger;
+  Map<String, dynamic> get rewards {
+    _$rewardsAtom.reportRead();
+    return super.rewards;
   }
 
   @override
-  set ledger(ObservableMap<String, dynamic> value) {
-    _$ledgerAtom.reportWrite(value, super.ledger, () {
-      super.ledger = value;
+  set rewards(Map<String, dynamic> value) {
+    _$rewardsAtom.reportWrite(value, super.rewards, () {
+      super.rewards = value;
+    });
+  }
+
+  final _$ownStashInfoAtom = Atom(name: '_StakingStore.ownStashInfo');
+
+  @override
+  OwnStashInfoData get ownStashInfo {
+    _$ownStashInfoAtom.reportRead();
+    return super.ownStashInfo;
+  }
+
+  @override
+  set ownStashInfo(OwnStashInfoData value) {
+    _$ownStashInfoAtom.reportWrite(value, super.ownStashInfo, () {
+      super.ownStashInfo = value;
     });
   }
 
@@ -200,6 +215,21 @@ mixin _$StakingStore on _StakingStore, Store {
   set txs(ObservableList<TxData> value) {
     _$txsAtom.reportWrite(value, super.txs, () {
       super.txs = value;
+    });
+  }
+
+  final _$txsRewardsAtom = Atom(name: '_StakingStore.txsRewards');
+
+  @override
+  ObservableList<TxRewardData> get txsRewards {
+    _$txsRewardsAtom.reportRead();
+    return super.txsRewards;
+  }
+
+  @override
+  set txsRewards(ObservableList<TxRewardData> value) {
+    _$txsRewardsAtom.reportWrite(value, super.txsRewards, () {
+      super.txsRewards = value;
     });
   }
 
@@ -293,6 +323,15 @@ mixin _$StakingStore on _StakingStore, Store {
         .run(() => super.addTxs(res, shouldCache: shouldCache));
   }
 
+  final _$addTxsRewardsAsyncAction = AsyncAction('_StakingStore.addTxsRewards');
+
+  @override
+  Future<void> addTxsRewards(Map<dynamic, dynamic> res,
+      {bool shouldCache = false}) {
+    return _$addTxsRewardsAsyncAction
+        .run(() => super.addTxsRewards(res, shouldCache: shouldCache));
+  }
+
   final _$loadAccountCacheAsyncAction =
       AsyncAction('_StakingStore.loadAccountCache');
 
@@ -352,13 +391,23 @@ mixin _$StakingStore on _StakingStore, Store {
   }
 
   @override
-  void setLedger(String pubKey, Map<String, dynamic> data,
-      {bool shouldCache = true, bool reset = false}) {
+  void setRewards(String pubKey, Map<String, dynamic> data) {
     final _$actionInfo = _$_StakingStoreActionController.startAction(
-        name: '_StakingStore.setLedger');
+        name: '_StakingStore.setRewards');
     try {
-      return super
-          .setLedger(pubKey, data, shouldCache: shouldCache, reset: reset);
+      return super.setRewards(pubKey, data);
+    } finally {
+      _$_StakingStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setOwnStashInfo(String pubKey, Map<String, dynamic> data,
+      {bool shouldCache = true}) {
+    final _$actionInfo = _$_StakingStoreActionController.startAction(
+        name: '_StakingStore.setOwnStashInfo');
+    try {
+      return super.setOwnStashInfo(pubKey, data, shouldCache: shouldCache);
     } finally {
       _$_StakingStoreActionController.endAction(_$actionInfo);
     }
@@ -405,10 +454,12 @@ overview: ${overview},
 staked: ${staked},
 nominatorCount: ${nominatorCount},
 validatorsInfo: ${validatorsInfo},
-ledger: ${ledger},
+rewards: ${rewards},
+ownStashInfo: ${ownStashInfo},
 txsLoading: ${txsLoading},
 txsCount: ${txsCount},
 txs: ${txs},
+txsRewards: ${txsRewards},
 rewardsChartDataCache: ${rewardsChartDataCache},
 stakesChartDataCache: ${stakesChartDataCache},
 phalaAirdropWhiteList: ${phalaAirdropWhiteList},

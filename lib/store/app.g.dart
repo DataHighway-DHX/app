@@ -84,21 +84,6 @@ mixin _$AppStore on _AppStore, Store {
     });
   }
 
-  final _$acalaAtom = Atom(name: '_AppStore.acala');
-
-  @override
-  AcalaStore get acala {
-    _$acalaAtom.reportRead();
-    return super.acala;
-  }
-
-  @override
-  set acala(AcalaStore value) {
-    _$acalaAtom.reportWrite(value, super.acala, () {
-      super.acala = value;
-    });
-  }
-
   final _$isReadyAtom = Atom(name: '_AppStore.isReady');
 
   @override
@@ -144,7 +129,6 @@ account: ${account},
 assets: ${assets},
 staking: ${staking},
 gov: ${gov},
-acala: ${acala},
 isReady: ${isReady},
 ethereum: ${ethereum}
     ''';

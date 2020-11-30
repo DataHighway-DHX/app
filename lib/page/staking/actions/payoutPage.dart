@@ -24,14 +24,88 @@ class _PayoutPageState extends State<PayoutPage> {
   _PayoutPageState(this.store);
   final AppStore store;
 
+  List _eraOptions = [];
+  int _eraSelected = 0;
+  int _eraSelectNew = 0;
+  bool _loading = true;
+
+  Future<void> _queryLatestRewards() async {
+    final options = await webApi.staking.fetchAccountRewardsEraOptions();
+    setState(() {
+      _eraOptions = options;
+    });
+    await webApi.staking.fetchAccountRewards(
+        store.account.currentAccount.pubKey, options[0]['value']);
+    setState(() {
+      _loading = false;
+    });
+  }
+
+  Future<void> _queryRewards(int selectedEra) async {
+    setState(() {
+      _loading = true;
+    });
+    await webApi.staking.fetchAccountRewards(
+        store.account.currentAccount.pubKey, _eraOptions[selectedEra]['value']);
+    setState(() {
+      _loading = false;
+    });
+  }
+
+  Future<void> _showEraSelect() async {
+    await showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: MediaQuery.of(context).copyWith().size.height / 3,
+          child: CupertinoPicker(
+            backgroundColor: Colors.white,
+            itemExtent: 58,
+            scrollController: FixedExtentScrollController(
+              initialItem: _eraSelected,
+            ),
+            children: _eraOptions.map((i) {
+              return Padding(
+                padding: EdgeInsets.all(16),
+                child: Text(
+                  _getEraText(i),
+                  style: TextStyle(fontSize: 16),
+                ),
+              );
+            }).toList(),
+            onSelectedItemChanged: (v) {
+              setState(() {
+                _eraSelectNew = v;
+              });
+            },
+          ),
+        );
+      },
+    );
+
+    if (_eraSelected != _eraSelectNew) {
+      _queryRewards(_eraSelectNew);
+      setState(() {
+        _eraSelected = _eraSelectNew;
+      });
+    }
+  }
+
+  String _getEraText(Map selected) {
+    if (selected['unit'] == 'eras') {
+      final dic = I18n.of(context).staking;
+      return '${dic['reward.max']} ${selected['text']} ${selected['unit']}';
+    } else {
+      return '${selected['text']} ${selected['unit']}';
+    }
+  }
+
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (store.staking.accountRewardTotal == null) {
-        webApi.staking.fetchAccountRewards(store.account.currentAccount.pubKey);
-      }
+      _queryLatestRewards();
     });
   }
 
@@ -39,7 +113,7 @@ class _PayoutPageState extends State<PayoutPage> {
     var dic = I18n.of(context).staking;
     final int decimals = store.settings.networkState.tokenDecimals;
 
-    List rewards = store.staking.ledger['rewards']['validators'];
+    List rewards = store.staking.rewards['validators'];
     if (rewards.length == 1 && List.of(rewards[0]['eras']).length == 1) {
       var args = {
         "title": dic['action.payout'],
@@ -50,8 +124,11 @@ class _PayoutPageState extends State<PayoutPage> {
         "detail": jsonEncode({
           'era': rewards[0]['eras'][0]['era'],
           'validator': rewards[0]['validatorId'],
-          'amount': Fmt.token(BigInt.parse(rewards[0]['available'].toString()),
-              length: decimals),
+          'amount': Fmt.token(
+            BigInt.parse(rewards[0]['available'].toString()),
+            decimals,
+            length: decimals,
+          ),
         }),
         "params": [
           // validatorId
@@ -83,7 +160,11 @@ class _PayoutPageState extends State<PayoutPage> {
         "call": 'batch',
       },
       "detail": jsonEncode({
-        'amount': Fmt.token(store.staking.accountRewardTotal, length: decimals),
+        'amount': Fmt.token(
+          store.staking.accountRewardTotal,
+          decimals,
+          length: decimals,
+        ),
         'txs': params,
       }),
       "params": [],
@@ -107,19 +188,30 @@ class _PayoutPageState extends State<PayoutPage> {
         centerTitle: true,
       ),
       body: Observer(builder: (BuildContext context) {
-        bool rewardLoading = store.staking.accountRewardTotal == null;
         return SafeArea(
           child: Column(
             children: <Widget>[
               Expanded(
                 child: ListView(
-                  padding: EdgeInsets.all(16),
+                  padding: EdgeInsets.only(top: 16),
                   children: <Widget>[
-                    AddressFormItem(
-                      store.account.currentAccount,
-                      label: dic['controller'],
+                    Padding(
+                      padding: EdgeInsets.only(left: 16, right: 16),
+                      child: AddressFormItem(
+                        store.account.currentAccount,
+                        label: dic['reward.sender'],
+                      ),
                     ),
-                    rewardLoading
+                    _eraOptions.length > 0
+                        ? ListTile(
+                            title: Text(dic['reward.time']),
+                            subtitle:
+                                Text(_getEraText(_eraOptions[_eraSelected])),
+                            trailing: Icon(Icons.arrow_forward_ios, size: 18),
+                            onTap: _loading ? null : () => _showEraSelect(),
+                          )
+                        : Container(),
+                    _loading
                         ? Column(
                             children: <Widget>[
                               Padding(
@@ -133,16 +225,19 @@ class _PayoutPageState extends State<PayoutPage> {
                               ),
                             ],
                           )
-                        : TextFormField(
-                            decoration: InputDecoration(
-                              labelText: I18n.of(context).assets['amount'],
+                        : Padding(
+                            padding: EdgeInsets.only(left: 16, right: 16),
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                labelText: I18n.of(context).assets['amount'],
+                              ),
+                              initialValue: Fmt.token(
+                                store.staking.accountRewardTotal,
+                                decimals,
+                                length: 8,
+                              ),
+                              readOnly: true,
                             ),
-                            initialValue: Fmt.token(
-                              store.staking.accountRewardTotal,
-                              decimals: decimals,
-                              length: 8,
-                            ),
-                            readOnly: true,
                           ),
                   ],
                 ),
@@ -151,7 +246,7 @@ class _PayoutPageState extends State<PayoutPage> {
                 padding: EdgeInsets.all(16),
                 child: RoundedButton(
                   text: I18n.of(context).home['submit.tx'],
-                  onPressed: rewardLoading ||
+                  onPressed: _loading ||
                           store.staking.accountRewardTotal == BigInt.zero
                       ? null
                       : _onSubmit,

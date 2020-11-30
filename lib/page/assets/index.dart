@@ -63,54 +63,6 @@ class _AssetsState extends State<Assets> {
         [webApi.assets.fetchBalance(), webApi.staking.fetchAccountStaking()]);
   }
 
-  Future<void> _getTokensFromFaucet() async {
-    setState(() {
-      _faucetSubmitting = true;
-    });
-    String res = await webApi.acala.fetchFaucet();
-
-    Timer(Duration(seconds: 3), () {
-      String dialogContent = I18n.of(context).acala['faucet.ok'];
-      bool isOK = false;
-      if (res == null) {
-        dialogContent = I18n.of(context).acala['faucet.error'];
-      } else if (res == "LIMIT") {
-        dialogContent = I18n.of(context).acala['faucet.limit'];
-      } else {
-        isOK = true;
-      }
-      setState(() {
-        _faucetSubmitting = false;
-      });
-
-      showCupertinoDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CupertinoAlertDialog(
-            title: Container(),
-            content: Text(dialogContent),
-            actions: <Widget>[
-              CupertinoButton(
-                child: Text(I18n.of(context).home['ok']),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  if (isOK) {
-                    globalBalanceRefreshKey.currentState.show();
-                    NotificationPlugin.showNotification(
-                      int.parse(res.substring(0, 6)),
-                      I18n.of(context).assets['notify.receive'],
-                      '{"ACA": 2, "aUSD": 2, "DOT": 2, "XBTC": 0.2}',
-                    );
-                  }
-                },
-              ),
-            ],
-          );
-        },
-      );
-    });
-  }
-
   Future<void> _handleScan() async {
     final Map dic = I18n.of(context).account;
     final data = await Navigator.pushNamed(
@@ -212,7 +164,7 @@ class _AssetsState extends State<Assets> {
     });
     String address = store.account.currentAddress;
     String ethAddress =
-        await webApi.evalJavascript('api.query.claims.preclaims("$address")');
+        await webApi.connector.eval('api.query.claims.preclaims("$address")');
     setState(() {
       _preclaimChecking = false;
     });

@@ -4,12 +4,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/common/logging.dart';
 import 'package:polka_wallet/service/subscan.dart';
-import 'package:polka_wallet/service/substrateApi/acala/apiAcala.dart';
 import 'package:polka_wallet/service/substrateApi/apiAccount.dart';
 import 'package:polka_wallet/service/substrateApi/apiAssets.dart';
 import 'package:polka_wallet/service/substrateApi/apiGov.dart';
 import 'package:polka_wallet/service/substrateApi/apiStaking.dart';
+import 'package:polka_wallet/service/substrateApi/js_connector.dart';
+import 'package:polka_wallet/service/substrateApi/types/genExternalLinksParams.dart';
+import 'package:polka_wallet/service/substrateApi/webview_manager.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/settings.dart';
 
@@ -24,27 +27,19 @@ class Api {
 
   ApiAccount account;
 
-  ApiAcala acala;
-
   ApiAssets assets;
   ApiStaking staking;
   ApiGovernance gov;
 
   SubScanApi subScanApi = SubScanApi();
 
-  Map<String, Function> _msgHandlers = {};
-  Map<String, Completer> _msgCompleters = {};
-  Map<String, Completer> get debugCompleters => _msgCompleters;
+  JsConnector connector;
+  Map<int, EvalInfo> get debugCompleters => connector?.debugCompleters;
 
-  FlutterWebviewPlugin _web;
-  int _evalJavascriptUID = 0;
-
-  Function _connectFunc;
+  WebviewManager _webManager = WebviewManager();
 
   Future<void> init() async {
     account = ApiAccount(this);
-
-    acala = ApiAcala(this);
 
     assets = ApiAssets(this);
     staking = ApiStaking(this);
@@ -53,134 +48,41 @@ class Api {
     await launchWebview();
   }
 
-  Future<void> launchWebview({bool customNode = false}) async {
-    _msgHandlers = {'txStatusChange': store.account.setTxStatus};
-
-    _evalJavascriptUID = 0;
-    _msgCompleters = {};
-
-    _connectFunc = customNode ? connectNode : connectNodeAll;
-
-    if (_web != null) {
-      _web.reload();
-      return;
+  void onWebviewLoaded() async {
+    String network = 'kusama';
+    if (store.settings.endpoint.info.contains('acala')) {
+      network = 'acala';
     }
-    _web = FlutterWebviewPlugin();
+    print('webview loaded for network $network');
 
-    _web.onStateChanged.listen((viewState) async {
-      if (viewState.type == WebViewState.finishLoad) {
-        String network = 'kusama';
-        if (store.settings.endpoint.info.contains('acala')) {
-          network = 'acala';
-        }
-        print('webview loaded for network $network');
-        DefaultAssetBundle.of(context)
-            .loadString('lib/js_service_$network/dist/main.js')
-            .then((String js) {
-          print('js file loaded');
-          // inject js file to webview
-          _web.evalJavascript(js);
-
-          // load keyPairs from local data
-          account.initAccounts();
-          // connect remote node
-          _connectFunc();
-        });
-      }
-    });
-
-    _web.launch(
-      'about:blank',
-      javascriptChannels: [
-        JavascriptChannel(
-            name: 'PolkaWallet',
-            onMessageReceived: (JavascriptMessage message) async {
-              print('received msg: ${message.message}');
-              try {
-                final msg = jsonDecode(message.message);
-                print('deserialized ${msg['uid']}');
-                final String path = msg['path'];
-                if (_msgCompleters[path] != null) {
-                  Completer handler = _msgCompleters.remove(path);
-                  if (msg['status'] == 'success') {
-                    handler.complete(msg['data']);
-                  } else {
-                    handler.completeError(msg['data']);
-                  }
-                }
-                if (_msgHandlers[path] != null) {
-                  Function handler = _msgHandlers[path];
-                  handler(msg['data']);
-                }
-              } catch (e) {
-                print('bad json: $e');
-              }
-            }),
-      ].toSet(),
-      ignoreSSLErrors: true,
-//        withLocalUrl: true,
-//        localUrlScope: 'lib/polkadot_js_service/dist/',
-      hidden: true,
-    );
+    final js = await DefaultAssetBundle.of(context)
+        .loadString('lib/js_service_$network/dist/main.js');
+    print('js file loaded');
+    log('substrate-api',
+        'base load, starting for ${store.settings.endpoint.info}');
+    log('substrate-api', 'base load, eval js');
+    await connector.eval(js, direct: true);
+    log('substrate-api', 'base load, init accounts');
+    await account.initAccounts();
+    log('substrate-api', 'base load, connect');
+    await connectNodeAll();
+    log('substrate-api', 'base load, finish');
   }
 
-  int _getEvalJavascriptUID() {
-    return _evalJavascriptUID++;
-  }
-
-  Future<dynamic> evalJavascript(
-    String code, {
-    bool wrapPromise = true,
-    bool allowRepeat = false,
-  }) async {
-    // check if there's a same request loading
-    if (!allowRepeat) {
-      for (String i in _msgCompleters.keys) {
-        String call = code.split('(')[0];
-        if (i.contains(call)) {
-          print('request $call loading');
-          return _msgCompleters[i].future;
-        }
-      }
+  Future<void> launchWebview() async {
+    if (_webManager.launched) {
+      await _webManager.reload();
     }
-
-    if (!wrapPromise) {
-      String res = await _web.evalJavascript(code);
-      return res;
-    }
-
-    Completer c = new Completer();
-
-    final uid = _getEvalJavascriptUID();
-    String method = 'uid=$uid;${code.split('(')[0]}';
-    _msgCompleters[method] = c;
-
-    String script = '''
-    try {
-      $code.then(function(res) {
-          PolkaWallet.postMessage(JSON.stringify({ 
-            path: "$method", status: "success", data: res, uid: "$uid"
-          }));
-        }).catch(function(err) {
-          PolkaWallet.postMessage(JSON.stringify({ 
-            path: "$method", status: "error", data: err.message, uid: "$uid"
-          }));
-        })
-    } catch (e) {
-      PolkaWallet.postMessage(JSON.stringify({ 
-        path: "$method", status: "error", data: e, uid: "$uid"
-      }));
-    }
-    ''';
-    _web.evalJavascript(script);
-
-    return c.future;
+    _webManager.onLoaded = onWebviewLoaded;
+    await _webManager.launch();
+    connector = _webManager.connector;
+    connector.defineHandler('txStatusChange', store.account.setTxStatus);
   }
 
   Future<void> connectNode() async {
     String node = store.settings.endpoint.value;
     // do connect
-    String res = await evalJavascript('settings.connect("$node")');
+    String res = await connector.eval('settings.connect("$node")');
     if (res == null) {
       print('connect failed');
       store.settings.setNetworkName(null);
@@ -194,7 +96,7 @@ class Api {
         store.settings.endpointList.map((e) => e.value).toList();
     // do connect
     String res =
-        await evalJavascript('settings.connectAll(${jsonEncode(nodes)})');
+        await connector.eval('settings.connectAll(${jsonEncode(nodes)})');
     if (res == null) {
       print('connect failed');
       store.settings.setNetworkName(null);
@@ -209,9 +111,9 @@ class Api {
   Future<void> fetchNetworkProps() async {
     // fetch network info
     List<dynamic> info = await Future.wait([
-      evalJavascript('settings.getNetworkConst()'),
-      evalJavascript('api.rpc.system.properties()'),
-      evalJavascript('api.rpc.system.chain()'),
+      connector.eval('settings.getNetworkConst()'),
+      connector.eval('api.rpc.system.properties()'),
+      connector.eval('api.rpc.system.chain()'),
     ]);
     print('trio done');
     store.settings.setNetworkConst(info[0]);
@@ -246,7 +148,7 @@ class Api {
       }
     });
     String blocks = blocksNeedUpdate.keys.join(',');
-    var data = await evalJavascript('account.getBlockTime([$blocks])');
+    var data = await connector.eval('account.getBlockTime([$blocks])');
 
     store.assets.setBlockMap(data);
   }
@@ -258,12 +160,20 @@ class Api {
     String channel,
     Function callback,
   ) async {
-    _msgHandlers[channel] = callback;
-    evalJavascript(
+    connector.defineHandler(channel, callback);
+    await connector.eval(
         'settings.subscribeMessage("$section", "$method", ${jsonEncode(params)}, "$channel")');
   }
 
   Future<void> unsubscribeMessage(String channel) async {
-    _web.evalJavascript('unsub$channel()');
+    await connector.eval('unsub$channel()', direct: true);
+  }
+
+  Future<List> getExternalLinks(GenExternalLinksParams params) async {
+    final List res = await connector.eval(
+      'settings.genLinks(${jsonEncode(GenExternalLinksParams.toJson(params))})',
+      allowRepeat: true,
+    );
+    return res;
   }
 }

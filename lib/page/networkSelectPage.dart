@@ -34,6 +34,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     networkEndpointPolkadot,
     networkEndpointKusama,
     networkEndpointAcala,
+    networkEndpointDatahighway,
   ];
 
   EndpointData _selectedNetwork;
@@ -43,15 +44,8 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     // refresh balance
     store.assets.clearTxs();
     store.assets.loadAccountCache();
-
-    if (store.settings.endpoint.info == networkEndpointAcala.info) {
-      store.acala.setTransferTxs([], reset: true);
-      store.acala.loadCache();
-    } else {
-      // refresh user's staking info if network is kusama or polkadot
-      store.staking.clearState();
-      store.staking.loadAccountCache();
-    }
+    store.staking.clearState();
+    store.staking.loadAccountCache();
   }
 
   Future<void> _reloadNetwork() async {

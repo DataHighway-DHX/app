@@ -50,10 +50,11 @@ class ValidatorDetailPage extends StatelessWidget {
   Widget build(BuildContext context) => Observer(
         builder: (_) {
           var dic = I18n.of(context).staking;
+          final int decimals = store.settings.networkState.tokenDecimals;
           final ValidatorData detail =
               ModalRoute.of(context).settings.arguments;
 
-          Map accInfo = store.account.accountIndexMap[detail.accountId];
+          Map accInfo = store.account.addressIndexMap[detail.accountId];
 
           Map rewardsChartData =
               store.staking.rewardsChartDataCache[detail.accountId];
@@ -116,12 +117,12 @@ class ValidatorDetailPage extends StatelessWidget {
                             children: <Widget>[
                               InfoItem(
                                 title: dic['stake.own'],
-                                content: Fmt.token(detail.bondOwn),
+                                content: Fmt.token(detail.bondOwn, decimals),
                                 crossAxisAlignment: CrossAxisAlignment.center,
                               ),
                               InfoItem(
                                 title: dic['stake.other'],
-                                content: Fmt.token(detail.bondOther),
+                                content: Fmt.token(detail.bondOther, decimals),
                                 crossAxisAlignment: CrossAxisAlignment.center,
                               ),
                             ],

@@ -87,7 +87,7 @@ class _TransferPageState extends State<TransferPage> {
           // params.to
           _addressCtrl.text.trim(),
           // params.amount
-          Fmt.tokenInt(_amountCtrl.text.trim(), decimals: decimals).toString(),
+          Fmt.tokenInt(_amountCtrl.text.trim(), decimals).toString(),
         ],
       };
       bool isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
@@ -102,15 +102,12 @@ class _TransferPageState extends State<TransferPage> {
           // params.currencyId
           symbol.toUpperCase(),
           // params.amount
-          Fmt.tokenInt(_amountCtrl.text.trim(), decimals: decimals).toString(),
+          Fmt.tokenInt(_amountCtrl.text.trim(), decimals).toString(),
         ];
       }
       args['onFinish'] = (BuildContext txPageContext, Map res) {
         final TransferPageParams routeArgs =
             ModalRoute.of(context).settings.arguments;
-        if (isAcala) {
-          store.acala.setTransferTxs([res]);
-        }
         Navigator.popUntil(
             txPageContext, ModalRoute.withName(routeArgs.redirect));
         // user may route to transfer page from asset page
@@ -232,7 +229,7 @@ class _TransferPageState extends State<TransferPage> {
                               decoration: InputDecoration(
                                 hintText: dic['amount'],
                                 labelText:
-                                    '${dic['amount']} (${dic['balance']}: ${Fmt.token(available, decimals: decimals)})',
+                                    '${dic['amount']} (${dic['balance']}: ${Fmt.token(available, decimals)})',
                               ),
                               inputFormatters: [
                                 RegExInputFormatter.withRegex(

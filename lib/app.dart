@@ -5,22 +5,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/willPopScopWrapper.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/page-acala/earn/addLiquidityPage.dart';
-import 'package:polka_wallet/page-acala/earn/earnHistoryPage.dart';
-import 'package:polka_wallet/page-acala/earn/earnPage.dart';
-import 'package:polka_wallet/page-acala/earn/withdrawLiquidityPage.dart';
-import 'package:polka_wallet/page-acala/homa/homaHistoryPage.dart';
-import 'package:polka_wallet/page-acala/homa/homaPage.dart';
-import 'package:polka_wallet/page-acala/homa/mintPage.dart';
-import 'package:polka_wallet/page-acala/homa/redeemPage.dart';
-import 'package:polka_wallet/page-acala/homePage.dart';
-import 'package:polka_wallet/page-acala/loan/loanAdjustPage.dart';
-import 'package:polka_wallet/page-acala/loan/loanCreatePage.dart';
-import 'package:polka_wallet/page-acala/loan/loanHistoryPage.dart';
-import 'package:polka_wallet/page-acala/loan/loanPage.dart';
-import 'package:polka_wallet/page-acala/loan/loanTxDetailPage.dart';
-import 'package:polka_wallet/page-acala/swap/swapHistoryPage.dart';
-import 'package:polka_wallet/page-acala/swap/swapPage.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/account/uos/qrSenderPage.dart';
@@ -213,18 +197,13 @@ class _WalletAppState extends State<WalletApp> {
         routes: {
           HomePage.route: (context) => Observer(
                 builder: (_) {
-                  EndpointData network = _appStore != null
-                      ? _appStore.settings.endpoint
-                      : EndpointData();
                   return WillPopScopWrapper(
                     child: FutureBuilder<int>(
                       future: _initStore(context),
                       builder: (_, AsyncSnapshot<int> snapshot) {
                         if (snapshot.hasData) {
                           return snapshot.data > 0
-                              ? network.info == networkEndpointAcala.info
-                                  ? AcalaHomePage(_appStore)
-                                  : HomePage(_appStore)
+                              ? HomePage(_appStore)
                               : CreateAccountEntryPage(_appStore);
                         } else {
                           return Container();
@@ -309,23 +288,6 @@ class _WalletAppState extends State<WalletApp> {
           FriendListPage.route: (_) => FriendListPage(_appStore),
           InitiateRecoveryPage.route: (_) => InitiateRecoveryPage(_appStore),
           VouchRecoveryPage.route: (_) => VouchRecoveryPage(_appStore),
-
-          // acala-network
-          SwapPage.route: (_) => SwapPage(_appStore),
-          LoanPage.route: (_) => LoanPage(_appStore),
-          LoanCreatePage.route: (_) => LoanCreatePage(_appStore),
-          LoanAdjustPage.route: (_) => LoanAdjustPage(_appStore),
-          LoanHistoryPage.route: (_) => LoanHistoryPage(_appStore),
-          LoanTxDetailPage.route: (_) => LoanTxDetailPage(_appStore),
-          SwapHistoryPage.route: (_) => SwapHistoryPage(_appStore),
-          EarnPage.route: (_) => EarnPage(_appStore),
-          AddLiquidityPage.route: (_) => AddLiquidityPage(_appStore),
-          WithdrawLiquidityPage.route: (_) => WithdrawLiquidityPage(_appStore),
-          EarnHistoryPage.route: (_) => EarnHistoryPage(_appStore),
-          HomaPage.route: (_) => HomaPage(_appStore),
-          MintPage.route: (_) => MintPage(_appStore),
-          HomaRedeemPage.route: (_) => HomaRedeemPage(_appStore),
-          HomaHistoryPage.route: (_) => HomaHistoryPage(_appStore),
           MenuPage.route: (_) => MenuPage(_appStore),
         },
       ),

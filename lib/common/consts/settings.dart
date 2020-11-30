@@ -26,6 +26,14 @@ EndpointData networkEndpointAcala = EndpointData.fromJson(const {
   'value': 'wss://acala-testnet-1.polkawallet.io:9904',
 });
 
+EndpointData networkEndpointDatahighway = EndpointData.fromJson(const {
+  'info': 'datahighway',
+  'ss58': 42,
+  'text':
+      'DataHighway (DataHighway Harbour Testnet, hosted by MXC Foundation gGmbH)',
+  'value': 'wss://testnet-harbour.datahighway.com',
+});
+
 List<EndpointData> networkEndpoints = [
   networkEndpointPolkadot,
   EndpointData.fromJson(const {
@@ -93,6 +101,7 @@ List<EndpointData> networkEndpoints = [
     'text': 'Mandala TC5 Node 2 (Hosted by OnFinality)',
     'value': 'wss://node-6714447553211260928.rz.onfinality.io/ws',
   }),
+  networkEndpointDatahighway,
 ];
 
 const network_ss58_map = {
@@ -102,6 +111,7 @@ const network_ss58_map = {
   'polkadot': 0,
 };
 
+const int kusama_token_decimals = 12;
 const int acala_token_decimals = 18;
 
 const int SECONDS_OF_DAY = 24 * 60 * 60; // seconds of one day

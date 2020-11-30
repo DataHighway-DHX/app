@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/staking/types/validatorData.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -24,14 +25,12 @@ class Fmt {
     }
     return addr.substring(0, pad) + '...' + addr.substring(addr.length - pad);
   }
-  
-  static String balanceNoDecimals(String raw, {int decimals = 12}) {
-    if (raw == null || raw.length == 0) {
-      return raw;
+
+  static String dateTime(DateTime time) {
+    if (time == null) {
+      return 'date-time';
     }
-    NumberFormat f = NumberFormat(",##0");
-    var num = f.parse(raw);
-    return f.format(num / pow(10, decimals));
+    return DateFormat('yyyy-MM-dd hh:mm').format(time);
   }
 
   /// number transform 1:
@@ -49,7 +48,7 @@ class Fmt {
 
   /// number transform 2:
   /// from <BigInt> to <double>
-  static double bigIntToDouble(BigInt value, {int decimals = 12}) {
+  static double bigIntToDouble(BigInt value, int decimals) {
     if (value == null) {
       return 0;
     }
@@ -75,48 +74,51 @@ class Fmt {
   /// combined number transform 1-3:
   /// from raw <String> to <String> in token format of ",##0.000"
   static String balance(
-    String raw, {
-    int decimals = 12,
+    String raw,
+    int decimals, {
     int length = 3,
   }) {
     if (raw == null || raw.length == 0) {
       return '~';
     }
-    return doubleFormat(bigIntToDouble(balanceInt(raw), decimals: decimals),
+    return doubleFormat(bigIntToDouble(balanceInt(raw), decimals),
         length: length);
   }
 
   /// combined number transform 1-2:
   /// from raw <String> to <double>
-  static double balanceDouble(String raw, {int decimals = 12}) {
-    return bigIntToDouble(balanceInt(raw), decimals: decimals);
+  static double balanceDouble(String raw, int decimals) {
+    return bigIntToDouble(balanceInt(raw), decimals);
   }
 
   /// combined number transform 2-3:
   /// from <BigInt> to <String> in token format of ",##0.000"
   static String token(
-    BigInt value, {
-    int decimals = 12,
+    BigInt value,
+    int decimals, {
     int length = 3,
   }) {
     if (value == null) {
       return '~';
     }
-    return doubleFormat(bigIntToDouble(value, decimals: decimals),
-        length: length);
+    return doubleFormat(bigIntToDouble(value, decimals), length: length);
   }
 
   /// number transform 4:
   /// from <String of double> to <BigInt>
-  static BigInt tokenInt(String value, {int decimals = 12}) {
+  static BigInt tokenInt(String value, int decimals) {
     if (value == null) {
       return BigInt.zero;
     }
     double v = 0;
-    if (value.contains(',') || value.contains('.')) {
-      v = NumberFormat(",##0.${"0" * decimals}").parse(value);
-    } else {
-      v = double.parse(value);
+    try {
+      if (value.contains(',') || value.contains('.')) {
+        v = NumberFormat(",##0.${"0" * decimals}").parse(value);
+      } else {
+        v = double.parse(value);
+      }
+    } catch (err) {
+      print('Fmt.tokenInt() error: ${err.toString()}');
     }
     return BigInt.from(v * pow(10, decimals));
   }
@@ -126,19 +128,20 @@ class Fmt {
   /// ceil number of last decimal
   static String priceCeil(
     double value, {
-    int decimals = acala_token_decimals,
     int lengthFixed = 2,
     int lengthMax,
   }) {
     if (value == null) {
       return '~';
     }
-    String tailDecimals =
+    final int x = pow(10, lengthMax ?? lengthFixed);
+    final double price = (value * x).ceilToDouble() / x;
+    final String tailDecimals =
         lengthMax == null ? '' : "#" * (lengthMax - lengthFixed);
-    NumberFormat f = NumberFormat(
-        ",##0${lengthFixed > 0 ? '.' : ''}${"0" * lengthFixed}$tailDecimals",
-        "en_US");
-    return f.format(value);
+    return NumberFormat(
+            ",##0${lengthFixed > 0 ? '.' : ''}${"0" * lengthFixed}$tailDecimals",
+            "en_US")
+        .format(price);
   }
 
   /// number transform 6:
@@ -152,12 +155,14 @@ class Fmt {
     if (value == null) {
       return '~';
     }
-    String tailDecimals =
+    final int x = pow(10, lengthMax ?? lengthFixed);
+    final double price = (value * x).floorToDouble() / x;
+    final String tailDecimals =
         lengthMax == null ? '' : "#" * (lengthMax - lengthFixed);
-    NumberFormat f = NumberFormat(
-        ",##0${lengthFixed > 0 ? '.' : ''}${"0" * lengthFixed}$tailDecimals",
-        "en_US");
-    return f.format(value);
+    return NumberFormat(
+            ",##0${lengthFixed > 0 ? '.' : ''}${"0" * lengthFixed}$tailDecimals",
+            "en_US")
+        .format(price);
   }
 
   /// number transform 7:
@@ -168,35 +173,29 @@ class Fmt {
   }
 
   static String priceCeilBigInt(
-    BigInt value, {
-    int decimals = acala_token_decimals,
+    BigInt value,
+    int decimals, {
     int lengthFixed = 2,
     int lengthMax,
   }) {
     if (value == null) {
       return '~';
     }
-    double price =
-        (value / BigInt.from(pow(10, decimals - (lengthMax ?? lengthFixed))))
-                .ceil() /
-            pow(10, lengthMax ?? lengthFixed);
-    return priceCeil(price, lengthFixed: lengthFixed, lengthMax: lengthMax);
+    return priceCeil(Fmt.bigIntToDouble(value, decimals),
+        lengthFixed: lengthFixed, lengthMax: lengthMax);
   }
 
   static String priceFloorBigInt(
-    BigInt value, {
-    int decimals = acala_token_decimals,
+    BigInt value,
+    int decimals, {
     int lengthFixed = 2,
     int lengthMax,
   }) {
     if (value == null) {
       return '~';
     }
-    double price =
-        (value / BigInt.from(pow(10, decimals - (lengthMax ?? lengthFixed))))
-                .floor() /
-            pow(10, lengthMax ?? lengthFixed);
-    return priceFloor(price, lengthFixed: lengthFixed, lengthMax: lengthMax);
+    return priceFloor(Fmt.bigIntToDouble(value, decimals),
+        lengthFixed: lengthFixed, lengthMax: lengthMax);
   }
 
   static bool isAddress(String txt) {
@@ -214,7 +213,8 @@ class Fmt {
     return reg.hasMatch(pass);
   }
 
-  static int sortValidatorList(ValidatorData a, ValidatorData b, int sortType) {
+  static int sortValidatorList(
+      Map addressIndexMap, ValidatorData a, ValidatorData b, int sortType) {
     if (a.commission == null || a.commission.isEmpty) {
       return 1;
     }
@@ -226,11 +226,32 @@ class Fmt {
     var cmpStake = a.total < b.total ? 1 : -1;
     switch (sortType) {
       case 0:
-        return a.total != b.total ? cmpStake : comA > comB ? 1 : -1;
+        return a.total != b.total
+            ? cmpStake
+            : comA > comB
+                ? 1
+                : -1;
       case 1:
-        return a.points == b.points ? cmpStake : a.points < b.points ? 1 : -1;
+        return a.points == b.points
+            ? cmpStake
+            : a.points < b.points
+                ? 1
+                : -1;
       case 2:
-        return comA == comB ? cmpStake : comA > comB ? 1 : -1;
+        return comA == comB
+            ? cmpStake
+            : comA > comB
+                ? 1
+                : -1;
+      case 3:
+        final infoA = addressIndexMap[a.accountId];
+        if (infoA != null && infoA['identity'] != null) {
+          final List judgements = infoA['identity']['judgements'];
+          if (judgements != null && judgements.length > 0) {
+            return -1;
+          }
+        }
+        return 1;
       default:
         return -1;
     }
@@ -239,10 +260,12 @@ class Fmt {
   static List<ValidatorData> filterValidatorList(
       List<ValidatorData> ls, String filter, Map accIndexMap) {
     ls.retainWhere((i) {
-      Map accInfo = accIndexMap[i.accountId];
-      return Fmt.validatorDisplayName(i, accInfo)
-          .toLowerCase()
-          .contains(filter.trim().toLowerCase());
+      final Map accInfo = accIndexMap[i.accountId];
+      final value = filter.trim().toLowerCase();
+      return Fmt.accountDisplayNameString(i.accountId, accInfo)
+              .toLowerCase()
+              .contains(value) ||
+          i.accountId.toLowerCase().contains(value);
     });
     return ls;
   }
@@ -327,15 +350,51 @@ class Fmt {
     return '${acc.name ?? ''}${(acc.observation ?? false) ? ' (${I18n.of(context).account['observe']})' : ''}';
   }
 
-  static String validatorDisplayName(ValidatorData validator, Map accInfo) {
-    String display = Fmt.address(validator.accountId, pad: 6);
-    if (accInfo != null && accInfo['identity']['display'] != null) {
-      display = accInfo['identity']['display'];
-      if (accInfo['identity']['displayParent'] != null) {
-        display = '${accInfo['identity']['displayParent']}/$display';
+  static String accountDisplayNameString(String address, Map accInfo) {
+    String display = Fmt.address(address, pad: 6);
+    if (accInfo != null) {
+      if (accInfo['identity']['display'] != null) {
+        display = accInfo['identity']['display'];
+        if (accInfo['identity']['displayParent'] != null) {
+          display = '${accInfo['identity']['displayParent']}/$display';
+        }
+      } else if (accInfo['accountIndex'] != null) {
+        display = accInfo['accountIndex'];
       }
       display = display.toUpperCase();
     }
     return display;
+  }
+
+  static String tokenView(String token) {
+    String tokenView = token ?? '';
+    if (token.contains('-')) {
+      tokenView = '$token LP';
+    }
+    return tokenView;
+  }
+
+  static Widget accountDisplayName(String address, Map accInfo) {
+    return Row(
+      children: <Widget>[
+        accInfo != null && accInfo['identity']['judgements'].length > 0
+            ? Container(
+                width: 14,
+                margin: EdgeInsets.only(right: 4),
+                child: Image.asset('assets/images/assets/success.png'),
+              )
+            : Container(height: 16),
+        Expanded(
+          child: Text(accountDisplayNameString(address, accInfo)),
+        )
+      ],
+    );
+  }
+
+  static String addressOfAccount(AccountData acc, AppStore store) {
+    return store.account.pubKeyAddressMap[store.settings.endpoint.ss58]
+            [acc.pubKey] ??
+        acc.address ??
+        '';
   }
 }

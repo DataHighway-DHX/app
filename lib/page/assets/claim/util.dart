@@ -14,14 +14,14 @@ class ClaimUtil {
   }
 
   static Future<String> fetchClaimAmount(Api webApi, String ethAddress) async {
-    var res = await webApi.evalJavascript(
+    var res = await webApi.connector.eval(
         'api.query.claims.claims(claim.addrToChecksum("$ethAddress")).then(res => res.toHuman())');
     return res;
   }
 
   static Future<String> fetchStatementKind(
       Api webApi, String ethAddress) async {
-    var statement = await webApi.evalJavascript(
+    var statement = await webApi.connector.eval(
         'api.query.claims.signing(claim.addrToChecksum("$ethAddress")).then(res => res.toHuman())');
     return statement;
   }

@@ -40,8 +40,7 @@ class TransferDetailPage extends StatelessWidget {
         ),
         DetailInfoItem(
           label: dic['fee'],
-          title:
-              '${Fmt.balance(tx.fee, decimals: decimals, length: decimals)} $symbol',
+          title: '${Fmt.balance(tx.fee, decimals, length: decimals)} $symbol',
         ),
         DetailInfoItem(
           label: dic['from'],

@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/TapTooltip.dart';
 import 'package:polka_wallet/common/components/listTail.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
@@ -107,26 +106,14 @@ class _AssetPageState extends State<AssetPage>
   List<Widget> _buildTxList() {
     List<Widget> res = [];
     final String token = ModalRoute.of(context).settings.arguments;
-    if (store.settings.endpoint.info == networkEndpointAcala.info) {
-      List<TransferData> ls = store.acala.txsTransfer.reversed.toList();
-      ls.retainWhere((i) => i.token.toUpperCase() == token.toUpperCase());
-      res.addAll(ls.map((i) {
-        return TransferListItem(i, token, true, false);
-      }));
-      res.add(ListTail(
-        isEmpty: ls.length == 0,
-        isLoading: false,
-      ));
-    } else {
-      res.addAll(store.assets.txsView.map((i) {
-        return TransferListItem(
-            i, token, i.from == store.account.currentAddress, true);
-      }));
-      res.add(ListTail(
-        isEmpty: store.assets.txsView.length == 0,
-        isLoading: store.assets.isTxsLoading,
-      ));
-    }
+    res.addAll(store.assets.txsView.map((i) {
+      return TransferListItem(
+          i, token, i.from == store.account.currentAddress, true);
+    }));
+    res.add(ListTail(
+      isEmpty: store.assets.txsView.length == 0,
+      isLoading: store.assets.isTxsLoading,
+    ));
 
     return res;
   }
@@ -174,7 +161,7 @@ class _AssetPageState extends State<AssetPage>
       balancesInfo.lockedBreakdown.forEach((i) {
         if (i.amount > BigInt.zero) {
           lockedInfo +=
-              '${Fmt.token(i.amount, decimals: decimals)} $symbol ${dic['lock.${i.use}']}\n';
+              '${Fmt.token(i.amount, decimals)} $symbol ${dic['lock.${i.use}']}\n';
         }
       });
     }
@@ -188,8 +175,8 @@ class _AssetPageState extends State<AssetPage>
           Padding(
             padding: EdgeInsets.only(bottom: 30, top: 30),
             child: Text(
-              Fmt.token(isBaseToken ? balancesInfo.total : balance,
-                  decimals: decimals, length: 8),
+              Fmt.token(isBaseToken ? balancesInfo.total : balance, decimals,
+                  length: 8),
               style: Theme.of(context)
                   .textTheme
                   .headline2
@@ -218,8 +205,7 @@ class _AssetPageState extends State<AssetPage>
                       ),
                     columnText(
                       dic['locked'],
-                      Fmt.token(balancesInfo?.lockedBalance,
-                          decimals: decimals),
+                      Fmt.token(balancesInfo?.lockedBalance, decimals),
                     ),
                   ],
                 ),
@@ -227,13 +213,13 @@ class _AssetPageState extends State<AssetPage>
               Expanded(
                 child: columnText(
                   dic['available'],
-                  Fmt.token(balancesInfo?.transferable, decimals: decimals),
+                  Fmt.token(balancesInfo?.transferable, decimals),
                 ),
               ),
               Expanded(
                 child: columnText(
                   dic['reserved'],
-                  Fmt.token(balancesInfo?.reserved, decimals: decimals),
+                  Fmt.token(balancesInfo?.reserved, decimals),
                 ),
               ),
             ],

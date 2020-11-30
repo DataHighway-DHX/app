@@ -48,7 +48,10 @@ abstract class _AccountStore with Store {
   ObservableList<AccountData> accountList = ObservableList<AccountData>();
 
   @observable
-  ObservableMap<String, Map> accountIndexMap = ObservableMap<String, Map>();
+  ObservableMap<String, Map> addressIndexMap = ObservableMap<String, Map>();
+
+  @observable
+  Map<String, Map> accountIndexMap = Map<String, Map>();
 
   @observable
   ObservableMap<String, AccountBondedInfo> pubKeyBondedMap =
@@ -73,7 +76,7 @@ abstract class _AccountStore with Store {
   AccountData get currentAccount {
     int i = accountListAll.indexWhere((i) => i.pubKey == currentAccountPubKey);
     if (i < 0) {
-      return accountListAll[0] ?? AccountData();
+      return AccountData();
     }
     return accountListAll[i];
   }
@@ -164,7 +167,7 @@ abstract class _AccountStore with Store {
       String seed = acc[seedType];
       if (seed != null && seed.isNotEmpty) {
         encryptSeed(pubKey, acc[seedType], seedType, password);
-        acc.remove(acc[seedType]);
+        acc.remove(seedType);
       }
     }
 
@@ -184,8 +187,9 @@ abstract class _AccountStore with Store {
 
     await loadAccount();
 
-    // clear the temp account after addAccount finished
-    newAccount = AccountCreate();
+    /// do not clear the temp account after addAccount finished because
+    /// user may need to save password with biometric.
+    // newAccount = AccountCreate();
   }
 
   @action
@@ -320,8 +324,17 @@ abstract class _AccountStore with Store {
 
   @action
   void setAccountsIndex(List list) {
+    final Map<String, Map> data = {};
     list.forEach((i) {
-      accountIndexMap[i['accountId']] = i;
+      data[i['accountId']] = i;
+    });
+    accountIndexMap = data;
+  }
+
+  @action
+  void setAddressIndex(List list) {
+    list.forEach((i) {
+      addressIndexMap[i['accountId']] = i;
     });
   }
 

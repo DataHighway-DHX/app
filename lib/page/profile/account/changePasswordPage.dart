@@ -38,7 +38,7 @@ class _ChangePassword extends State<ChangePasswordPage> {
   Future<void> _onSave() async {
     if (_formKey.currentState.validate()) {
       var dic = I18n.of(context).profile;
-      var acc = await api.evalJavascript(
+      var acc = await api.connector.eval(
           'account.changePassword("${store.currentAccount.pubKey}", "${_passOldCtrl.text}", "${_passCtrl.text}")');
       if (acc == null) {
         showCupertinoDialog(

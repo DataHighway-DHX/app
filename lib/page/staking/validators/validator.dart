@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
-import 'package:polka_wallet/common/components/textTag.dart';
 import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/staking/types/validatorData.dart';
@@ -12,15 +11,15 @@ class Validator extends StatelessWidget {
   Validator(
     this.validator,
     this.accInfo,
-    this.nominations, {
-    this.hasPhalaAirdrop = false,
-  }) : isWaiting = validator.total == BigInt.zero;
+    this.decimals,
+    this.nominations,
+  ) : isWaiting = validator.total == BigInt.zero;
 
   final ValidatorData validator;
   final Map accInfo;
+  final int decimals;
   final bool isWaiting;
   final List nominations;
-  final bool hasPhalaAirdrop;
 
   @override
   Widget build(BuildContext context) {
@@ -46,27 +45,13 @@ class Validator extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      accInfo != null &&
-                              accInfo['identity']['judgements'].length > 0
-                          ? Container(
-                              width: 14,
-                              margin: EdgeInsets.only(right: 4),
-                              child: Image.asset(
-                                  'assets/images/assets/success.png'),
-                            )
-                          : Container(),
-                      hasPhalaAirdrop ? TextTag(dic['phala']) : Container(),
-                      Expanded(
-                        child:
-                            Text(Fmt.validatorDisplayName(validator, accInfo)),
-                      ),
-                    ],
+                  Fmt.accountDisplayName(
+                    validator.accountId,
+                    accInfo,
                   ),
                   Text(
                     !isWaiting
-                        ? '${dic['total']}: ${hasDetail ? Fmt.token(validator.total) : '~'}'
+                        ? '${dic['total']}: ${hasDetail ? Fmt.token(validator.total, decimals) : '~'}'
                         : '${dic['nominators']}: ${nominations.length}',
                     style: TextStyle(
                       color: Theme.of(context).unselectedWidgetColor,

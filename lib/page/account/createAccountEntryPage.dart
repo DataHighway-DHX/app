@@ -26,7 +26,7 @@ class CreateAccountEntryPage extends StatelessWidget {
         'account.recover("$keyType", "$cryptoType", \'$key$derivePath\', "$demoPassword")';
     code = code.replaceAll(RegExp(r'\t|\n|\r'), '');
     Map<String, dynamic> acc =
-        await webApi.evalJavascript(code, allowRepeat: true);
+        await webApi.connector.eval(code, allowRepeat: true);
     await store.account.addAccount(acc, store.account.newAccount.password);
     webApi.account.encodeAddress([acc['pubKey']]);
     store.assets.loadAccountCache();

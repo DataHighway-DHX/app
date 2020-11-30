@@ -4,8 +4,8 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
-import 'package:polka_wallet/common/components/textTag.dart';
 import 'package:polka_wallet/common/widgets/roundedButton.dart';
+import 'package:polka_wallet/common/components/textTag.dart';
 import 'package:polka_wallet/common/components/validatorListFilter.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
@@ -79,7 +79,8 @@ class _NominatePageState extends State<NominatePage> {
 
   Widget _buildListItem(BuildContext context, ValidatorData validator) {
     final dic = I18n.of(context).staking;
-    final Map accInfo = store.account.accountIndexMap[validator.accountId];
+    final int decimals = store.settings.networkState.tokenDecimals;
+    final Map accInfo = store.account.addressIndexMap[validator.accountId];
     final bool hasPhalaAirdrop =
         store.staking.phalaAirdropWhiteList[validator.accountId] ?? false;
     final bool isWaiting = validator.total == BigInt.zero;
@@ -98,26 +99,13 @@ class _NominatePageState extends State<NominatePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      accInfo != null &&
-                              accInfo['identity']['judgements'].length > 0
-                          ? Container(
-                              width: 14,
-                              margin: EdgeInsets.only(right: 4),
-                              child: Image.asset(
-                                  'assets/images/assets/success.png'),
-                            )
-                          : Container(),
-                      Expanded(
-                        child:
-                            Text(Fmt.validatorDisplayName(validator, accInfo)),
-                      ),
-                    ],
+                  Fmt.accountDisplayName(
+                    validator.accountId,
+                    accInfo,
                   ),
                   !isWaiting
                       ? Text(
-                          '${dic['total']}: ${Fmt.token(validator.total)}',
+                          '${dic['total']}: ${Fmt.token(validator.total, decimals)}',
                           style: TextStyle(
                             color: Theme.of(context).unselectedWidgetColor,
                             fontSize: 12,
@@ -183,25 +171,28 @@ class _NominatePageState extends State<NominatePage> {
   void initState() {
     super.initState();
 
-    setState(() {
-      store.staking.validatorsAll.forEach((i) {
-        _notSelected.add(i);
-        _selectedMap[i.accountId] = false;
-      });
-      store.staking.nominatingList.forEach((i) {
-        _selected.add(i);
-        _notSelected.removeWhere((item) => item.accountId == i.accountId);
-        _selectedMap[i.accountId] = true;
-      });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        store.staking.validatorsAll.forEach((i) {
+          _notSelected.add(i);
+          _selectedMap[i.accountId] = false;
+        });
+        print(store.staking.nominatingList.length);
+        store.staking.nominatingList.forEach((i) {
+          _selected.add(i);
+          _notSelected.removeWhere((item) => item.accountId == i.accountId);
+          _selectedMap[i.accountId] = true;
+        });
 
-      // set recommended selected
-      List<ValidatorData> recommended = _notSelected.toList();
-      recommended.retainWhere((i) =>
-          store.staking.recommendedValidatorList.indexOf(i.accountId) > -1);
-      recommended.forEach((i) {
-        _selected.add(i);
-        _notSelected.removeWhere((item) => item.accountId == i.accountId);
-        _selectedMap[i.accountId] = true;
+        // set recommended selected
+        List<ValidatorData> recommended = _notSelected.toList();
+        recommended.retainWhere((i) =>
+            store.staking.recommendedValidatorList.indexOf(i.accountId) > -1);
+        recommended.forEach((i) {
+          _selected.add(i);
+          _notSelected.removeWhere((item) => item.accountId == i.accountId);
+          _selectedMap[i.accountId] = true;
+        });
       });
     });
   }
@@ -222,9 +213,10 @@ class _NominatePageState extends State<NominatePage> {
     // filter the _notSelected list
     List<ValidatorData> retained = List.of(_notSelected);
     retained = Fmt.filterValidatorList(
-        retained, _filter, store.account.accountIndexMap);
+        retained, _filter, store.account.addressIndexMap);
     // and sort it
-    retained.sort((a, b) => Fmt.sortValidatorList(a, b, _sort));
+    retained.sort((a, b) =>
+        Fmt.sortValidatorList(store.account.addressIndexMap, a, b, _sort));
     list.addAll(retained);
 
     return Scaffold(
@@ -270,7 +262,9 @@ class _NominatePageState extends State<NominatePage> {
                   text: I18n.of(context).home['submit.tx'],
                   onPressed: store.staking.validatorsInfo.length == 0
                       ? null
-                      : _selected.length == 0 ? _chill : _setNominee,
+                      : _selected.length == 0
+                          ? _chill
+                          : _setNominee,
                 ),
               ),
             ],

@@ -153,7 +153,7 @@ class _ReferendumVoteState extends State<ReferendumVotePage> {
                             decoration: InputDecoration(
                               hintText: dic['amount'],
                               labelText:
-                                  '${dic['amount']} (${dic['balance']}: ${Fmt.token(balance)})',
+                                  '${dic['amount']} (${dic['balance']}: ${Fmt.token(balance, decimals)})',
                             ),
                             inputFormatters: [
                               RegExInputFormatter.withRegex(

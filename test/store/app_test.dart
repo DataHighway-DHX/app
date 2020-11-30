@@ -22,7 +22,6 @@ void main() {
       expect(store.assets, isNotNull);
       expect(store.staking, isNotNull);
       expect(store.gov, isNotNull);
-      expect(store.acala, isNotNull);
 
       expect(store.isReady, true);
 

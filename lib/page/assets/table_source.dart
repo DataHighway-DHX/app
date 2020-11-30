@@ -79,13 +79,13 @@ class MxcTableSource extends TableSource {
             content(
                 '${dic['locked']} ${store.ethereum.claimsStatusMXCLocked.toString() == '1' ? '(finalized)' : ''}:'),
             content(
-                '${Fmt.balanceNoDecimals(store.ethereum.claimsApprovedMXCLocked.toString(), decimals: decimals)} (${store.ethereum.claimsApprovedProportionsMXCLocked}%)',
+                '${Fmt.balance(store.ethereum.claimsApprovedMXCLocked.toString(), decimals)} (${store.ethereum.claimsApprovedProportionsMXCLocked}%)',
                 color: Colors.green),
             content(
-                '${Fmt.balanceNoDecimals(store.ethereum.claimsPendingMXCLocked.toString(), decimals: decimals)} (${store.ethereum.claimsPendingProportionsMXCLocked}%)',
+                '${Fmt.balance(store.ethereum.claimsPendingMXCLocked.toString(), decimals)} (${store.ethereum.claimsPendingProportionsMXCLocked}%)',
                 color: Colors.orange),
             content(
-                '${Fmt.balanceNoDecimals(store.ethereum.claimsRejectedMXCLocked.toString(), decimals: decimals)} (${store.ethereum.claimsRejectedProportionsMXCLocked}%)',
+                '${Fmt.balance(store.ethereum.claimsRejectedMXCLocked.toString(), decimals)} (${store.ethereum.claimsRejectedProportionsMXCLocked}%)',
                 color: Colors.red)
           ],
         ),
@@ -94,13 +94,13 @@ class MxcTableSource extends TableSource {
             content(
                 '${dic['signaled']} ${store.ethereum.claimsStatusMXCSignaled.toString() == '1' ? '(finalized)' : ''}:'),
             content(
-                '${Fmt.balanceNoDecimals(store.ethereum.claimsApprovedMXCSignaled.toString(), decimals: decimals)} (${store.ethereum.claimsApprovedProportionsMXCSignaled}%)',
+                '${Fmt.balance(store.ethereum.claimsApprovedMXCSignaled.toString(), decimals)} (${store.ethereum.claimsApprovedProportionsMXCSignaled}%)',
                 color: Colors.green),
             content(
-                '${Fmt.balanceNoDecimals(store.ethereum.claimsPendingMXCSignaled.toString(), decimals: decimals)} (${store.ethereum.claimsPendingProportionsMXCSignaled}%)',
+                '${Fmt.balance(store.ethereum.claimsPendingMXCSignaled.toString(), decimals)} (${store.ethereum.claimsPendingProportionsMXCSignaled}%)',
                 color: Colors.orange),
             content(
-                '${Fmt.balanceNoDecimals(store.ethereum.claimsRejectedMXCSignaled.toString(), decimals: decimals)} (${store.ethereum.claimsRejectedProportionsMXCSignaled}%)',
+                '${Fmt.balance(store.ethereum.claimsRejectedMXCSignaled.toString(), decimals)} (${store.ethereum.claimsRejectedProportionsMXCSignaled}%)',
                 color: Colors.red)
           ],
         ),
@@ -177,13 +177,13 @@ class IotaTableSource extends TableSource {
             content(
                 '${dic['signaled']} ${store.ethereum.claimsStatusIOTAPeggedSignaled.toString() == '1' ? '(finalized)' : ''}'),
             content(
-                '${Fmt.balanceNoDecimals(store.ethereum.claimsApprovedIOTAPeggedSignaled.toString(), decimals: decimals)}(${store.ethereum.claimsApprovedProportionsIOTAPeggedSignaled}%)',
+                '${Fmt.balance(store.ethereum.claimsApprovedIOTAPeggedSignaled.toString(), decimals)}(${store.ethereum.claimsApprovedProportionsIOTAPeggedSignaled}%)',
                 color: Colors.green),
             content(
-                '${Fmt.balanceNoDecimals(store.ethereum.claimsPendingIOTAPeggedSignaled.toString(), decimals: decimals)}(${store.ethereum.claimsPendingProportionsIOTAPeggedSignaled}%)',
+                '${Fmt.balance(store.ethereum.claimsPendingIOTAPeggedSignaled.toString(), decimals)}(${store.ethereum.claimsPendingProportionsIOTAPeggedSignaled}%)',
                 color: Colors.orange),
             content(
-                '${Fmt.balanceNoDecimals(store.ethereum.claimsRejectedIOTAPeggedSignaled.toString(), decimals: decimals)}(${store.ethereum.claimsRejectedProportionsIOTAPeggedSignaled}%)',
+                '${Fmt.balance(store.ethereum.claimsRejectedIOTAPeggedSignaled.toString(), decimals)}(${store.ethereum.claimsRejectedProportionsIOTAPeggedSignaled}%)',
                 color: Colors.red)
           ],
         ),

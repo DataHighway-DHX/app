@@ -91,7 +91,7 @@ class RemoteNodeListPage extends StatelessWidget {
                 }
                 store.setEndpoint(i);
                 store.setNetworkLoading(true);
-                webApi.launchWebview(customNode: true);
+                webApi.launchWebview(); // TODO | ilya | customNode
                 Navigator.of(context).pop();
               },
             ))
