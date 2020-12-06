@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/common/logging.dart';
+import 'package:polka_wallet/service/ethereum_api/api.dart';
 import 'package:polka_wallet/service/subscan.dart';
 import 'package:polka_wallet/service/substrateApi/apiAccount.dart';
 import 'package:polka_wallet/service/substrateApi/apiAssets.dart';
@@ -15,14 +16,15 @@ import 'package:polka_wallet/service/substrateApi/types/genExternalLinksParams.d
 import 'package:polka_wallet/service/substrateApi/webview_manager.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/settings.dart';
+import 'package:flutter/services.dart' show rootBundle;
+
+import 'api_datahighway.dart';
 
 // global api instance
 Api webApi;
 
 class Api {
-  Api(this.context, this.store);
-
-  final BuildContext context;
+  Api(this.store);
   final AppStore store;
 
   ApiAccount account;
@@ -30,6 +32,7 @@ class Api {
   ApiAssets assets;
   ApiStaking staking;
   ApiGovernance gov;
+  ApiDatahighway datahighway;
 
   SubScanApi subScanApi = SubScanApi();
 
@@ -44,6 +47,8 @@ class Api {
     assets = ApiAssets(this);
     staking = ApiStaking(this);
     gov = ApiGovernance(this);
+    gov = ApiGovernance(this);
+    datahighway = ApiDatahighway(this);
 
     await launchWebview();
   }
@@ -53,10 +58,13 @@ class Api {
     if (store.settings.endpoint.info.contains('acala')) {
       network = 'acala';
     }
+    if (store.settings.endpoint.info.contains('datahighway')) {
+      network = 'datahighway';
+    }
     print('webview loaded for network $network');
 
-    final js = await DefaultAssetBundle.of(context)
-        .loadString('lib/js_service_$network/dist/main.js');
+    final js =
+        await rootBundle.loadString('lib/js_service_$network/dist/main.js');
     print('js file loaded');
     log('substrate-api',
         'base load, starting for ${store.settings.endpoint.info}');
@@ -76,7 +84,8 @@ class Api {
     _webManager.onLoaded = onWebviewLoaded;
     await _webManager.launch();
     connector = _webManager.connector;
-    connector.defineHandler('txStatusChange', store.account.setTxStatus);
+    connector.defineHandler(
+        'txStatusChange', (v) => store.account.setTxStatus(v));
   }
 
   Future<void> connectNode() async {
@@ -88,7 +97,10 @@ class Api {
       store.settings.setNetworkName(null);
       return;
     }
-    fetchNetworkProps();
+    if (res.contains('datahighway')) {
+      await _setupDatahighway();
+    }
+    await fetchNetworkProps();
   }
 
   Future<void> connectNodeAll() async {
@@ -102,10 +114,23 @@ class Api {
       store.settings.setNetworkName(null);
       return;
     }
+    if (res.contains('datahighway')) {
+      await _setupDatahighway();
+    }
     EndpointData connected =
         store.settings.endpointList.firstWhere((i) => i.value == res);
     store.settings.setEndpoint(connected);
     await fetchNetworkProps();
+  }
+
+  Future<void> _setupDatahighway() async {
+    await ethereum.connectDeployer(DeployerHostInfo(
+      ip: '192.168.43.88',
+      hostname: '192.168.43.88:8080',
+      scheme: 'http',
+      city: 'Home',
+      ethereumAddress: '0x0066B0267Bf7003F5Bc20d8b938005d3E0aeae21',
+    ));
   }
 
   Future<void> fetchNetworkProps() async {

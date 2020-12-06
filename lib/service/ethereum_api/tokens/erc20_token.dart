@@ -1,13 +1,13 @@
-import 'package:polka_wallet/service/ethereumApi/contract.dart';
 import 'package:web3dart/web3dart.dart';
+import '../api.dart';
+import '../contract.dart';
 
-import 'api.dart';
-
-class MxcTokenApi extends BaseContractApi {
-  MxcTokenApi(ContractAbiProvider abiProvider, EthereumAddress contractAddress,
-      EthereumApi ethereumApi)
+class Erc20TokenApi extends BaseContractApi {
+  Erc20TokenApi(ContractAbiProvider abiProvider,
+      EthereumAddress contractAddress, EthereumApi ethereumApi)
       : super(abiProvider, contractAddress, ethereumApi);
 
+  /// Gets balance with 18 decimals (divide on 1000000000000000000)
   Future<BigInt> balanceOf(EthereumAddress address) async {
     final client = await getClient();
     final contract = await getContract();

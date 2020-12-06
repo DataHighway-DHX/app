@@ -1,25 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/app.dart';
 import 'package:polka_wallet/page/profile/settings/remoteNodeListPage.dart';
 import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class SettingsPage extends StatefulWidget {
-  SettingsPage(this.store, this.changeLang);
+  SettingsPage(this.store);
   static final String route = '/profile/settings';
   final SettingsStore store;
-  final Function changeLang;
+
   @override
-  _Settings createState() => _Settings(store, changeLang);
+  _Settings createState() => _Settings();
 }
 
 class _Settings extends State<SettingsPage> {
-  _Settings(this.store, this.changeLang);
-
-  final SettingsStore store;
-  final Function changeLang;
+  SettingsStore get store => widget.store;
 
   final _langOptions = [null, 'en', 'zh'];
 
@@ -65,7 +63,7 @@ class _Settings extends State<SettingsPage> {
               String code = _langOptions[_selected];
               if (code != store.localeCode) {
                 store.setLocalCode(code);
-                changeLang(context, code);
+                WalletApp.of(context).changeLang(code);
               }
               return true;
             },

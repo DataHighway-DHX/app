@@ -12,10 +12,18 @@ import 'package:polka_wallet/service/subscan.dart';
 import 'package:flutter/services.dart';
 
 import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/store/app.dart';
 
-void pendingTasks() {
-  print('test');
-  print(webApi.debugCompleters);
+Future<AppStore> buildAppStore() async {
+  final appStore = globalAppStore;
+  await appStore.init();
+  return appStore;
+}
+
+Future<Api> buildApi(AppStore appStore) async {
+  webApi = Api(appStore);
+  await webApi.init();
+  return webApi;
 }
 
 Future<void> main() async {
@@ -49,12 +57,15 @@ Future<void> main() async {
 
   HttpOverrides.global = MyHttpOverrides();
 
-  runApp(
-    WalletApp(),
-  );
-
   FlutterAppCenter.init(
     androidAppId: 'f37bf978-7d80-4798-ae45-ea13ad0ff077',
     iOSAppId: '590a0334-84e0-4e44-9e8b-4f8611ba2e3b',
+  );
+
+  final appStore = await buildAppStore();
+  final _ = await buildApi(appStore);
+
+  runApp(
+    WalletApp(appStore),
   );
 }

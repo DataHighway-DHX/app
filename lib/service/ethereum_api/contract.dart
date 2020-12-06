@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
-import 'package:polka_wallet/service/ethereumApi/api.dart';
 import 'package:web3dart/web3dart.dart';
+import 'api.dart';
 
 abstract class ContractAbiProvider {
   String get name;

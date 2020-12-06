@@ -37,10 +37,10 @@ abstract class _AppStore with Store {
   LocalStorage localStorage = LocalStorage();
 
   @action
-  Future<void> init(String sysLocaleCode) async {
+  Future<void> init() async {
     // wait settings store loaded
     settings = SettingsStore(this);
-    await settings.init(sysLocaleCode);
+    await settings.init();
 
     account = AccountStore(this);
     await account.loadAccount();

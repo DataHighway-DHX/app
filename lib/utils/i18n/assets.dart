@@ -116,6 +116,7 @@ const Map<String, String> enAssets = {
   'claim.token.instruction': 'Token claims are handled as described in the ',
   'claim.dhx.document': 'DHX Documentation',
   'notify.receive': 'Token Received',
+  'transaction.pending': 'Transaction pending',
   'lock.address': 'Lock Address',
   'lock.locking': 'Locking',
   'lock.months': 'Months',
@@ -309,4 +310,5 @@ const Map<String, String> zhAssets = {
   'sort.by': '排序方式',
   'claim.history': '索赔历史',
   'transaction.filter': '过滤交易消息',
+  'transaction.pending': '待处理交易',
 };

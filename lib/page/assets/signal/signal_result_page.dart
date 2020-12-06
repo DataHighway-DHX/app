@@ -4,8 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:polka_wallet/common/components/gasInput.dart';
 import 'package:polka_wallet/common/components/transaction_message.dart';
 import 'package:polka_wallet/common/widgets/roundedButton.dart';
-import 'package:polka_wallet/service/ethereumApi/api.dart';
-import 'package:polka_wallet/service/ethereumApi/model.dart';
+import 'package:polka_wallet/service/ethereum_api/api.dart';
+import 'package:polka_wallet/service/ethereum_api/model.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -48,16 +48,11 @@ class _ResultPageState extends State<SignalResultPage> {
   }
 
   Future<void> signal() async {
-    final walletStructs = await ethereum.lockdrop.signalWalletStructs(
-      widget.signalParams.currentAddress,
-      widget.signalParams.currency.address,
-    );
-
-    await ethereum.lockdrop.signal(
+    await ethereum.deployer.signal(
       amount: widget.signalParams.parsedAmount,
       term: widget.signalParams.term,
-      dhxPublicKey: walletStructs.dataHighwayPublicKey,
-      tokenContractAddress: widget.signalParams.currency.address,
+      dhxPublicKey: store.account.currentAccount.address,
+      token: widget.signalParams.currency,
     );
 
     print('success');

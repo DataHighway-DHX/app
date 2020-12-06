@@ -26,7 +26,7 @@ class _AboutPage extends State<AboutPage> {
     setState(() {
       _loading = false;
     });
-    UI.checkUpdate(context, versions);
+    await UI.checkUpdate(context, versions: versions);
   }
 
   @override

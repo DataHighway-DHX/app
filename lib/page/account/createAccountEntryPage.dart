@@ -7,30 +7,45 @@ import 'package:polka_wallet/page/account/import/importAccountPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account/account.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-class CreateAccountEntryPage extends StatelessWidget {
+class CreateAccountEntryPage extends StatefulWidget {
   static final String route = '/account/entry';
   final AppStore store;
 
   CreateAccountEntryPage(this.store);
+
+  @override
+  _CreateAccountEntryPageState createState() => _CreateAccountEntryPageState();
+}
+
+class _CreateAccountEntryPageState extends State<CreateAccountEntryPage> {
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI.checkUpdate(context));
+  }
 
   Future<void> demoLogin(BuildContext context) async {
     final keyType = AccountStore.seedTypeMnemonic;
     final cryptoType = 'sr25519';
     final derivePath = '';
 
-    store.account.setNewAccount(demoUsername, demoPassword);
+    widget.store.account.setNewAccount(demoUsername, demoPassword);
 
     String code =
-        'account.recover("$keyType", "$cryptoType", \'$key$derivePath\', "$demoPassword")';
+        'account.recover("$keyType", "$cryptoType", \'$derivePath\', "$demoPassword")';
     code = code.replaceAll(RegExp(r'\t|\n|\r'), '');
     Map<String, dynamic> acc =
         await webApi.connector.eval(code, allowRepeat: true);
-    await store.account.addAccount(acc, store.account.newAccount.password);
+    await widget.store.account
+        .addAccount(acc, widget.store.account.newAccount.password);
     webApi.account.encodeAddress([acc['pubKey']]);
-    store.assets.loadAccountCache();
-    store.staking.loadAccountCache();
+    widget.store.assets.loadAccountCache();
+    widget.store.staking.loadAccountCache();
 
     // fetch info for the imported account
     String pubKey = acc['pubKey'];

@@ -18,18 +18,13 @@ var kRpcUrlInfuraTestnetRopsten =
 var kWsUrlInfuraTestnetRopsten =
     'wss://ropsten.infura.io/ws/v3/${DotEnv().env['INFURA_API_PROJECT_ID']}';
 
-final dataHighwayPublicKey = DotEnv().env['DHX_PUBLIC_KEY'];
-final contractOwnerLockdrop =
-    EthereumAddress.fromHex(DotEnv().env['CONTRACT_OWNER_LOCKDROP_TESTNET']);
-final ethPrivateKey = DotEnv().env['ETHEREUM_PRIVATE_KEY'];
-
-final EthereumAddress kContractAddrDataHighwayLockdropTestnet =
-    EthereumAddress.fromHex(DotEnv().env['CONTRACT_ADDRESS_LOCKDROP_TESTNET']);
 final EthereumAddress kContractAddrMXCTestnet =
     EthereumAddress.fromHex(DotEnv().env['CONTRACT_ADDRESS_MXC_TESTNET']);
 // TODO - add address of IOTA Pegged ERC20 contract to .env file
 final EthereumAddress kContractAddrIOTAPeggedTestnet = EthereumAddress.fromHex(
     DotEnv().env['CONTRACT_ADDRESS_IOTA_PEGGED_TESTNET']);
+final String deployersListUrl = DotEnv().env['DEPLOYERS_LIST'] ??
+    'https://raw.githubusercontent.com/DataHighway-DHX/deployer/main/hosted_deployers.json';
 var kAbiCodeFileMXC = "abi_mxc.json";
 var kAbiCodeFileDataHighwayLockdropTestnet =
     "abi_datahighway_lockdrop_testnet.json";

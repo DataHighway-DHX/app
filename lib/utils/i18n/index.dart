@@ -21,11 +21,12 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<I18n> {
 
   @override
   Future<I18n> load(Locale locale) {
-    return SynchronousFuture<I18n>(I18n(overriddenLocale));
+    return SynchronousFuture<I18n>(I18n(overriddenLocale ?? locale));
   }
 
   @override
-  bool shouldReload(AppLocalizationsDelegate old) => true;
+  bool shouldReload(AppLocalizationsDelegate old) =>
+      old.overriddenLocale != overriddenLocale;
 }
 
 class I18n {

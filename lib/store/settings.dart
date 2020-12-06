@@ -87,10 +87,10 @@ abstract class _SettingsStore with Store {
   }
 
   @action
-  Future<void> init(String sysLocaleCode) async {
+  Future<void> init() async {
     await loadLocalCode();
     await Future.wait([
-      loadEndpoint(sysLocaleCode),
+      loadEndpoint(),
       loadCustomSS58Format(),
       loadNetworkStateCache(),
       loadContacts(),
@@ -180,7 +180,7 @@ abstract class _SettingsStore with Store {
   }
 
   @action
-  Future<void> loadEndpoint(String sysLocaleCode) async {
+  Future<void> loadEndpoint() async {
     Map<String, dynamic> value =
         await rootStore.localStorage.getObject(localStorageEndpointKey);
     if (value == null) {

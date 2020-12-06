@@ -7,13 +7,24 @@ import 'package:flutter/services.dart';
 import 'package:package_info/package_info.dart';
 import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/downloadDialog.dart';
+import 'package:polka_wallet/common/components/snackbars.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
+import 'package:polka_wallet/service/ethereum_api/api.dart';
+import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UI {
+  static void handleError(ScaffoldState state, Exception e) {
+    if (e is DeployerException) {
+      state?.showSnackBar(SnackBars.error(e.message));
+    } else {
+      state?.showSnackBar(SnackBars.error(e.toString()));
+    }
+  }
+
   static void copyAndNotify(BuildContext context, String text) {
     Clipboard.setData(ClipboardData(text: text));
 
@@ -45,8 +56,11 @@ class UI {
     }
   }
 
-  static Future<void> checkUpdate(BuildContext context, Map versions,
-      {bool autoCheck = false}) async {
+  static Future<void> checkUpdate(BuildContext context,
+      {Map versions, bool autoCheck = false}) async {
+    if (versions == null) {
+      versions = await WalletApi.getLatestVersion();
+    }
     if (versions == null || !Platform.isAndroid && !Platform.isIOS) return;
     String platform = Platform.isAndroid ? 'android' : 'ios';
     final Map dic = I18n.of(context).home;

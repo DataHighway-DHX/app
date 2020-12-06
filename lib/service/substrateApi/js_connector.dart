@@ -53,6 +53,7 @@ class JsConnector {
         if (msg['status'] == 'success') {
           completer.complete(msg['data']);
         } else {
+          log(_loggerTopic, 'error: ${msg['data']}');
           completer.completeError(msg['data']);
         }
       }
@@ -74,8 +75,9 @@ class JsConnector {
     final call = _getCallName(code);
     log(_loggerTopic, 'eval: $call');
     if (!allowRepeat) {
-      final evalInfo = _msgCompleters.values
-          .firstWhere((c) => c.call == call, orElse: () => null);
+      final evalInfo = _msgCompleters.values.firstWhere(
+          (c) => c.call == call && !c.completer.isCompleted,
+          orElse: () => null);
       if (evalInfo != null) return evalInfo.completer.future;
     }
 

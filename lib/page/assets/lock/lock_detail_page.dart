@@ -1,21 +1,25 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/snackbars.dart';
 import 'package:polka_wallet/common/widgets/picker_card.dart';
 import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/page/assets/lock/lock_params.dart';
 import 'package:polka_wallet/page/assets/lock/lock_result_page.dart';
 import 'package:polka_wallet/common/components/transaction_message.dart';
-import 'package:polka_wallet/service/ethereumApi/api.dart';
-import 'package:polka_wallet/service/ethereumApi/model.dart';
+import 'package:polka_wallet/service/ethereum_api/api.dart';
+import 'package:polka_wallet/service/ethereum_api/model.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:polka_wallet/store/assets/types/currency.dart';
+import 'package:web3dart/web3dart.dart';
 
 class LockDetailPage extends StatefulWidget {
-  LockDetailPage(this.store);
+  LockDetailPage(this.store, this.params);
 
   static final String route = '/assets/lock/detail';
   final AppStore store;
+  final LockParams params;
 
   @override
   _DetailPageState createState() => _DetailPageState(store);
@@ -28,10 +32,13 @@ class _DetailPageState extends State<LockDetailPage> {
 
   TextEditingController _amountCtl = TextEditingController(text: '0');
 
-  LockParams params = LockParams();
+  LockParams get params => widget.params;
 
   Decimal mxcBalance;
   Decimal iotaBalance;
+  bool isLoading = false;
+  bool txPending = false;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
 
   @override
   void initState() {
@@ -42,12 +49,50 @@ class _DetailPageState extends State<LockDetailPage> {
   Future<void> initStateAsync() async {
     final mxcBalance = await ethereum.mxcToken.balanceOf(params.currentAddress);
     final iotaBalance =
-        BigInt.parse('-10000000000'); //await ethereum.getBalanceIOTAPegged();
+        await ethereum.iotaToken.balanceOf(params.currentAddress);
     if (mounted) {
       setState(() {
-        this.mxcBalance = mxcBalance.toMxcAmount();
-        this.iotaBalance = iotaBalance.toMxcAmount();
+        this.mxcBalance = mxcBalance.toDecimal();
+        this.iotaBalance = iotaBalance.toDecimal();
       });
+    }
+  }
+
+  void _turnLoading(bool value) {
+    if (mounted) setState(() => isLoading = value);
+  }
+
+  Future<void> next() async {
+    _turnLoading(true);
+    try {
+      final hash = await ethereum.deployer.lock(
+        amount: params.parsedAmount,
+        sender: EthereumAddress.fromHex(ethereum.lockdrop.host.ethereumAddress),
+        useValidator: params.isValidator,
+        term: params.term,
+        dhxPublicKey: store.account.currentAccountPubKey,
+        token: params.currency,
+      );
+
+      if (!mounted) return;
+      setState(() => txPending = true);
+      final result = await ethereum.lockdrop.waitForTransaction(hash);
+      if (result == TransactionStatus.succeed) {
+        setState(() => txPending = false);
+        Navigator.pushNamed(
+          context,
+          LockResultPage.route,
+          arguments: params,
+        );
+      } else {
+        scaffoldKey.currentState
+            ?.showSnackBar(SnackBars.error('Transaction Failed'));
+        if (mounted) setState(() => txPending = false);
+      }
+    } catch (e) {
+      scaffoldKey.currentState?.showSnackBar(SnackBars.error(e.toString()));
+    } finally {
+      _turnLoading(false);
     }
   }
 
@@ -56,6 +101,7 @@ class _DetailPageState extends State<LockDetailPage> {
     var dic = I18n.of(context).assets;
 
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         title: Text(dic['lock.tokens']),
         centerTitle: true,
@@ -75,9 +121,9 @@ class _DetailPageState extends State<LockDetailPage> {
                         dic['transaction.instruction'],
                       ),
                     ),
-                    PickerCard<LockCurrency>(
+                    PickerCard<TokenCurrency>(
                       label: dic['token.currency'],
-                      values: LockCurrency.values,
+                      values: TokenCurrency.values,
                       onValueSelected: (s, v) =>
                           setState(() => params.currency = s),
                       margin: const EdgeInsets.symmetric(vertical: 10),
@@ -114,10 +160,10 @@ class _DetailPageState extends State<LockDetailPage> {
                         labelText: dic['amount.balance'].replaceAll(
                           '{0}',
                           () {
-                            if (params.currency == LockCurrency.iota)
-                              return '$iotaBalance IOTA';
-                            if (params.currency == LockCurrency.mxc)
-                              return '$mxcBalance MXC';
+                            if (params.currency == TokenCurrency.iota)
+                              return '${iotaBalance ?? '...'} IOTA';
+                            if (params.currency == TokenCurrency.mxc)
+                              return '${mxcBalance ?? '...'} MXC';
                             throw Exception(
                                 'Unknown currency ${params.currency}');
                           }(),
@@ -128,7 +174,7 @@ class _DetailPageState extends State<LockDetailPage> {
                     SizedBox(height: 10),
                     Center(
                       child: Text(
-                        'MSB: ?',
+                        'MSB: ${params.msb}',
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -158,14 +204,11 @@ class _DetailPageState extends State<LockDetailPage> {
                   left: 10, right: 10, bottom: 30, top: 5),
               child: Container(
                 child: RoundedButton(
-                  text: I18n.of(context).home['next'],
-                  onPressed: params.amountValid
-                      ? () => Navigator.pushNamed(
-                            context,
-                            LockResultPage.route,
-                            arguments: params,
-                          )
-                      : null,
+                  text: txPending
+                      ? dic['transaction.pending']
+                      : I18n.of(context).home['next'],
+                  onPressed:
+                      params.amountValid && !isLoading ? () => next() : null,
                 ),
               ),
             ),

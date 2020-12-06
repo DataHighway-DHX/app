@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/widgets/picker_card.dart';
 import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/common/components/transaction_message.dart';
-import 'package:polka_wallet/service/ethereumApi/model.dart';
+import 'package:polka_wallet/service/ethereum_api/model.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/assets/types/currency.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'signal_result_page.dart';
 
@@ -52,9 +53,9 @@ class _DetailPageState extends State<SignalDetailPage> {
                         dic['transaction.instruction'],
                       ),
                     ),
-                    PickerCard<SignalCurrency>(
+                    PickerCard<TokenCurrency>(
                       label: dic['token.currency'],
-                      values: SignalCurrency.values,
+                      values: TokenCurrency.values,
                       onValueSelected: (s, v) =>
                           setState(() => params.currency = s),
                       margin: const EdgeInsets.symmetric(vertical: 10),

@@ -4,14 +4,20 @@ import 'package:polka_wallet/common/widgets/picker_button.dart';
 import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/page/assets/lock/instruction/instruction_page.dart';
 import 'package:polka_wallet/page/assets/lock/lock_detail_page.dart';
+import 'package:polka_wallet/service/ethereum_api/api.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/assets/types/currency.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
+import 'lock_params.dart';
+
 class LockPage extends StatefulWidget {
-  LockPage(this.store);
+  LockPage(this.store, this.msb, this.currency);
 
   static final String route = '/assets/lock';
   final AppStore store;
+  final double msb;
+  final TokenCurrency currency;
 
   @override
   _LockPageState createState() => _LockPageState(store);
@@ -87,7 +93,13 @@ class _LockPageState extends State<LockPage> {
               RoundedButton(
                 text: I18n.of(context).home['next'],
                 onPressed: rulesAccepted
-                    ? () => Navigator.pushNamed(context, LockDetailPage.route)
+                    ? () => Navigator.pushNamed(
+                          context,
+                          LockDetailPage.route,
+                          arguments: LockParams()
+                            ..msb = widget.msb
+                            ..currency = widget.currency,
+                        )
                     : null,
               ),
               SizedBox(height: 15),

@@ -3,26 +3,18 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/common/configs/sys.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/asset_card.dart';
-import 'package:polka_wallet/page/assets/claim/claimPage.dart';
-import 'package:polka_wallet/page/assets/lock/lock_page.dart';
+import 'package:polka_wallet/page/assets/claim/claim_page.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
-import 'package:polka_wallet/page/assets/signal/signal_page.dart';
-import 'package:polka_wallet/service/ethereumApi/api.dart';
+import 'package:polka_wallet/page/assets/tokens/iota_asset_card.dart';
+import 'package:polka_wallet/page/assets/tokens/mxc_asset_card.dart';
 import 'package:polka_wallet/common/components/passwordInputDialog.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/uos/qrSignerPage.dart';
-import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/claim/attestPage.dart';
-import 'package:polka_wallet/page/assets/claim/claimPage.dart';
-import 'package:polka_wallet/page/assets/receive/receivePage.dart';
-import 'package:polka_wallet/page/assets/index.dart';
-import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
@@ -33,13 +25,7 @@ import 'package:polka_wallet/utils/format.dart';
 
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-import '../../service/ethereumApi/apiAssetsMXC.dart';
-import '../../service/ethereumApi/apiMiningMXC.dart';
-import '../../service/ethereumApi/lockdrop.dart';
-import '../../constants.dart';
-import 'package:polka_wallet/common/widgets/roundedButton.dart';
-
-import 'table_source.dart';
+import 'tokens/eth_asset_card.dart';
 
 class Assets extends StatefulWidget {
   Assets(this.store);
@@ -156,24 +142,6 @@ class _AssetsState extends State<Assets> {
       QrSignerPage.route,
       arguments: signed['signature'].toString().substring(2),
     );
-  }
-
-  Future<String> _checkPreclaim() async {
-    setState(() {
-      _preclaimChecking = true;
-    });
-    String address = store.account.currentAddress;
-    String ethAddress =
-        await webApi.connector.eval('api.query.claims.preclaims("$address")');
-    setState(() {
-      _preclaimChecking = false;
-    });
-    if (ethAddress == null) {
-      Navigator.of(context).pushNamed(ClaimPage.route, arguments: '');
-    } else {
-      Navigator.of(context).pushNamed(AttestPage.route, arguments: ethAddress);
-    }
-    return ethAddress;
   }
 
   Widget _buildTopCard(BuildContext context) {
@@ -316,54 +284,24 @@ class _AssetsState extends State<Assets> {
                     .map((e) => e.freeBalance)
                     .fold<BigInt>(BigInt.from(0), (a, b) => a + b)
                     .toDouble(),
-                usdBalance: 404,
+                usdBalance: 0,
                 claim: false,
                 lock: false,
                 signal: false,
               ),
               SizedBox(height: 20),
-              AssetCard(
-                image: AssetImage('assets/images/assets/MXC.png'),
-                label: AssetsConfigs.mxc,
-                subtitle: 'ERC-20',
-                balance: 123,
-                usdBalance: 10,
-                expandedContent: AssetsCardContent(
-                  store: store,
-                  tableSource: MxcTableSource(),
+              if (!store.settings.loading) ...[
+                MxcAssetCard(store: store),
+                SizedBox(height: 20),
+                IotaAssetCard(store: store),
+                SizedBox(
+                  height: 20,
                 ),
-              ),
-              SizedBox(height: 20),
-              AssetCard(
-                image: AssetImage('assets/images/assets/currencies/IOTA.png'),
-                label: AssetsConfigs.iota,
-                subtitle: 'ERC-20',
-                balance: 123,
-                usdBalance: 10,
-                expandedContent: AssetsCardContent(
-                  store: store,
-                  tableSource: IotaTableSource(),
+                EthAssetCard(store: store),
+                SizedBox(
+                  height: 20,
                 ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              AssetCard(
-                image: AssetImage('assets/images/assets/currencies/ETH.png'),
-                label: 'ETH',
-                subtitle: 'GAS',
-                balance: store.assets.balances.values
-                    .map((e) => e.freeBalance)
-                    .fold<BigInt>(BigInt.from(0), (a, b) => a + b)
-                    .toDouble(),
-                usdBalance: 404,
-                claim: false,
-                lock: false,
-                signal: false,
-              ),
-              SizedBox(
-                height: 20,
-              ),
+              ],
               AssetCard(
                 image: AssetImage('assets/images/assets/currencies/DOT.png'),
                 label: 'DOT',
@@ -371,10 +309,6 @@ class _AssetsState extends State<Assets> {
                 balance: 123,
                 usdBalance: 10,
                 lock: false,
-                expandedContent: AssetsCardContent(
-                  store: store,
-                  tableSource: MxcTableSource(),
-                ),
               ),
             ],
           ),

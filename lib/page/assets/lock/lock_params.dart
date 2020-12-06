@@ -1,17 +1,23 @@
 import 'package:polka_wallet/constants.dart';
-import 'package:polka_wallet/service/ethereumApi/model.dart';
+import 'package:polka_wallet/service/ethereum_api/api.dart';
+import 'package:polka_wallet/store/assets/types/currency.dart';
 import 'package:web3dart/credentials.dart';
 import 'package:decimal/decimal.dart';
 
 class LockParams {
   String amount = '0';
   bool isValidator = false;
-  LockdropTerm term = LockdropTerm.threeMo;
-  LockCurrency currency = LockCurrency.mxc;
+  double msb;
 
-  EthereumAddress get contractAddress =>
-      kContractAddrDataHighwayLockdropTestnet;
+  final ClaimType claimType = ClaimType.lock;
+
+  LockdropTerm term = LockdropTerm.threeMo;
+  TokenCurrency currency = TokenCurrency.mxc;
+
+  EthereumAddress get contractOwnerAddress =>
+      EthereumAddress.fromHex(ethereum.lockdrop.host.ethereumAddress);
   EthereumAddress get currentAddress => kAccountAddrTestnet;
+  EthereumAddress lockAddress;
 
   BigInt get parsedAmount {
     final parsedDecimal = Decimal.tryParse(amount);
@@ -28,27 +34,6 @@ class LockParams {
   }
 
   String get transactionMessage {
-    return '${term.deserialize()},lock,$amount(amount),${currency.name}PublicKey#,$currentAddress';
-  }
-}
-
-class LockCurrency {
-  final String name;
-  final EthereumAddress address;
-  const LockCurrency._(this.name, this.address);
-
-  static LockCurrency mxc = LockCurrency._('MXC', kContractAddrMXCTestnet);
-  static LockCurrency iota =
-      LockCurrency._('IOTA', kContractAddrIOTAPeggedTestnet);
-  // static const LockCurrency dhx = LockCurrency._('DHX');
-  // static const LockCurrency dot = LockCurrency._('DOT');
-  static List<LockCurrency> values = [
-    mxc,
-    iota, /*dhx, dot*/
-  ];
-
-  @override
-  String toString() {
-    return name;
+    return '${term.deserialize()},lock,$amount(amount),${currency.name}PublicKey#,${lockAddress ?? 'waiting'}';
   }
 }

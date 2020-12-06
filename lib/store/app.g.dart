@@ -117,8 +117,8 @@ mixin _$AppStore on _AppStore, Store {
   final _$initAsyncAction = AsyncAction('_AppStore.init');
 
   @override
-  Future<void> init(String sysLocaleCode) {
-    return _$initAsyncAction.run(() => super.init(sysLocaleCode));
+  Future<void> init() {
+    return _$initAsyncAction.run(() => super.init());
   }
 
   @override

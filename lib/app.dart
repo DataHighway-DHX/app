@@ -2,15 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/common/components/willPopScopWrapper.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/account/uos/qrSenderPage.dart';
 import 'package:polka_wallet/page/account/uos/qrSignerPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
-import 'package:polka_wallet/page/assets/claim/claimPage.dart';
+import 'package:polka_wallet/page/assets/claim/claim_page.dart';
 import 'package:polka_wallet/page/assets/claim/claim_details_page.dart';
 import 'package:polka_wallet/page/assets/lock/instruction/instruction_page.dart';
 import 'package:polka_wallet/page/assets/lock/lock_detail_page.dart';
@@ -29,7 +26,6 @@ import 'package:polka_wallet/page/governance/council/candidateDetailPage.dart';
 import 'package:polka_wallet/page/governance/council/candidateListPage.dart';
 import 'package:polka_wallet/page/governance/council/councilVotePage.dart';
 import 'package:polka_wallet/page/governance/democracy/referendumVotePage.dart';
-import 'package:polka_wallet/page/networkSelectPage.dart';
 import 'package:polka_wallet/page/profile/aboutPage.dart';
 import 'package:polka_wallet/page/profile/account/accountManagePage.dart';
 import 'package:polka_wallet/page/profile/account/changeNamePage.dart';
@@ -60,13 +56,8 @@ import 'package:polka_wallet/page/staking/actions/setPayeePage.dart';
 import 'package:polka_wallet/page/staking/actions/stakingDetailPage.dart';
 import 'package:polka_wallet/page/staking/actions/unbondPage.dart';
 import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
-import 'package:polka_wallet/service/ethereumApi/api.dart';
-import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/notification.dart';
-import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/settings.dart';
-import 'package:polka_wallet/utils/UI.dart';
 
 import 'page/menu_page.dart';
 import 'utils/i18n/index.dart';
@@ -79,36 +70,45 @@ import 'package:polka_wallet/page/account/import/importAccountPage.dart';
 import 'package:polka_wallet/page/account/createAccountEntryPage.dart';
 
 class WalletApp extends StatefulWidget {
-  const WalletApp();
+  const WalletApp(this.appStore);
+
+  final AppStore appStore;
 
   @override
-  _WalletAppState createState() => _WalletAppState();
+  WalletAppState createState() => WalletAppState();
+
+  static WalletAppState of(BuildContext context, {bool nullOk = false}) {
+    assert(nullOk != null);
+    assert(context != null);
+    final WalletAppState result =
+        context.findAncestorStateOfType<WalletAppState>();
+    if (nullOk || result != null) return result;
+    throw FlutterError.fromParts(<DiagnosticsNode>[
+      ErrorSummary(
+          'WalletApp.of() called with a context that does not contain a WalletApp.'),
+      ErrorDescription(
+          'No WalletApp ancestor could be found starting from the context that was passed to WalletApp.of(). '
+          'This usually happens when the context provided is from the same StatefulWidget as that '
+          'whose build function actually creates the WalletApp widget being sought.'),
+      context.describeElement('The context used was')
+    ]);
+  }
 }
 
-class _WalletAppState extends State<WalletApp> {
-  AppStore _appStore;
+class WalletAppState extends State<WalletApp> {
+  AppStore get _appStore => widget.appStore;
 
   Locale _locale = const Locale('en', '');
   ThemeData _theme = appTheme;
 
-  void _changeTheme() {
-    // TODO: THEME CHANGE
-    // if (_appStore.settings.endpoint.info == networkEndpointAcala.info) {
-    //   setState(() {
-    //     _theme = appThemeAcala;
-    //   });
-    // } else if (_appStore.settings.endpoint.info == networkEndpointKusama.info) {
-    //   setState(() {
-    //     _theme = appThemeKusama;
-    //   });
-    // } else {
-    //   setState(() {
-    //     _theme = appTheme;
-    //   });
-    // }
+  @override
+  void initState() {
+    super.initState();
+    changeLang(_appStore.settings.localeCode);
+    loadAccountsFuture = _loadAccounts();
   }
 
-  void _changeLang(BuildContext context, String code) {
+  void changeLang(String code) {
     Locale res;
     switch (code) {
       case 'zh':
@@ -118,42 +118,21 @@ class _WalletAppState extends State<WalletApp> {
         res = const Locale('en', '');
         break;
       default:
-        res = Localizations.localeOf(context);
+        res = null;
     }
-    setState(() {
-      _locale = res;
-    });
+    if (_locale != res) {
+      setState(() {
+        _locale = res;
+      });
+    }
   }
 
-  Future<void> _checkUpdate(BuildContext context) async {
-    final versions = await WalletApi.getLatestVersion();
-    UI.checkUpdate(context, versions, autoCheck: true);
-  }
-
-  Future<int> _initStore(BuildContext context) async {
-    if (_appStore == null) {
-      _appStore = globalAppStore;
-      print('initailizing app state');
-      print('sys locale: ${Localizations.localeOf(context)}');
-      await _appStore.init(Localizations.localeOf(context).toString());
-
-      // init webApi after store initiated
-      webApi = Api(context, _appStore);
-      webApi.init();
-
-      _changeLang(context, _appStore.settings.localeCode);
-
-      //init Ethereum
-      try {
-        ethereum = Ethereum.fromAssets();
-        ethereum.init();
-      } catch (e) {
-        print('Ethereum init problems');
-        print(e);
-      }
-
-      _checkUpdate(context);
-    }
+  Future loadAccountsFuture;
+  Future<int> _loadAccounts() async {
+    // if (_appStore == null) {
+    //   _changeLang(context, _appStore.settings.localeCode);
+    //   _checkUpdate(context);
+    // }
     return _appStore.account.accountListAll.length;
   }
 
@@ -191,30 +170,12 @@ class _WalletAppState extends State<WalletApp> {
           const Locale('en', ''),
           const Locale('zh', ''),
         ],
-        initialRoute: HomePage.route,
+        initialRoute: _appStore.account.accountListAll.isEmpty
+            ? CreateAccountEntryPage.route
+            : HomePage.routee,
         theme: _theme,
-//      darkTheme: darkTheme,
         routes: {
-          HomePage.route: (context) => Observer(
-                builder: (_) {
-                  return WillPopScopWrapper(
-                    child: FutureBuilder<int>(
-                      future: _initStore(context),
-                      builder: (_, AsyncSnapshot<int> snapshot) {
-                        if (snapshot.hasData) {
-                          return snapshot.data > 0
-                              ? HomePage(_appStore)
-                              : CreateAccountEntryPage(_appStore);
-                        } else {
-                          return Container();
-                        }
-                      },
-                    ),
-                  );
-                },
-              ),
-          NetworkSelectPage.route: (_) =>
-              NetworkSelectPage(_appStore, _changeTheme),
+          HomePage.routee: (_) => HomePage(_appStore),
           // account
           CreateAccountEntryPage.route: (_) =>
               CreateAccountEntryPage(_appStore),
@@ -225,18 +186,29 @@ class _WalletAppState extends State<WalletApp> {
           ScanPage.route: (_) => ScanPage(),
           TxConfirmPage.route: (_) => TxConfirmPage(_appStore),
           // mining
-          SignalPage.route: (_) => SignalPage(_appStore),
+          SignalPage.route: (ctx) => SignalPage(
+                _appStore,
+                (ModalRoute.of(ctx)?.settings?.arguments as Map)['msb'],
+                (ModalRoute.of(ctx)?.settings?.arguments as Map)['currency'],
+              ),
           SignalDetailPage.route: (_) => SignalDetailPage(_appStore),
           SignalResultPage.route: (ctx) => SignalResultPage(
-              _appStore, ModalRoute.of(ctx)?.settings?.arguments ?? ''),
+              _appStore, ModalRoute.of(ctx)?.settings?.arguments),
           SignalInstructionPage.route: (_) => SignalInstructionPage(),
-          LockPage.route: (_) => LockPage(_appStore),
-          LockDetailPage.route: (_) => LockDetailPage(_appStore),
+          LockPage.route: (ctx) => LockPage(
+                _appStore,
+                (ModalRoute.of(ctx)?.settings?.arguments as Map)['msb'],
+                (ModalRoute.of(ctx)?.settings?.arguments as Map)['currency'],
+              ),
+          LockDetailPage.route: (ctx) => LockDetailPage(
+              _appStore, ModalRoute.of(ctx)?.settings?.arguments),
           LockResultPage.route: (ctx) => LockResultPage(
               _appStore, ModalRoute.of(ctx)?.settings?.arguments),
           LockInstructionPage.route: (_) => LockInstructionPage(),
-          ClaimPage.route: (_) => ClaimPage(_appStore),
-          ClaimDetailsPage.route: (_) => ClaimDetailsPage(_appStore),
+          ClaimPage.route: (ctx) => ClaimPage(
+              _appStore, ModalRoute.of(ctx)?.settings?.arguments ?? true),
+          ClaimDetailsPage.route: (ctx) => ClaimDetailsPage(
+              _appStore, ModalRoute.of(ctx)?.settings?.arguments),
           QrSignerPage.route: (_) => QrSignerPage(_appStore),
           QrSenderPage.route: (_) => QrSenderPage(),
           // assets
@@ -245,7 +217,6 @@ class _WalletAppState extends State<WalletApp> {
           ReceivePage.route: (_) => ReceivePage(_appStore),
           TransferDetailPage.route: (_) => TransferDetailPage(_appStore),
           CurrencySelectPage.route: (_) => CurrencySelectPage(),
-          ClaimPage.route: (_) => ClaimPage(_appStore),
           AttestPage.route: (_) => AttestPage(_appStore),
           // staking
           StakingDetailPage.route: (_) => StakingDetailPage(_appStore),
@@ -272,8 +243,7 @@ class _WalletAppState extends State<WalletApp> {
           ChangeNamePage.route: (_) => ChangeNamePage(_appStore.account),
           ChangePasswordPage.route: (_) =>
               ChangePasswordPage(_appStore.account),
-          SettingsPage.route: (_) =>
-              SettingsPage(_appStore.settings, _changeLang),
+          SettingsPage.route: (_) => SettingsPage(_appStore.settings),
           ExportAccountPage.route: (_) => ExportAccountPage(_appStore.account),
           ExportResultPage.route: (_) => ExportResultPage(),
           RemoteNodeListPage.route: (_) =>

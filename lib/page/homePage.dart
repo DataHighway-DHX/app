@@ -7,6 +7,7 @@ import 'package:polka_wallet/page/governance/index.dart';
 import 'package:polka_wallet/page/profile/index.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -15,7 +16,7 @@ import 'menu_page.dart';
 class HomePage extends StatefulWidget {
   HomePage(this.store);
 
-  static final String route = '/';
+  static final String routee = '/';
   final AppStore store;
 
   @override
@@ -151,12 +152,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    super.initState();
     if (_notificationPlugin == null) {
       _notificationPlugin = NotificationPlugin();
       _notificationPlugin.init(context);
     }
-
-    super.initState();
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => UI.checkUpdate(context));
   }
 
   @override

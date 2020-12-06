@@ -4,16 +4,16 @@ import 'package:flutter/services.dart';
 import 'package:polka_wallet/common/components/gasInput.dart';
 import 'package:polka_wallet/common/components/snackbars.dart';
 import 'package:polka_wallet/common/widgets/roundedButton.dart';
-import 'package:polka_wallet/service/ethereumApi/api.dart';
-import 'package:polka_wallet/service/ethereumApi/model.dart';
+import 'package:polka_wallet/page/assets/claim/claim_page.dart';
+import 'package:polka_wallet/service/ethereum_api/api.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:web3dart/web3dart.dart';
 
 import '../../../constants.dart';
 import '../../../common/components/transaction_message.dart';
 import 'lock_params.dart';
-import 'dart:convert' show utf8;
 
 class LockResultPage extends StatefulWidget {
   LockResultPage(this.store, this.lockParams);
@@ -35,43 +35,22 @@ class _ResultPageState extends State<LockResultPage> {
   bool _showMessageInQr = false;
   bool _continueBox = false;
 
-  bool _isLoading = false;
+  @override
+  void initState() {
+    super.initState();
+    initStateAsync();
+  }
 
-  int gasLimit = int.parse(kGasLimitRecommended);
-  int gasPrice = int.parse(kGasPriceRecommended);
-
-  void _turnLoading(bool value) {
-    if (mounted) setState(() => _isLoading = value);
+  Future<void> initStateAsync() async {
+    final structs = await ethereum.lockdrop.lockWalletStructs(
+        widget.lockParams.currentAddress, widget.lockParams.currency.address);
+    setState(() {
+      widget.lockParams.lockAddress = structs.lockAddress;
+    });
   }
 
   Future<void> _lock() async {
-    _turnLoading(true);
-    try {
-      final hash = await ethereum.lockdrop.lock(
-        amount: widget.lockParams.parsedAmount,
-        contractOwnerAddress: contractOwnerLockdrop,
-        isValidator: widget.lockParams.isValidator,
-        term: widget.lockParams.term,
-        dhxPublicKey: utf8.encode(dataHighwayPublicKey),
-        tokenContractAddress: widget.lockParams.currency.address,
-        privateKey: ethPrivateKey,
-        gasPrice: gasPrice,
-        maxGas: gasLimit,
-      );
-
-      final result = await ethereum.lockdrop.waitForTransaction(hash);
-      print('$_lock ($hash): $result');
-      if (result == TransactionStatus.succeed) {
-        Navigator.of(context).push(null);
-      } else {
-        scaffoldKey.currentState
-            .showSnackBar(SnackBars.error('transaction failed'));
-      }
-    } catch (e) {
-      scaffoldKey.currentState.showSnackBar(SnackBars.error(e.toString()));
-    } finally {
-      _turnLoading(false);
-    }
+    Navigator.of(context).pushNamed(ClaimPage.route, arguments: false);
   }
 
   @override
@@ -120,7 +99,7 @@ class _ResultPageState extends State<LockResultPage> {
                                   QrImage(
                                     data: _showMessageInQr
                                         ? widget.lockParams.transactionMessage
-                                        : widget.lockParams.contractAddress
+                                        : widget.lockParams.lockAddress
                                             .toString(),
                                     version: QrVersions.auto,
                                     size: 150.0,
@@ -157,7 +136,7 @@ class _ResultPageState extends State<LockResultPage> {
                               SizedBox(width: 16),
                               Expanded(
                                 child: Text(
-                                  widget.lockParams.contractAddress.toString(),
+                                  widget.lockParams.lockAddress.toString(),
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText2
@@ -172,7 +151,7 @@ class _ResultPageState extends State<LockResultPage> {
                                 onPressed: () {
                                   Clipboard.setData(
                                     ClipboardData(
-                                      text: widget.lockParams.contractAddress
+                                      text: widget.lockParams.lockAddress
                                           .toString(),
                                     ),
                                   );
@@ -216,19 +195,6 @@ class _ResultPageState extends State<LockResultPage> {
                     contentPadding: EdgeInsets.zero,
                   ),
                   SizedBox(height: 20),
-                  GasInput(
-                    title: dic['gas.limit'],
-                    defaultValue: kGasLimitRecommended,
-                    subtitle: dic['units'],
-                    onValue: (s) => gasLimit = s,
-                  ),
-                  SizedBox(height: 10),
-                  GasInput(
-                    title: dic['gas.price'],
-                    defaultValue: kGasPriceRecommended,
-                    subtitle: dic['gwei'],
-                    onValue: (s) => gasPrice = s,
-                  ),
                 ],
               ),
             ),
@@ -241,12 +207,10 @@ class _ResultPageState extends State<LockResultPage> {
               child: Container(
                 child: RoundedButton(
                   text: I18n.of(context).assets['lock'],
-                  onPressed: _continueBox &&
-                          gasPrice != null &&
-                          gasLimit != null &&
-                          !_isLoading
-                      ? () => _lock()
-                      : null,
+                  onPressed:
+                      _continueBox && widget.lockParams.lockAddress != null
+                          ? () => _lock()
+                          : null,
                 ),
               ),
             ),

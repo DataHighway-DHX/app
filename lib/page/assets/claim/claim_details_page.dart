@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:polka_wallet/service/ethereum_api/api.dart';
 
 class ClaimDetailsPage extends StatelessWidget {
   static final String route = '/assets/claim/details';
+  final Claim claim;
 
-  ClaimDetailsPage(AppStore store);
+  ClaimDetailsPage(AppStore store, this.claim);
 
   Widget tableRow(BuildContext context, String title, String content,
       {bool copyable = false}) {
+    Claim claim = Claim();
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
@@ -76,17 +80,18 @@ class ClaimDetailsPage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 16),
-              tableRow(context, dic['from'], '0x84294...w3ergtf',
+              tableRow(context, dic['from'], Fmt.address(claim.ethereumAccount),
                   copyable: true),
-              tableRow(context, dic['to'], '0x84294...w3ergtf', copyable: true),
-              tableRow(context, dic['amount'], '21.768 MXC'),
-              tableRow(context, dic['transaction.fee'], '\$ 25'),
-              tableRow(context, dic['expected.msb'], '1.00125'),
-              tableRow(context, dic['duration'], '3 months'),
-              tableRow(context, dic['timestamp'], '29 days ago'),
-              tableRow(context, dic['blockchain'], 'Ethereum Testnet (Görli)'),
-              tableRow(context, dic['transaction.hash'],
-                  '6146ccf6a66d994f7c363db 875e31ca35581450a4bf6d3 be6cc9ac79233a69d0'),
+              tableRow(context, dic['to'], Fmt.address(claim.tokenAddress),
+                  copyable: true),
+              tableRow(context, dic['amount'],
+                  '${Fmt.balance(claim.amount, 18)} ${claim.tokenName.toUpperCase()}'),
+              tableRow(context, dic['transaction.fee'], 'TBD'),
+              tableRow(context, dic['expected.msb'], 'TBD'),
+              tableRow(context, dic['duration'], '${claim.term.months} months'),
+              tableRow(context, dic['timestamp'], 'TBD days ago'),
+              tableRow(
+                  context, dic['transaction.hash'], claim.depositTransaction),
               SizedBox(height: 25),
               Text(
                 dic['your.claim'],

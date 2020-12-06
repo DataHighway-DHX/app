@@ -1,13 +1,12 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:polka_wallet/common/widgets/roundedButton.dart';
-import 'package:polka_wallet/page/assets/claim/claimPage.dart';
+import 'package:polka_wallet/page/assets/claim/claim_page.dart';
 import 'package:polka_wallet/page/assets/signal/signal_page.dart';
+import 'package:polka_wallet/service/ethereum_api/api.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/format.dart';
+import 'package:polka_wallet/store/assets/types/currency.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 import 'asset/assetPage.dart';
@@ -20,6 +19,8 @@ class AssetCard extends StatefulWidget {
   final String subtitle;
   final double balance;
   final double usdBalance;
+  final TokenCurrency currency;
+  final double msb;
 
   final bool lock;
   final bool signal;
@@ -37,6 +38,8 @@ class AssetCard extends StatefulWidget {
     this.signal = true,
     this.claim = true,
     this.expandedContent,
+    this.msb,
+    this.currency,
   }) : super(key: key);
 
   @override
@@ -57,13 +60,18 @@ class _AssetCardState extends State<AssetCard>
         Tween(begin: 0.0, end: 1.0).animate(expandAnimationController);
   }
 
-  Widget itemButton(BuildContext context, String text, String routeName) {
+  Widget itemButton(BuildContext context, String text, String routeName,
+      [Object arguments]) {
     return Expanded(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 5),
         child: RoundedButton.dense(
           text: text,
-          onPressed: () => Navigator.pushNamed(context, routeName),
+          onPressed: () => Navigator.pushNamed(
+            context,
+            routeName,
+            arguments: arguments,
+          ),
         ),
       ),
     );
@@ -81,9 +89,16 @@ class _AssetCardState extends State<AssetCard>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          if (widget.lock) itemButton(context, dic['lock'], LockPage.route),
+          if (widget.lock)
+            itemButton(context, dic['lock'], LockPage.route, {
+              'msb': widget.msb,
+              'currency': widget.currency,
+            }),
           if (widget.signal)
-            itemButton(context, dic['signal'], SignalPage.route),
+            itemButton(context, dic['signal'], SignalPage.route, {
+              'msb': widget.msb,
+              'currency': widget.currency,
+            }),
           if (widget.claim) itemButton(context, dic['claim'], ClaimPage.route),
         ],
       ),
@@ -143,7 +158,7 @@ class _AssetCardState extends State<AssetCard>
                 ),
                 Spacer(),
                 Text(
-                  widget.balance.toStringAsFixed(3),
+                  widget.balance?.toStringAsFixed(3) ?? '...',
                   style: Theme.of(context).textTheme.subtitle1.copyWith(
                         color: Color(0xFF939393),
                         fontWeight: FontWeight.bold,

@@ -21,6 +21,7 @@ curl "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.pkg" > "$HO
 sudo installer -store -pkg "$HOME/Downloads/node-installer.pkg" -target "/"
 cd ./lib/js_service_kusama && yarn install && yarn run build && cd ../..
 cd ./lib/js_service_acala && yarn install && yarn run build && cd ../..
+cd ./lib/js_service_datahighway && yarn install && yarn run build && cd ../..
 
 touch assets/.env
 echo "MNENOMIC=${MNENOMIC}" > assets/.env
@@ -33,5 +34,6 @@ echo "CONTRACT_ADDRESS_MXC_MAINNET=${CONTRACT_ADDRESS_MXC_MAINNET}" >> assets/.e
 echo "CONTRACT_ADDRESS_IOTA_PEGGED_MAINNET=${CONTRACT_ADDRESS_IOTA_PEGGED_MAINNET}" >> assets/.env
 echo "INFURA_API_PROJECT_ID=${INFURA_API_PROJECT_ID}" >> assets/.env
 echo "ENVIRONMENT=${ENVIRONMENT}" >> assets/.env
+echo "DEPLOYERS_LIST=${DEPLOYERS_LIST}" >> assets/.env
 
 flutter build ios --release --no-codesign

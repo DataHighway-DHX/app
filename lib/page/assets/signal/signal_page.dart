@@ -3,16 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/widgets/picker_button.dart';
 import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/page/assets/signal/instruction/instruction_page.dart';
+import 'package:polka_wallet/page/assets/signal/signal_params.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/assets/types/currency.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 import 'signal_detail_page.dart';
 
 class SignalPage extends StatefulWidget {
-  SignalPage(this.store);
+  SignalPage(this.store, this.msb, this.currency);
 
   static final String route = '/assets/signal';
   final AppStore store;
+  final double msb;
+  final TokenCurrency currency;
 
   @override
   _SignalPageState createState() => _SignalPageState(store);
@@ -88,7 +92,13 @@ class _SignalPageState extends State<SignalPage> {
               RoundedButton(
                 text: I18n.of(context).home['next'],
                 onPressed: rulesAccepted
-                    ? () => Navigator.pushNamed(context, SignalDetailPage.route)
+                    ? () => Navigator.pushNamed(
+                          context,
+                          SignalDetailPage.route,
+                          arguments: SignalParams()
+                            ..msb = widget.msb
+                            ..currency = widget.currency,
+                        )
                     : null,
               ),
               SizedBox(height: 15),
