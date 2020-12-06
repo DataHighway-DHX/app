@@ -233,7 +233,7 @@ class _CouncilState extends State<Council> {
       return RefreshIndicator(
         key: globalCouncilRefreshKey,
         onRefresh: _fetchCouncilInfo,
-        child: store.gov.council == null
+        child: store.gov.council?.members == null
             ? Container()
             : ListView(
                 children: <Widget>[
