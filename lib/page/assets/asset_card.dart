@@ -21,6 +21,7 @@ class AssetCard extends StatefulWidget {
   final double usdBalance;
   final TokenCurrency currency;
   final double msb;
+  final bool native;
 
   final bool lock;
   final bool signal;
@@ -40,6 +41,7 @@ class AssetCard extends StatefulWidget {
     this.expandedContent,
     this.msb,
     this.currency,
+    this.native = true,
   }) : super(key: key);
 
   @override
@@ -120,8 +122,10 @@ class _AssetCardState extends State<AssetCard>
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: InkWell(
-        onTap: () => Navigator.pushNamed(context, AssetPage.route,
-            arguments: widget.label),
+        onTap: widget.native
+            ? () => Navigator.pushNamed(context, AssetPage.route,
+                arguments: widget.label)
+            : null,
         child: Column(
           children: <Widget>[
             SizedBox(

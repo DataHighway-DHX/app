@@ -302,14 +302,14 @@ class _AssetsState extends State<Assets> {
                   height: 20,
                 ),
               ],
-              AssetCard(
-                image: AssetImage('assets/images/assets/currencies/DOT.png'),
-                label: 'DOT',
-                subtitle: 'DataHighway Testnet',
-                balance: 123,
-                usdBalance: 10,
-                lock: false,
-              ),
+              // AssetCard(
+              //   image: AssetImage('assets/images/assets/currencies/DOT.png'),
+              //   label: 'DOT',
+              //   subtitle: 'DataHighway Testnet',
+              //   balance: 123,
+              //   usdBalance: 10,
+              //   lock: false,
+              // ),
             ],
           ),
         );

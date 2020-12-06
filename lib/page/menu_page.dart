@@ -119,22 +119,22 @@ class _MenuPageState extends State<MenuPage> {
                   onTap: () => setSelectedWallet(0),
                   selected: _selectedNetwork == networkEndpointDatahighway,
                 ),
-                MenuButton(
-                  image: AssetImage(
-                      'assets/images/public/wallet_types/polkadot.png'),
-                  selectedImage: AssetImage(
-                      'assets/images/public/wallet_types/polkadot_sel.png'),
-                  onTap: () => setSelectedWallet(1),
-                  selected: _selectedNetwork == networkEndpointPolkadot,
-                ),
-                MenuButton(
-                  image: AssetImage(
-                      'assets/images/public/wallet_types/kusama.png'),
-                  selectedImage: AssetImage(
-                      'assets/images/public/wallet_types/kusama_sel.png'),
-                  onTap: () => setSelectedWallet(2),
-                  selected: _selectedNetwork == networkEndpointKusama,
-                ),
+                // MenuButton(
+                //   image: AssetImage(
+                //       'assets/images/public/wallet_types/polkadot.png'),
+                //   selectedImage: AssetImage(
+                //       'assets/images/public/wallet_types/polkadot_sel.png'),
+                //   onTap: () => setSelectedWallet(1),
+                //   selected: _selectedNetwork == networkEndpointPolkadot,
+                // ),
+                // MenuButton(
+                //   image: AssetImage(
+                //       'assets/images/public/wallet_types/kusama.png'),
+                //   selectedImage: AssetImage(
+                //       'assets/images/public/wallet_types/kusama_sel.png'),
+                //   onTap: () => setSelectedWallet(2),
+                //   selected: _selectedNetwork == networkEndpointKusama,
+                // ),
               ],
             ),
           ),

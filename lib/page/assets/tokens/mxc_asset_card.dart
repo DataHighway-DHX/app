@@ -57,6 +57,7 @@ class _MxcAssetCardState extends State<MxcAssetCard> {
       builder: (_, snap) => Column(
         children: [
           AssetCard(
+            native: false,
             image: AssetImage('assets/images/assets/MXC.png'),
             label: AssetsConfigs.mxc,
             subtitle: 'ERC-20',

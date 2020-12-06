@@ -34,6 +34,7 @@ class _EthAssetCardState extends State<EthAssetCard> {
       builder: (_, snap) => Column(
         children: [
           AssetCard(
+            native: false,
             image: AssetImage('assets/images/assets/currencies/ETH.png'),
             label: 'ETH',
             subtitle: 'GAS',

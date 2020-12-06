@@ -25,9 +25,13 @@ class _StakingState extends State<Staking> {
   @override
   Widget build(BuildContext context) {
     var dic = I18n.of(context).staking;
-    var tabs = [dic['actions'], dic['validators']];
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text(dic['validators']),
+        centerTitle: true,
+        elevation: 0.0,
+      ),
       backgroundColor: Theme.of(context).cardColor,
       body: SafeArea(
         child: Container(
@@ -35,24 +39,8 @@ class _StakingState extends State<Staking> {
           color: Colors.transparent,
           child: Column(
             children: <Widget>[
-              TopTabs(
-                names: tabs,
-                activeTab: _tab,
-                onTab: (v) {
-                  if (_tab != v) {
-                    setState(() {
-                      _tab = v;
-                    });
-                  }
-                },
-              ),
-              SizedBox(
-                height: 20,
-              ),
               Expanded(
-                child: _tab == 1
-                    ? StakingOverviewPage(store)
-                    : StakingActions(store),
+                child: StakingOverviewPage(store),
               ),
             ],
           ),
