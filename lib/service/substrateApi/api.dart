@@ -63,8 +63,9 @@ class Api {
     }
     print('webview loaded for network $network');
 
-    final js =
-        await rootBundle.loadString('lib/js_service_$network/dist/main.js');
+    final data = await rootBundle.load('lib/js_service_$network/dist/main.js');
+    final js = utf8.decode(data.buffer.asUint8List());
+
     print('js file loaded');
     log('substrate-api',
         'base load, starting for ${store.settings.endpoint.info}');
