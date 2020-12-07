@@ -35,7 +35,6 @@ class _HomePageState extends State<HomePage> {
   final List<String> _tabList = [
     'Mining',
     'Staking',
-    'Governance',
     'Profile',
   ];
 
@@ -69,8 +68,6 @@ class _HomePageState extends State<HomePage> {
         return Assets(store);
       case 1:
         return Staking(store);
-      case 2:
-        return Governance(store);
       default:
         return Profile(store);
     }
@@ -79,7 +76,7 @@ class _HomePageState extends State<HomePage> {
   List<Widget> _buildPages() {
     bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
     String imageColor = isKusama ? 'black' : 'pink';
-    return [0, 1, 2, 3].map((i) {
+    return List.generate(_tabList.length, (i) => i).map((i) {
       if (i == 0) {
         // return assets page
         return Stack(
