@@ -58,6 +58,7 @@ class _MxcAssetCardState extends State<MxcAssetCard> {
         children: [
           AssetCard(
             native: false,
+            loading: !snap.hasData,
             image: AssetImage('assets/images/assets/MXC.png'),
             label: AssetsConfigs.mxc,
             subtitle: 'ERC-20',

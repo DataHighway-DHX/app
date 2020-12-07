@@ -55,6 +55,7 @@ class _IotaAssetCardState extends State<IotaAssetCard> {
         children: [
           AssetCard(
             native: false,
+            loading: !snap.hasData,
             image: AssetImage('assets/images/assets/currencies/IOTA.png'),
             label: AssetsConfigs.iota,
             subtitle: 'ERC-20',

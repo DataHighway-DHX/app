@@ -35,6 +35,7 @@ class _EthAssetCardState extends State<EthAssetCard> {
         children: [
           AssetCard(
             native: false,
+            loading: !snap.hasData,
             image: AssetImage('assets/images/assets/currencies/ETH.png'),
             label: 'ETH',
             subtitle: 'GAS',

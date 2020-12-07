@@ -22,6 +22,7 @@ class AssetCard extends StatefulWidget {
   final TokenCurrency currency;
   final double msb;
   final bool native;
+  final bool loading;
 
   final bool lock;
   final bool signal;
@@ -42,6 +43,7 @@ class AssetCard extends StatefulWidget {
     this.msb,
     this.currency,
     this.native = true,
+    this.loading = false,
   }) : super(key: key);
 
   @override
@@ -69,11 +71,13 @@ class _AssetCardState extends State<AssetCard>
         padding: EdgeInsets.symmetric(horizontal: 5),
         child: RoundedButton.dense(
           text: text,
-          onPressed: () => Navigator.pushNamed(
-            context,
-            routeName,
-            arguments: arguments,
-          ),
+          onPressed: widget.loading
+              ? null
+              : () => Navigator.pushNamed(
+                    context,
+                    routeName,
+                    arguments: arguments,
+                  ),
         ),
       ),
     );
