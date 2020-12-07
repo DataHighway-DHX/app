@@ -184,7 +184,7 @@ abstract class _SettingsStore with Store {
     Map<String, dynamic> value =
         await rootStore.localStorage.getObject(localStorageEndpointKey);
     if (value == null) {
-      endpoint = networkEndpointKusama;
+      endpoint = networkEndpointDatahighway;
     } else {
       endpoint = EndpointData.fromJson(value);
     }
