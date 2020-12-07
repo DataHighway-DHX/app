@@ -290,7 +290,7 @@ class _AssetsState extends State<Assets> {
                 signal: false,
               ),
               SizedBox(height: 20),
-              ...[
+              if (!store.settings.loading) ...[
                 MxcAssetCard(store: store),
                 SizedBox(height: 20),
                 IotaAssetCard(store: store),
