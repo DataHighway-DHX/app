@@ -54,6 +54,7 @@ class _PickerCardState<T> extends State<PickerCard<T>> {
         values: List.generate(widget.values.length, (i) => i),
       ),
     );
+    if (val == null) return;
     setState(() {
       selectionIndex = val;
       selectedValue = widget.values[val];
