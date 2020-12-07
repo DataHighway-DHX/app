@@ -40,6 +40,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
   final TextEditingController _keyCtrl = new TextEditingController();
   final TextEditingController _nameCtrl = new TextEditingController();
   final TextEditingController _passCtrl = new TextEditingController();
+  final TextEditingController _ethCtrl = new TextEditingController();
 
   final TextEditingController _observationAddressCtrl =
       new TextEditingController();
@@ -180,6 +181,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
       'memo': _memoCtrl.text,
       'observation': true,
       'pubKey': pubKey,
+      'ethereum': _ethCtrl.text.trim(),
     };
     // create new contact
     int exist = widget.store.settings.contactList
@@ -304,6 +306,21 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                   values: _keyOptions,
                   defaultValue: _keyOptions[_keySelection],
                 ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      hintText: dic['eth.address'],
+                      labelText: dic['eth.address'],
+                    ),
+                    controller: _ethCtrl,
+                    validator: (v) {
+                      return !Fmt.ethereumAddressCorrect(v.trim())
+                          ? null
+                          : dic['eth.address.error'];
+                    },
+                  ),
+                ),
                 _keySelection != 3
                     ? Padding(
                         padding: EdgeInsets.only(left: 16, right: 16),
@@ -346,9 +363,13 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                   _onAddObservationAccount();
                   return;
                 }
+                widget.store.account
+                    .setNewAccountEthereum(_ethCtrl.text.trim());
                 if (_keySelection == 2) {
                   widget.store.account.setNewAccount(
-                      _nameCtrl.text.trim(), _passCtrl.text.trim());
+                    _nameCtrl.text.trim(),
+                    _passCtrl.text.trim(),
+                  );
                 }
                 widget.store.account.setNewAccountKey(_keyCtrl.text.trim());
                 widget.onSubmit({

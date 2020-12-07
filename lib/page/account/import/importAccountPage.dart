@@ -123,7 +123,11 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
   }
 
   Future<void> _saveAccount(Map<String, dynamic> acc) async {
-    await store.account.addAccount(acc, store.account.newAccount.password);
+    await store.account.addAccount(
+      acc,
+      store.account.newAccount.password,
+      widget.store.account.newAccount.ethereumAddress,
+    );
     webApi.account.encodeAddress([acc['pubKey']]);
 
     store.assets.loadAccountCache();

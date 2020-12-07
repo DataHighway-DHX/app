@@ -239,8 +239,10 @@ mixin _$AccountStore on _AccountStore, Store {
   final _$addAccountAsyncAction = AsyncAction('_AccountStore.addAccount');
 
   @override
-  Future<void> addAccount(Map<String, dynamic> acc, String password) {
-    return _$addAccountAsyncAction.run(() => super.addAccount(acc, password));
+  Future<void> addAccount(
+      Map<String, dynamic> acc, String password, String ethereumAddress) {
+    return _$addAccountAsyncAction
+        .run(() => super.addAccount(acc, password, ethereumAddress));
   }
 
   final _$removeAccountAsyncAction = AsyncAction('_AccountStore.removeAccount');
@@ -324,11 +326,22 @@ mixin _$AccountStore on _AccountStore, Store {
   }
 
   @override
-  void setNewAccount(String name, String password) {
+  void setNewAccountEthereum(String ethereumAddress) {
+    final _$actionInfo = _$_AccountStoreActionController.startAction(
+        name: '_AccountStore.setNewAccountEthereum');
+    try {
+      return super.setNewAccountEthereum(ethereumAddress);
+    } finally {
+      _$_AccountStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setNewAccount(String name, String password, [String ethereumAddress]) {
     final _$actionInfo = _$_AccountStoreActionController.startAction(
         name: '_AccountStore.setNewAccount');
     try {
-      return super.setNewAccount(name, password);
+      return super.setNewAccount(name, password, ethereumAddress);
     } finally {
       _$_AccountStoreActionController.endAction(_$actionInfo);
     }
@@ -502,12 +515,28 @@ mixin _$AccountCreate on _AccountCreate, Store {
     });
   }
 
+  final _$ethereumAddressAtom = Atom(name: '_AccountCreate.ethereumAddress');
+
+  @override
+  String get ethereumAddress {
+    _$ethereumAddressAtom.reportRead();
+    return super.ethereumAddress;
+  }
+
+  @override
+  set ethereumAddress(String value) {
+    _$ethereumAddressAtom.reportWrite(value, super.ethereumAddress, () {
+      super.ethereumAddress = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
 name: ${name},
 password: ${password},
-key: ${key}
+key: ${key},
+ethereumAddress: ${ethereumAddress}
     ''';
   }
 }

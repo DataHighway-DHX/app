@@ -9,8 +9,18 @@ import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/staking/types/validatorData.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:web3dart/credentials.dart';
 
 class Fmt {
+  static bool ethereumAddressCorrect(String address) {
+    try {
+      EthereumAddress.fromHex(address);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   static String passwordToEncryptKey(String password) {
     String passHex = hex.encode(utf8.encode(password));
     if (passHex.length > 32) {

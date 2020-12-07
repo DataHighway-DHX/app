@@ -8,6 +8,7 @@ import 'package:polka_wallet/service/ethereum_api/api.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets/types/currency.dart';
+import 'package:web3dart/web3dart.dart';
 
 import 'tables/iota_table_source.dart';
 
@@ -36,11 +37,13 @@ class _IotaAssetCardState extends State<IotaAssetCard> {
 
   Future<_IotaAssetModel> _initFuture;
   Future<_IotaAssetModel> getModel() async {
-    final unparsed = await ethereum.iotaToken.balanceOf(kAccountAddrTestnet);
+    final ethAddress = EthereumAddress.fromHex(
+        widget.store.account.currentAccount.ethereumAddress);
+    final unparsed = await ethereum.iotaToken.balanceOf(ethAddress);
     final balance = unparsed.toDecimal();
 
     final signal = await ethereum.lockdrop
-        .signalWalletStructs(kAccountAddrTestnet, kContractAddrMXCTestnet);
+        .signalWalletStructs(ethAddress, ethereum.iotaToken.contractAddress);
 
     final msbRates = await webApi.datahighway.getMSBRates();
 

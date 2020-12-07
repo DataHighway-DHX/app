@@ -15,6 +15,7 @@ abstract class _AccountData {
   String address = '';
   String encoded = '';
   String pubKey = '';
+  String ethereumAddress = '';
 
   Map<String, dynamic> encoding = Map<String, dynamic>();
   Map<String, dynamic> meta = Map<String, dynamic>();

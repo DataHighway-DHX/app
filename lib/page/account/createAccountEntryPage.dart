@@ -41,8 +41,11 @@ class _CreateAccountEntryPageState extends State<CreateAccountEntryPage> {
     code = code.replaceAll(RegExp(r'\t|\n|\r'), '');
     Map<String, dynamic> acc =
         await webApi.connector.eval(code, allowRepeat: true);
-    await widget.store.account
-        .addAccount(acc, widget.store.account.newAccount.password);
+    await widget.store.account.addAccount(
+      acc,
+      widget.store.account.newAccount.password,
+      widget.store.account.newAccount.ethereumAddress,
+    );
     webApi.account.encodeAddress([acc['pubKey']]);
     widget.store.assets.loadAccountCache();
     widget.store.staking.loadAccountCache();

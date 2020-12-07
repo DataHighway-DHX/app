@@ -5,8 +5,6 @@ var kEnvironment = DotEnv().env['ENVIRONMENT'];
 
 // Account
 var kMnemonicSeed = DotEnv().env['MNENOMIC'];
-var kAccountAddrTestnet =
-    EthereumAddress.fromHex(DotEnv().env['ETHEREUM_ADDRESS']);
 //Latest 0x022478d51bF0cF12799E443ccd19527e075B6B37
 //before 0x2733566693458ee7e35f63b309da864db2637dc1
 var kGasLimitRecommended = '2000000';
@@ -18,11 +16,7 @@ var kRpcUrlInfuraTestnetRopsten =
 var kWsUrlInfuraTestnetRopsten =
     'wss://ropsten.infura.io/ws/v3/${DotEnv().env['INFURA_API_PROJECT_ID']}';
 
-final EthereumAddress kContractAddrMXCTestnet =
-    EthereumAddress.fromHex(DotEnv().env['CONTRACT_ADDRESS_MXC_TESTNET']);
 // TODO - add address of IOTA Pegged ERC20 contract to .env file
-final EthereumAddress kContractAddrIOTAPeggedTestnet = EthereumAddress.fromHex(
-    DotEnv().env['CONTRACT_ADDRESS_IOTA_PEGGED_TESTNET']);
 final String deployersListUrl = DotEnv().env['DEPLOYERS_LIST'] ??
     'https://raw.githubusercontent.com/DataHighway-DHX/deployer/main/hosted_deployers.json';
 var kAbiCodeFileMXC = "abi_mxc.json";
@@ -32,8 +26,8 @@ var kAbiCodeFileDataHighwayLockdropTestnet =
 var kAbiCodeFileDataHighwayIOTAPeggedTestnet =
     "abi_datahighway_iota_pegged_testnet.json";
 
-const demoUsername = 'aaaaaqwer1234';
-const demoPassword = 'aaaaaqwer1234';
+final demoUsername = DotEnv().env['DEMO_USERNAME'];
+final demoPassword = DotEnv().env['DEMO_PASSWORD'];
 
 // // Mainnet
 // var kRpcUrlInfuraMainnet =

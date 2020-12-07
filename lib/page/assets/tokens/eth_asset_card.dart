@@ -5,6 +5,7 @@ import 'package:polka_wallet/constants.dart';
 import 'package:polka_wallet/page/assets/asset_card.dart';
 import 'package:polka_wallet/service/ethereum_api/api.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:web3dart/web3dart.dart';
 
 class EthAssetCard extends StatefulWidget {
   final AppStore store;
@@ -23,7 +24,10 @@ class _EthAssetCardState extends State<EthAssetCard> {
 
   Future<Decimal> _getBalanceFuture;
   Future<Decimal> getBalance() async {
-    final unparsed = await ethereum.getBalance(kAccountAddrTestnet);
+    final unparsed = await ethereum.getBalance(
+      EthereumAddress.fromHex(
+          widget.store.account.currentAccount.ethereumAddress),
+    );
     return unparsed.toDecimal();
   }
 

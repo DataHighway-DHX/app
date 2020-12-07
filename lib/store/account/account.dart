@@ -118,9 +118,15 @@ abstract class _AccountStore with Store {
   }
 
   @action
-  void setNewAccount(String name, String password) {
+  void setNewAccountEthereum(String ethereumAddress) {
+    newAccount.ethereumAddress = ethereumAddress;
+  }
+
+  @action
+  void setNewAccount(String name, String password, [String ethereumAddress]) {
     newAccount.name = name;
     newAccount.password = password;
+    if (ethereumAddress != null) newAccount.ethereumAddress = ethereumAddress;
   }
 
   @action
@@ -160,8 +166,10 @@ abstract class _AccountStore with Store {
   }
 
   @action
-  Future<void> addAccount(Map<String, dynamic> acc, String password) async {
+  Future<void> addAccount(
+      Map<String, dynamic> acc, String password, String ethereumAddress) async {
     String pubKey = acc['pubKey'];
+    acc['ethereumAddress'] = ethereumAddress;
     // save seed and remove it before add account
     void saveSeed(String seedType) {
       String seed = acc[seedType];
@@ -357,4 +365,7 @@ abstract class _AccountCreate with Store {
 
   @observable
   String key = '';
+
+  @observable
+  String ethereumAddress = '';
 }

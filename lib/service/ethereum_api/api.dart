@@ -52,35 +52,17 @@ class Ethereum {
       wsUrl: kWsUrlInfuraTestnetRopsten,
     );
 
-    final mxcToken = MxcTokenApi(
-      ContractAbiProvider.fromAsset(
-        'MXCToken',
-        'assets/data/$kAbiCodeFileMXC',
-      ),
-      kContractAddrMXCTestnet,
-      ethereumApi,
-    );
-
-    final iotaPeggedToken = IotaTokenApi(
-      ContractAbiProvider.fromAsset(
-        'IOTAPeggedToken',
-        'assets/data/$kAbiCodeFileDataHighwayIOTAPeggedTestnet',
-      ),
-      kContractAddrIOTAPeggedTestnet,
-      ethereumApi,
-    );
-
-    return Ethereum(mxcToken, iotaPeggedToken, ethereumApi);
+    return Ethereum(ethereumApi);
   }
 
-  Ethereum(this.mxcToken, this.iotaToken, this._api);
+  Ethereum(this._api);
 
   final store = globalAppStore;
 
   LockdropApi lockdrop;
   DeployerApi deployer;
-  final MxcTokenApi mxcToken;
-  final IotaTokenApi iotaToken;
+  MxcTokenApi mxcToken;
+  IotaTokenApi iotaToken;
 
   final EthereumApi _api;
 
@@ -106,6 +88,9 @@ class Ethereum {
     final httpRes = await http.get('${info.url}/lockdrop/get');
     final jsonRes = jsonDecode(httpRes.body);
     final contractAddress = jsonRes['lockdropAddress'];
+    final mxcAddress = jsonRes['mxcToken'];
+    final iotaAddress = jsonRes['iotaToken'];
+
     lockdrop = LockdropApi(
       info,
       ContractAbiProvider.fromAsset(
@@ -113,6 +98,24 @@ class Ethereum {
         'assets/data/$kAbiCodeFileDataHighwayLockdropTestnet',
       ),
       EthereumAddress.fromHex(contractAddress),
+      _api,
+    );
+
+    mxcToken = MxcTokenApi(
+      ContractAbiProvider.fromAsset(
+        'MXCToken',
+        'assets/data/$kAbiCodeFileMXC',
+      ),
+      mxcAddress,
+      _api,
+    );
+
+    iotaToken = IotaTokenApi(
+      ContractAbiProvider.fromAsset(
+        'IOTAPeggedToken',
+        'assets/data/$kAbiCodeFileDataHighwayIOTAPeggedTestnet',
+      ),
+      iotaAddress,
       _api,
     );
     deployer = DeployerApi(info);

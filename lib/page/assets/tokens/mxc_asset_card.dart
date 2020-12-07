@@ -8,6 +8,7 @@ import 'package:polka_wallet/service/ethereum_api/api.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets/types/currency.dart';
+import 'package:web3dart/web3dart.dart';
 
 import 'tables/mxc_table_source.dart';
 
@@ -37,13 +38,15 @@ class _MxcAssetCardState extends State<MxcAssetCard> {
 
   Future<_MxcAssetModel> _initFuture;
   Future<_MxcAssetModel> getModel() async {
-    final unparsed = await ethereum.mxcToken.balanceOf(kAccountAddrTestnet);
+    final ethAddress = EthereumAddress.fromHex(
+        widget.store.account.currentAccount.ethereumAddress);
+    final unparsed = await ethereum.mxcToken.balanceOf(ethAddress);
     final balance = unparsed.toDecimal();
 
     final lock = await ethereum.lockdrop
-        .lockWalletStructs(kAccountAddrTestnet, kContractAddrMXCTestnet);
+        .lockWalletStructs(ethAddress, ethereum.mxcToken.contractAddress);
     final signal = await ethereum.lockdrop
-        .signalWalletStructs(kAccountAddrTestnet, kContractAddrMXCTestnet);
+        .signalWalletStructs(ethAddress, ethereum.mxcToken.contractAddress);
 
     final msbRates = await webApi.datahighway.getMSBRates();
 

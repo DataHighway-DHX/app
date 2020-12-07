@@ -46,7 +46,11 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
       return;
     }
 
-    await store.account.addAccount(acc, store.account.newAccount.password);
+    await store.account.addAccount(
+      acc,
+      store.account.newAccount.password,
+      widget.store.account.newAccount.ethereumAddress,
+    );
     webApi.account.encodeAddress([acc['pubKey']]);
 
     store.assets.loadAccountCache();

@@ -16,7 +16,7 @@ class LockParams {
 
   EthereumAddress get contractOwnerAddress =>
       EthereumAddress.fromHex(ethereum.lockdrop.host.ethereumAddress);
-  EthereumAddress get currentAddress => kAccountAddrTestnet;
+  EthereumAddress currentAddress;
   EthereumAddress lockAddress;
 
   BigInt get parsedAmount {

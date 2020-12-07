@@ -12,6 +12,7 @@ AccountData _$AccountDataFromJson(Map<String, dynamic> json) {
     ..address = json['address'] as String
     ..encoded = json['encoded'] as String
     ..pubKey = json['pubKey'] as String
+    ..ethereumAddress = json['ethereumAddress'] as String
     ..encoding = json['encoding'] as Map<String, dynamic>
     ..meta = json['meta'] as Map<String, dynamic>
     ..memo = json['memo'] as String
@@ -24,6 +25,7 @@ Map<String, dynamic> _$AccountDataToJson(AccountData instance) =>
       'address': instance.address,
       'encoded': instance.encoded,
       'pubKey': instance.pubKey,
+      'ethereumAddress': instance.ethereumAddress,
       'encoding': instance.encoding,
       'meta': instance.meta,
       'memo': instance.memo,

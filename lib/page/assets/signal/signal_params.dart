@@ -13,7 +13,7 @@ class SignalParams {
   TokenCurrency currency = TokenCurrency.mxc;
 
   EthereumAddress contractAddress;
-  EthereumAddress get currentAddress => kAccountAddrTestnet;
+  EthereumAddress currentAddress;
   BigInt get parsedAmount {
     final parsedDecimal = Decimal.tryParse(amount);
     if (parsedDecimal == null) return null;
