@@ -46,7 +46,7 @@ class CreateAccountForm extends StatelessWidget {
                   ),
                   controller: _ethCtrl,
                   validator: (v) {
-                    return !Fmt.ethereumAddressCorrect(v.trim())
+                    return Fmt.ethereumAddressCorrect(v.trim())
                         ? null
                         : dic['eth.address.error'];
                   },

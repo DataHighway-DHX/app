@@ -106,7 +106,7 @@ class Ethereum {
         'MXCToken',
         'assets/data/$kAbiCodeFileMXC',
       ),
-      mxcAddress,
+      EthereumAddress.fromHex(mxcAddress),
       _api,
     );
 
@@ -115,7 +115,7 @@ class Ethereum {
         'IOTAPeggedToken',
         'assets/data/$kAbiCodeFileDataHighwayIOTAPeggedTestnet',
       ),
-      iotaAddress,
+      EthereumAddress.fromHex(iotaAddress),
       _api,
     );
     deployer = DeployerApi(info);

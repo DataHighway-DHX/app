@@ -306,21 +306,22 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                   values: _keyOptions,
                   defaultValue: _keyOptions[_keySelection],
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      hintText: dic['eth.address'],
-                      labelText: dic['eth.address'],
+                if (_keySelection == 2)
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        hintText: dic['eth.address'],
+                        labelText: dic['eth.address'],
+                      ),
+                      controller: _ethCtrl,
+                      validator: (v) {
+                        return Fmt.ethereumAddressCorrect(v.trim())
+                            ? null
+                            : dic['eth.address.error'];
+                      },
                     ),
-                    controller: _ethCtrl,
-                    validator: (v) {
-                      return !Fmt.ethereumAddressCorrect(v.trim())
-                          ? null
-                          : dic['eth.address.error'];
-                    },
                   ),
-                ),
                 _keySelection != 3
                     ? Padding(
                         padding: EdgeInsets.only(left: 16, right: 16),
