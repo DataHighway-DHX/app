@@ -56,6 +56,7 @@ import 'package:polka_wallet/page/staking/actions/setPayeePage.dart';
 import 'package:polka_wallet/page/staking/actions/stakingDetailPage.dart';
 import 'package:polka_wallet/page/staking/actions/unbondPage.dart';
 import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
+import 'package:polka_wallet/service/ethereum_api/api.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/store/app.dart';
 
@@ -68,6 +69,7 @@ import 'package:polka_wallet/page/account/create/createAccountPage.dart';
 import 'package:polka_wallet/page/account/create/backupAccountPage.dart';
 import 'package:polka_wallet/page/account/import/importAccountPage.dart';
 import 'package:polka_wallet/page/account/createAccountEntryPage.dart';
+import 'package:polka_wallet/store/assets/types/currency.dart';
 
 class WalletApp extends StatefulWidget {
   const WalletApp(this.appStore);
@@ -191,7 +193,8 @@ class WalletAppState extends State<WalletApp> {
                 (ModalRoute.of(ctx)?.settings?.arguments as Map)['msb'],
                 (ModalRoute.of(ctx)?.settings?.arguments as Map)['currency'],
               ),
-          SignalDetailPage.route: (_) => SignalDetailPage(_appStore),
+          SignalDetailPage.route: (ctx) => SignalDetailPage(
+              _appStore, ModalRoute.of(ctx)?.settings?.arguments),
           SignalResultPage.route: (ctx) => SignalResultPage(
               _appStore, ModalRoute.of(ctx)?.settings?.arguments),
           SignalInstructionPage.route: (_) => SignalInstructionPage(),
@@ -205,8 +208,17 @@ class WalletAppState extends State<WalletApp> {
           LockResultPage.route: (ctx) => LockResultPage(
               _appStore, ModalRoute.of(ctx)?.settings?.arguments),
           LockInstructionPage.route: (_) => LockInstructionPage(),
-          ClaimPage.route: (ctx) => ClaimPage(
-              _appStore, ModalRoute.of(ctx)?.settings?.arguments ?? true),
+          ClaimPage.route: (ctx) {
+            final arguments =
+                (ModalRoute.of(ctx)?.settings?.arguments as Map) ?? {};
+            return ClaimPage(
+              _appStore,
+              showHistory: arguments['showHistory'] ?? true,
+              initialClaimType: arguments['initialClaimType'] ?? ClaimType.lock,
+              initialClaimCurrency:
+                  arguments['initialClaimCurrency'] ?? TokenCurrency.mxc,
+            );
+          },
           ClaimDetailsPage.route: (ctx) => ClaimDetailsPage(
               _appStore, ModalRoute.of(ctx)?.settings?.arguments),
           QrSignerPage.route: (_) => QrSignerPage(_appStore),

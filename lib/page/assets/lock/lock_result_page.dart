@@ -50,7 +50,10 @@ class _ResultPageState extends State<LockResultPage> {
   }
 
   Future<void> _lock() async {
-    Navigator.of(context).pushNamed(ClaimPage.route, arguments: false);
+    Navigator.of(context).pushNamed(ClaimPage.route, arguments: {
+      'showHistory': false,
+      'initialClaimType': ClaimType.lock,
+    });
   }
 
   @override

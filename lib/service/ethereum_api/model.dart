@@ -62,7 +62,7 @@ class Claim {
   final String dataHighwayPublicKey;
   final String depositTransaction;
   final String ethereumAccount;
-  final String createdAt;
+  final DateTime createdAt;
   final String lockAddress;
   Claim({
     this.type,
@@ -78,7 +78,8 @@ class Claim {
   });
 
   String get transactionMessage {
-    return '${term.deserialize()},lock,$amount(amount),${tokenName}PublicKey#,${lockAddress ?? 'waiting'}';
+    final type = this.type == ClaimType.lock ? 'lock' : 'signal';
+    return '${term.deserialize()},$type,$amount(amount),${tokenName}PublicKey#,${lockAddress ?? 'waiting'}';
   }
 
   factory Claim.fromMap(Map<String, dynamic> map) {
@@ -93,7 +94,8 @@ class Claim {
       dataHighwayPublicKey: map['dataHighwayPublicKey'],
       depositTransaction: map['depositTransaction'],
       ethereumAccount: map['ethereumAccount'],
-      createdAt: map['createdAt'],
+      createdAt:
+          map['createdAt'] == null ? null : DateTime.parse(map['createdAt']),
       lockAddress: map['lockAddress'],
     );
   }

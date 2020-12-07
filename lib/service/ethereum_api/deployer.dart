@@ -28,7 +28,7 @@ class DeployerApi {
     }
   }
 
-  Future<void> signal({
+  Future<String> signal({
     @required LockdropTerm term,
     @required BigInt amount,
     @required String dhxPublicKey,
@@ -68,18 +68,41 @@ class DeployerApi {
     return json['transactionHash'];
   }
 
-  Future<String> claim({
+  Future<String> claimLock({
     @required String transactionHash,
   }) async {
     Uri uri;
     final authority = host.url.split('//')[1];
     if (host.scheme == 'http') {
-      uri = Uri.http(authority, '/lockdrop/claim', {
+      uri = Uri.http(authority, '/lockdrop/claimLock', {
         'transactionHash': transactionHash,
       });
     } else {
-      uri = Uri.https(authority, '/lockdrop/claim', {
+      uri = Uri.https(authority, '/lockdrop/claimLock', {
         'transactionHash': transactionHash,
+      });
+    }
+    final res = await http.get(uri);
+    _handleError(res);
+    final json = jsonDecode(res.body);
+    return json['transactionHash'];
+  }
+
+  Future<String> claimSignal({
+    @required String transactionHash,
+    @required TokenCurrency token,
+  }) async {
+    Uri uri;
+    final authority = host.url.split('//')[1];
+    if (host.scheme == 'http') {
+      uri = Uri.http(authority, '/lockdrop/claimSignal', {
+        'transactionHash': transactionHash,
+        'token': token.name.toLowerCase(),
+      });
+    } else {
+      uri = Uri.https(authority, '/lockdrop/claimSignal', {
+        'transactionHash': transactionHash,
+        'token': token.name.toLowerCase(),
       });
     }
     final res = await http.get(uri);

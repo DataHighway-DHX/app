@@ -1,16 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:polka_wallet/common/components/gasInput.dart';
 import 'package:polka_wallet/common/components/transaction_message.dart';
 import 'package:polka_wallet/common/widgets/roundedButton.dart';
+import 'package:polka_wallet/page/assets/claim/claim_page.dart';
 import 'package:polka_wallet/service/ethereum_api/api.dart';
-import 'package:polka_wallet/service/ethereum_api/model.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import '../../../constants.dart';
 import 'signal_params.dart';
 
 class SignalResultPage extends StatefulWidget {
@@ -31,31 +29,18 @@ class _ResultPageState extends State<SignalResultPage> {
   bool _showMessageInQr = false;
   bool _continueBox = false;
 
-  SignalWalletStructsResponse walletStructs;
-
   @override
   void initState() {
     super.initState();
-    init();
-  }
-
-  Future<void> init() async {
-    walletStructs = await ethereum.lockdrop.signalWalletStructs(
-      widget.signalParams.currentAddress,
-      widget.signalParams.currency.address,
-    );
-    if (mounted) setState(() {});
+    widget.signalParams.contractAddress = ethereum.lockdrop.contractAddress;
   }
 
   Future<void> signal() async {
-    await ethereum.deployer.signal(
-      amount: widget.signalParams.parsedAmount,
-      term: widget.signalParams.term,
-      dhxPublicKey: store.account.currentAccount.address,
-      token: widget.signalParams.currency,
-    );
-
-    print('success');
+    Navigator.of(context).pushNamed(ClaimPage.route, arguments: {
+      'showHistory': false,
+      'initialClaimType': ClaimType.signal,
+      'initialClaimCurrency': widget.signalParams.currency,
+    });
   }
 
   @override
@@ -98,43 +83,40 @@ class _ResultPageState extends State<SignalResultPage> {
                             child: Container(
                               height: 150,
                               width: 150,
-                              child: walletStructs == null
-                                  ? Center(child: CircularProgressIndicator())
-                                  : Stack(
-                                      children: [
-                                        QrImage(
-                                          data: _showMessageInQr
-                                              ? widget.signalParams
-                                                  .transactionMessage
-                                              : walletStructs.contractAddr
-                                                  .toString(),
-                                          version: QrVersions.auto,
-                                          size: 150.0,
-                                          foregroundColor:
-                                              Theme.of(context).primaryColor,
-                                          errorCorrectionLevel: 3,
-                                        ),
-                                        Align(
-                                          child: Container(
-                                            padding: EdgeInsets.only(
-                                              left: 8,
-                                              top: 8,
-                                              bottom: 8,
-                                              right: 5,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: Image.asset(
-                                              'assets/images/assets/DHX.png',
-                                              height: 35,
-                                              width: 35,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                              child: Stack(
+                                children: [
+                                  QrImage(
+                                    data: _showMessageInQr
+                                        ? widget.signalParams.transactionMessage
+                                        : widget.signalParams.contractAddress
+                                            .toString(),
+                                    version: QrVersions.auto,
+                                    size: 150.0,
+                                    foregroundColor:
+                                        Theme.of(context).primaryColor,
+                                    errorCorrectionLevel: 3,
+                                  ),
+                                  Align(
+                                    child: Container(
+                                      padding: EdgeInsets.only(
+                                        left: 8,
+                                        top: 8,
+                                        bottom: 8,
+                                        right: 5,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Image.asset(
+                                        'assets/images/assets/DHX.png',
+                                        height: 35,
+                                        width: 35,
+                                      ),
                                     ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           SizedBox(height: 8),
@@ -143,9 +125,8 @@ class _ResultPageState extends State<SignalResultPage> {
                               SizedBox(width: 16),
                               Expanded(
                                 child: Text(
-                                  walletStructs == null
-                                      ? '...'
-                                      : walletStructs.contractAddr.toString(),
+                                  widget.signalParams.contractAddress
+                                      .toString(),
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText2
@@ -157,16 +138,14 @@ class _ResultPageState extends State<SignalResultPage> {
                               IconButton(
                                 icon: Icon(Icons.content_copy),
                                 color: Theme.of(context).primaryColor,
-                                onPressed: walletStructs == null
-                                    ? null
-                                    : () {
-                                        Clipboard.setData(
-                                          ClipboardData(
-                                            text: walletStructs.contractAddr
-                                                .toString(),
-                                          ),
-                                        );
-                                      },
+                                onPressed: () {
+                                  Clipboard.setData(
+                                    ClipboardData(
+                                      text: widget.signalParams.contractAddress
+                                          .toString(),
+                                    ),
+                                  );
+                                },
                               ),
                             ],
                           )
@@ -204,18 +183,6 @@ class _ResultPageState extends State<SignalResultPage> {
                       style: Theme.of(context).textTheme.bodyText2,
                     ),
                     contentPadding: EdgeInsets.zero,
-                  ),
-                  SizedBox(height: 20),
-                  GasInput(
-                    title: dic['gas.limit'],
-                    defaultValue: kGasLimitRecommended,
-                    subtitle: dic['units'],
-                  ),
-                  SizedBox(height: 10),
-                  GasInput(
-                    title: dic['gas.price'],
-                    defaultValue: kGasPriceRecommended,
-                    subtitle: dic['gwei'],
                   ),
                 ],
               ),

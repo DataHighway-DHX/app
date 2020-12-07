@@ -12,6 +12,7 @@ class SignalParams {
   LockdropTerm term = LockdropTerm.threeMo;
   TokenCurrency currency = TokenCurrency.mxc;
 
+  EthereumAddress contractAddress;
   EthereumAddress get currentAddress => kAccountAddrTestnet;
   BigInt get parsedAmount {
     final parsedDecimal = Decimal.tryParse(amount);
@@ -23,6 +24,6 @@ class SignalParams {
   }
 
   String get transactionMessage {
-    return '${term.deserialize()},lock,$amount(amount),${currency.name}PublicKey#,$currentAddress';
+    return '${term.deserialize()},signal,$amount(amount),${currency.name}PublicKey#,${contractAddress ?? 'waiting'}';
   }
 }

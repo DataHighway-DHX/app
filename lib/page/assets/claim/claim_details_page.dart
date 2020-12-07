@@ -89,7 +89,8 @@ class ClaimDetailsPage extends StatelessWidget {
               tableRow(context, dic['transaction.fee'], 'TBD'),
               tableRow(context, dic['expected.msb'], 'TBD'),
               tableRow(context, dic['duration'], '${claim.term.months} months'),
-              tableRow(context, dic['timestamp'], 'TBD days ago'),
+              tableRow(context, dic['timestamp'],
+                  '${DateTime.now().difference(claim.createdAt).inDays} days ago'),
               tableRow(
                   context, dic['transaction.hash'], claim.depositTransaction),
               SizedBox(height: 25),

@@ -3,15 +3,22 @@ import 'package:polka_wallet/common/components/snackbars.dart';
 import 'package:polka_wallet/common/widgets/picker_dialog.dart';
 import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/service/ethereum_api/api.dart';
-import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/assets/types/currency.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class ClaimCreateInfo extends StatefulWidget {
-  ClaimCreateInfo({Key key, this.claimed}) : super(key: key);
+  ClaimCreateInfo({
+    Key key,
+    this.claimed,
+    this.initialClaimType = ClaimType.lock,
+    this.initialClaimCurrency,
+  }) : super(key: key);
 
   final VoidCallback claimed;
+  final ClaimType initialClaimType;
+  final TokenCurrency initialClaimCurrency;
   @override
   _ClaimCreateInfoState createState() => _ClaimCreateInfoState();
 }
@@ -24,6 +31,19 @@ class _ClaimCreateInfoState extends State<ClaimCreateInfo>
   bool isLoading = false;
   bool txPending = false;
   Claim claim;
+  ClaimType claimType;
+  TokenCurrency claimCurrency;
+  List<TokenCurrency> supportedCurrencies = [
+    TokenCurrency.iota,
+    TokenCurrency.mxc
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    claimType = widget.initialClaimType;
+    claimCurrency = widget.initialClaimCurrency ?? TokenCurrency.mxc;
+  }
 
   void _turnLoading(bool value) {
     if (mounted) setState(() => isLoading = value);
@@ -33,7 +53,13 @@ class _ClaimCreateInfoState extends State<ClaimCreateInfo>
     _turnLoading(true);
     final txHash = _hashCtl.text.trim();
     try {
-      final hash = await ethereum.deployer.claim(transactionHash: txHash);
+      String hash;
+      if (claimType == ClaimType.lock) {
+        hash = await ethereum.deployer.claimLock(transactionHash: txHash);
+      } else {
+        hash = await ethereum.deployer
+            .claimSignal(transactionHash: txHash, token: claimCurrency);
+      }
 
       if (!mounted) return;
       setState(() => txPending = true);
@@ -96,6 +122,18 @@ class _ClaimCreateInfoState extends State<ClaimCreateInfo>
     );
   }
 
+  String claimTypeStringifier([ClaimType claimType]) {
+    final dic = I18n.of(context).assets;
+    claimType ??= this.claimType;
+    switch (claimType) {
+      case ClaimType.lock:
+        return dic['lock'];
+      case ClaimType.signal:
+        return dic['signal'];
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final dic = I18n.of(context).assets;
@@ -107,6 +145,71 @@ class _ClaimCreateInfoState extends State<ClaimCreateInfo>
             Center(
               child: Image.asset('assets/images/assets/claim_icon.png'),
             ),
+            SizedBox(height: 20),
+            Row(
+              children: [
+                Text(dic['claim.title']),
+                Spacer(),
+                GestureDetector(
+                  child: Row(
+                    children: [
+                      Text(
+                        claimTypeStringifier(),
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                      GestureDetector(
+                        child: Icon(Icons.keyboard_arrow_down),
+                        onTap: () async {
+                          final val = await PickerDialog.show(
+                            context,
+                            PickerDialog<ClaimType>(
+                              values: ClaimType.values,
+                              selectedValue: claimType,
+                              stringifier: claimTypeStringifier,
+                            ),
+                          );
+                          if (val != null) setState(() => claimType = val);
+                        },
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            if (claimType == ClaimType.signal) ...[
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  Text(dic['token.currency']),
+                  Spacer(),
+                  GestureDetector(
+                    child: Row(
+                      children: [
+                        Text(
+                          claimCurrency.name,
+                          style: Theme.of(context).textTheme.bodyText1,
+                        ),
+                        GestureDetector(
+                          child: Icon(Icons.keyboard_arrow_down),
+                          onTap: () async {
+                            final val = await PickerDialog.show(
+                              context,
+                              PickerDialog<TokenCurrency>(
+                                values: supportedCurrencies,
+                                selectedValue: claimCurrency,
+                                stringifier: (t) => t.name,
+                              ),
+                            );
+                            if (val != null)
+                              setState(() => claimCurrency = val);
+                          },
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ],
             SizedBox(height: 20),
             TextField(
               controller: _hashCtl,

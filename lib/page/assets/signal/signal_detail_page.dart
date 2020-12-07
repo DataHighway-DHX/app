@@ -1,21 +1,26 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/snackbars.dart';
 import 'package:polka_wallet/common/widgets/picker_card.dart';
 import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/common/components/transaction_message.dart';
+import 'package:polka_wallet/service/ethereum_api/api.dart';
 import 'package:polka_wallet/service/ethereum_api/model.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets/types/currency.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'signal_result_page.dart';
 
 import 'signal_params.dart';
 
 class SignalDetailPage extends StatefulWidget {
-  SignalDetailPage(this.store);
+  SignalDetailPage(this.store, this.params);
 
   static final String route = '/assets/signal/detail';
   final AppStore store;
+  final SignalParams params;
 
   @override
   _DetailPageState createState() => _DetailPageState(store);
@@ -27,7 +32,67 @@ class _DetailPageState extends State<SignalDetailPage> {
   final AppStore store;
 
   TextEditingController _amountCtl = TextEditingController(text: '0');
-  SignalParams params = SignalParams();
+  SignalParams get params => widget.params;
+
+  Decimal mxcBalance;
+  Decimal iotaBalance;
+  bool isLoading = false;
+  bool txPending = false;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    initStateAsync();
+  }
+
+  Future<void> initStateAsync() async {
+    final mxcBalance = await ethereum.mxcToken.balanceOf(params.currentAddress);
+    final iotaBalance =
+        await ethereum.iotaToken.balanceOf(params.currentAddress);
+    if (mounted) {
+      setState(() {
+        this.mxcBalance = mxcBalance.toDecimal();
+        this.iotaBalance = iotaBalance.toDecimal();
+      });
+    }
+  }
+
+  void _turnLoading(bool value) {
+    if (mounted) setState(() => isLoading = value);
+  }
+
+  Future<void> next() async {
+    _turnLoading(true);
+    try {
+      final hash = await ethereum.deployer.signal(
+        amount: params.parsedAmount,
+        term: params.term,
+        dhxPublicKey: store.account.currentAccountPubKey,
+        token: params.currency,
+      );
+
+      if (!mounted) return;
+      setState(() => txPending = true);
+      final result = await ethereum.lockdrop.waitForTransaction(hash);
+      if (result == TransactionStatus.succeed) {
+        setState(() => txPending = false);
+        Navigator.pushNamed(
+          context,
+          SignalResultPage.route,
+          arguments: params,
+        );
+      } else {
+        scaffoldKey.currentState
+            ?.showSnackBar(SnackBars.error('Transaction Failed'));
+        if (mounted) setState(() => txPending = false);
+      }
+    } catch (e) {
+      UI.handleError(scaffoldKey.currentState, e);
+    } finally {
+      _turnLoading(false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,9 +147,14 @@ class _DetailPageState extends State<SignalDetailPage> {
                             : null,
                         labelText: dic['amount.balance'].replaceAll(
                           '{0}',
-                          (store.assets.balances['DHX']?.transferable ??
-                                  BigInt.zero)
-                              .toString(),
+                          () {
+                            if (params.currency == TokenCurrency.iota)
+                              return '${iotaBalance ?? '...'} IOTA';
+                            if (params.currency == TokenCurrency.mxc)
+                              return '${mxcBalance ?? '...'} MXC';
+                            throw Exception(
+                                'Unknown currency ${params.currency}');
+                          }(),
                         ),
                       ),
                       keyboardType: TextInputType.number,
@@ -92,7 +162,7 @@ class _DetailPageState extends State<SignalDetailPage> {
                     SizedBox(height: 10),
                     Center(
                       child: Text(
-                        'MSB: ?',
+                        'MSB: ${params.msb}',
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -122,11 +192,11 @@ class _DetailPageState extends State<SignalDetailPage> {
                   left: 10, right: 10, bottom: 30, top: 5),
               child: Container(
                 child: RoundedButton(
-                  text: I18n.of(context).home['next'],
-                  onPressed: params.parsedAmount != null
-                      ? () => Navigator.pushNamed(
-                          context, SignalResultPage.route,
-                          arguments: params)
+                  text: txPending
+                      ? dic['transaction.pending']
+                      : I18n.of(context).home['next'],
+                  onPressed: params.parsedAmount != null && !isLoading
+                      ? () => next()
                       : null,
                 ),
               ),

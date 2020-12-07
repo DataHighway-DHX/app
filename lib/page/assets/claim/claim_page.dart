@@ -5,6 +5,7 @@ import 'package:polka_wallet/common/widgets/picker_dialog.dart';
 import 'package:polka_wallet/common/widgets/roundedButton.dart';
 import 'package:polka_wallet/service/ethereum_api/api.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/assets/types/currency.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -12,11 +13,18 @@ import 'claim_create_info.dart';
 import 'claim_tile.dart';
 
 class ClaimPage extends StatefulWidget {
-  ClaimPage(this.store, [this.showHistory = true]);
+  ClaimPage(
+    this.store, {
+    this.showHistory = true,
+    this.initialClaimType,
+    this.initialClaimCurrency,
+  });
 
   static final String route = '/assets/claim';
   final AppStore store;
   final bool showHistory;
+  final ClaimType initialClaimType;
+  final TokenCurrency initialClaimCurrency;
 
   @override
   _ClaimPageState createState() => _ClaimPageState(store);
@@ -83,6 +91,8 @@ class _ClaimPageState extends State<ClaimPage> {
               children: <Widget>[
                 ClaimCreateInfo(
                   claimed: claimed,
+                  initialClaimType: widget.initialClaimType,
+                  initialClaimCurrency: widget.initialClaimCurrency,
                 ),
                 SizedBox(height: 25),
                 if (widget.showHistory) ...[

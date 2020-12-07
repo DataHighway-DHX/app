@@ -10,6 +10,7 @@ import 'package:polka_wallet/common/components/transaction_message.dart';
 import 'package:polka_wallet/service/ethereum_api/api.dart';
 import 'package:polka_wallet/service/ethereum_api/model.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:polka_wallet/store/assets/types/currency.dart';
 import 'package:web3dart/web3dart.dart';
@@ -90,7 +91,7 @@ class _DetailPageState extends State<LockDetailPage> {
         if (mounted) setState(() => txPending = false);
       }
     } catch (e) {
-      scaffoldKey.currentState?.showSnackBar(SnackBars.error(e.toString()));
+      UI.handleError(scaffoldKey.currentState, e);
     } finally {
       _turnLoading(false);
     }

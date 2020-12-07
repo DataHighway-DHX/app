@@ -46,7 +46,7 @@ class ClaimTile extends StatelessWidget {
                 children: [
                   Text(claim.transactionMessage.substring(0, 20)),
                   Text(
-                    '${dic['signal.amount']}: ${Fmt.balance(claim.amount, 18)}',
+                    '${claim.type == ClaimType.signal ? dic['signal.amount'] : dic['lock.amount']}: ${Fmt.balance(claim.amount, 18)}',
                     style: Theme.of(context).textTheme.bodyText1,
                   ),
                   Text(
