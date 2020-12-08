@@ -125,13 +125,7 @@ class Api {
   }
 
   Future<void> _setupDatahighway() async {
-    await ethereum.connectDeployer(DeployerHostInfo(
-      ip: '192.168.43.88',
-      hostname: '192.168.43.88:8080',
-      scheme: 'http',
-      city: 'Home',
-      ethereumAddress: '0x0066B0267Bf7003F5Bc20d8b938005d3E0aeae21',
-    ));
+    await ethereum.connectDeployer();
   }
 
   Future<void> fetchNetworkProps() async {
